@@ -1,7 +1,7 @@
+name: QuanLyAn_Server
 services:
   mariadb:
     image: mariadb:11.3
-    container_name: QuanLyAn_ToaAnKhuVuc9_DongThap
     ports:
       - "3306:3306"
     environment:
