@@ -24,10 +24,10 @@ public class LegalCase {
     @Column(name = "case_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long caseId;
-    @Column(name = "reception_number")
-    String receptionNumber;
-    @Column(name = "reception_date", unique = true)
-    LocalDate receptionDate;
+    @Column(name = "acceptance_number", unique = true)
+    String acceptanceNumber;
+    @Column(name = "acceptance_date")
+    LocalDate acceptanceDate;
     @Column(name = "expired_date")
     LocalDate expiredDate;
     String plaintiff;
@@ -47,8 +47,8 @@ public class LegalCase {
     Judge judge;
 
     @OneToMany(mappedBy = "legalCase")
-    List<AdditionalReception> additionalReceptions;
+    List<AdditionalAcceptanceNotice> additionalAcceptanceNotices;
 
     @OneToMany(mappedBy = "legalCase")
-    List<DecisionToExtend> decisionToExtends;
+    List<ExtendDecision> extendDecisions;
 }

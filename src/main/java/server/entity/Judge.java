@@ -29,6 +29,9 @@ public class Judge {
     @Column(name = "max_number_of_legal_case")
     long maxNumberOfLegalCase;
 
+    @Enumerated(EnumType.STRING)
+    StatusOfJudge statusOfJudge;
+
     @OneToMany(mappedBy = "judge")
     List<LegalCase> legalCases;
     @OneToOne(mappedBy = "judge")

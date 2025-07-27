@@ -7,8 +7,9 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum Role {
-    ADMIN("Quyền quản lý"),
-    JUDGE("Quyền thẩm phán");
+    ADMIN("Quản trị viên"),
+    MANAGER("Quản lý"),
+    JUDGE("Thẩm phán");
     String name;
 
     Role(String name) {

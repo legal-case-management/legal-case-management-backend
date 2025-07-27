@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "decision_to_extends")
+@Table(name = "additional_acceptance_notices")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -15,15 +15,15 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @ToString
 @Builder
-public class DecisionToExtend {
+public class AdditionalAcceptanceNotice {
     @Id
-    @Column(name = "decision_to_extend_id")
+    @Column(name = "additional_acceptance_notice_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long decisionToExtendId;
-    @Column(name = "decision_number", unique = true)
-    String decisionNumber;
-    @Column(name = "decision_date")
-    LocalDate decisionDate;
+    long additionalAcceptanceNoticeId;
+    @Column(name = "acceptance_number", unique = true)
+    String acceptanceNumber;
+    @Column(name = "acceptance_date")
+    LocalDate acceptanceDate;
 
     @ManyToOne
     @JoinColumn(name = "legal_case_id")
