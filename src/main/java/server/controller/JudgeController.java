@@ -1,5 +1,7 @@
 package server.controller;
 
+import jakarta.validation.Valid;
+import server.dto.request.JudgeRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.JudgeResponse;
 import server.service.JudgeService;
@@ -17,7 +19,7 @@ import java.util.List;
 @RequestMapping("judge")
 @Slf4j
 public class JudgeController {
-    JudgeService customerService;
+    JudgeService judgeService;
 
     @GetMapping("all")
     public ApiResponse<List<JudgeResponse>> createCustomerAccount(){
@@ -25,7 +27,7 @@ public class JudgeController {
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(customerService.getAll())
+                .data(judgeService.getAll())
                 .build();
     }
 
@@ -35,7 +37,17 @@ public class JudgeController {
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(customerService.getMyInfo())
+                .data(judgeService.getMyInfo())
                 .build();
     }
+    @PostMapping("")
+    public ApiResponse<Void> createCustomer(@RequestBody @Valid JudgeRequest request){
+        judgeService.create(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Thêm thẩm phán thành công")
+                .build();
+    }
+
 }

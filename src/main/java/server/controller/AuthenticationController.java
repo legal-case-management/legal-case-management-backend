@@ -1,14 +1,12 @@
 package server.controller;
 
 import server.dto.request.IntrospectRequest;
-import server.dto.request.authentication.JudgeCreateRequest;
 import server.dto.request.authentication.LoginRequest;
 import server.dto.request.authentication.LogoutRequest;
 import server.dto.request.authentication.RefreshTokenRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.service.AuthenticationService;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,15 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class AuthenticationController {
     AuthenticationService authenticationService;
-    @PostMapping("/judge")
-    public ApiResponse<Void> createCustomer(@RequestBody @Valid JudgeCreateRequest request){
-        authenticationService.judgeRegister(request);
-        return ApiResponse.<Void>builder()
-                .success(true)
-                .status(200)
-                .message("Thêm thẩm phán thành công")
-                .build();
-    }
+
 
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> customerLogin(@RequestBody LoginRequest request) {

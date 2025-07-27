@@ -1,13 +1,11 @@
 package server.service;
 
 import server.dto.request.IntrospectRequest;
-import server.dto.request.authentication.JudgeCreateRequest;
 import server.dto.request.authentication.LoginRequest;
 import server.dto.request.authentication.LogoutRequest;
 import server.dto.request.authentication.RefreshTokenRequest;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.entity.Account;
-import server.entity.enums.Judge;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.AccountMapper;
@@ -85,17 +83,6 @@ public class AuthenticationService {
         } catch (JOSEException e) {
             throw new AppException(ErrorCode.TOKEN_GENERATION_FAILED);
         }
-    }
-
-    public void judgeRegister(JudgeCreateRequest request) {
-
-        Judge judge = judgeMapper.toJudge(request);
-        Judge judgeSaved = judgeRepository.save(judge);
-
-        Account account = accountMapper.toAccount(request);
-        account.setPassword(passwordEncoder.encode(request.getPassword()));
-        account.setJudge(judgeSaved);
-        accountRepository.save(account);
     }
 
     public void introspect(IntrospectRequest request) {

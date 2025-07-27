@@ -1,11 +1,11 @@
 package server.mapper;
 
-import server.dto.request.authentication.JudgeCreateRequest;
+import server.dto.request.JudgeRequest;
 import server.entity.Account;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AccountMapper {
-    Account toAccount(JudgeCreateRequest request);
+    Account toAccount(JudgeRequest request);
 }
