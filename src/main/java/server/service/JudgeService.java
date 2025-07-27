@@ -3,8 +3,7 @@ package server.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import server.dto.request.JudgeRequest;
 import server.dto.response.JudgeResponse;
-import server.entity.Account;
-import server.entity.enums.Judge;
+import server.entity.*;
 import server.entity.enums.StatusOfJudge;
 import server.exception.AppException;
 import server.exception.ErrorCode;
@@ -34,7 +33,7 @@ public class JudgeService {
 
     PasswordEncoder passwordEncoder;
 
-    @PreAuthorize("hasAnyAuthority('ADMIN MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
     public List<JudgeResponse> getAll() {
         return judgeRepository
                 .findAll()

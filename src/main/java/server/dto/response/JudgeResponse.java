@@ -10,9 +10,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class JudgeResponse {
-    long judgeId;
+    String judgeId;
     String fistName;
     String lastName;
     long maxNumberOfLegalCase;

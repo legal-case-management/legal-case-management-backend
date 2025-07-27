@@ -18,8 +18,8 @@ import java.time.LocalDate;
 public class ExtendDecision {
     @Id
     @Column(name = "extend_decision_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long extendDecisionId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String extendDecisionId;
     @Column(name = "acceptance_number", unique = true)
     String acceptanceNumber;
     @Column(name = "acceptance_date")

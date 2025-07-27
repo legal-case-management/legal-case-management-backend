@@ -21,8 +21,8 @@ import java.util.List;
 public class LegalCase {
     @Id
     @Column(name = "legal_case_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long legalCaseId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String legalCaseId;
     @Column(name = "acceptance_number", unique = true)
     String acceptanceNumber;
     @Column(name = "acceptance_date")

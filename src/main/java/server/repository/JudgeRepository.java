@@ -1,6 +1,6 @@
 package server.repository;
 
-import server.entity.enums.Judge;
+import server.entity.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

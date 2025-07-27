@@ -18,8 +18,8 @@ import java.time.LocalDate;
 public class AdditionalAcceptanceNotice {
     @Id
     @Column(name = "additional_acceptance_notice_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long additionalAcceptanceNoticeId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String additionalAcceptanceNoticeId;
     @Column(name = "acceptance_number", unique = true)
     String acceptanceNumber;
     @Column(name = "acceptance_date")

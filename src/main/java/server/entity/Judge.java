@@ -19,8 +19,8 @@ import java.util.List;
 public class Judge {
     @Id
     @Column(name = "judge_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long judgeId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String judgeId;
     @Column(name = "fist_name")
     String fistName;
     @Column(name = "last_name")

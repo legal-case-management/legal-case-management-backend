@@ -2,7 +2,7 @@ package server.mapper;
 
 import server.dto.request.JudgeRequest;
 import server.dto.response.JudgeResponse;
-import server.entity.enums.Judge;
+import server.entity.Judge;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

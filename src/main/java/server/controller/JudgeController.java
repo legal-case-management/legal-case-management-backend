@@ -22,7 +22,7 @@ public class JudgeController {
     JudgeService judgeService;
 
     @GetMapping("all")
-    public ApiResponse<List<JudgeResponse>> createCustomerAccount(){
+    public ApiResponse<List<JudgeResponse>> getAll(){
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
