@@ -1,10 +1,9 @@
-package server.entity.enums;
+package server.entity;
 
 import jakarta.persistence.*;
-import server.entity.Account;
-import server.entity.LegalCase;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.entity.enums.StatusOfJudge;
 
 import java.util.List;
 
@@ -36,4 +35,8 @@ public class Judge {
     List<LegalCase> legalCases;
     @OneToOne(mappedBy = "judge")
     Account account;
+
+    private String getName() {
+        return lastName + " " + fistName;
+    }
 }

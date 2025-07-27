@@ -70,7 +70,7 @@ public class AuthenticationService {
         /* Check password*/
         boolean authenticated = passwordEncoder.matches(request.getPassword(), account.getPassword());
         if (!authenticated)
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+            throw new AppException(ErrorCode.INVALID_PASSWORD);
 
         try {
             /* Create token*/

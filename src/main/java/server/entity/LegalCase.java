@@ -2,7 +2,6 @@ package server.entity;
 
 import jakarta.persistence.*;
 import server.entity.enums.Assignment;
-import server.entity.enums.Judge;
 import server.entity.enums.StatusOfLegalCase;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,9 +20,9 @@ import java.util.List;
 @Builder
 public class LegalCase {
     @Id
-    @Column(name = "case_id")
+    @Column(name = "legal_case_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long caseId;
+    long legalCaseId;
     @Column(name = "acceptance_number", unique = true)
     String acceptanceNumber;
     @Column(name = "acceptance_date")

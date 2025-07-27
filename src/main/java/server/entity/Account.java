@@ -1,7 +1,6 @@
 package server.entity;
 
 import jakarta.persistence.*;
-import server.entity.enums.Judge;
 import server.entity.enums.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
