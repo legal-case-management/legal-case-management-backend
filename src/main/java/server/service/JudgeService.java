@@ -26,7 +26,7 @@ public class JudgeService {
     JudgeMapper judgeMapper;
     AccountMapper accountMapper;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN MANAGER')")
     public List<JudgeResponse> getAll() {
         return judgeRepository
                 .findAll()

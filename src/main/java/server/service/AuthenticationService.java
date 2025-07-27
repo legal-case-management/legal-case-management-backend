@@ -60,7 +60,13 @@ public class AuthenticationService {
 
     public AuthenticationResponse login(LoginRequest request) {
         /* Find account in database*/
-        Account account = accountRepository.findAccountByUsername(request.getIdentifier())
+        String identifier = request.getIdentifier();
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
+        Account account = identifier.matches(emailRegex)
+                ? accountRepository.findAccountByEmail(identifier)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED))
+                : accountRepository.findAccountByUsername(identifier)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
         /* Check password*/

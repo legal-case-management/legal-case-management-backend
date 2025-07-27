@@ -22,6 +22,7 @@ public class Account {
     String accountId;
     String username;
     String password;
+    String email;
     Role role;
     @OneToOne
     @JoinColumn(name = "judge_id")
