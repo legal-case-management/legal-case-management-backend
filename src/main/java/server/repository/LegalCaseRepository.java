@@ -9,10 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
-    boolean existsByCaseNumber(String caseNumber);
-
     @Query("SELECT lc FROM LegalCase lc " +
-            "JOIN lc.judge j " +
+            "LEFT JOIN lc.judge j " +
             "WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber LIKE %:acceptanceNumber%) " +
             "AND (:startAcceptanceDate IS NULL OR lc.acceptanceDate >= :startAcceptanceDate) " +
             "AND (:endAcceptanceDate IS NULL OR lc.acceptanceDate <= :endAcceptanceDate) " +
