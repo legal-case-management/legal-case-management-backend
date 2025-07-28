@@ -41,7 +41,7 @@ public class JudgeController {
                 .build();
     }
     @PostMapping("")
-    public ApiResponse<Void> createCustomer(@RequestBody @Valid JudgeRequest request){
+    public ApiResponse<Void> create(@RequestBody @Valid JudgeRequest request){
         judgeService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)

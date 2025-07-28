@@ -1,12 +1,13 @@
 package server.controller;
 
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import server.dto.request.JudgeRequest;
+import server.dto.request.LegalCaseRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.JudgeResponse;
 import server.dto.response.LegalCaseResponse;
@@ -28,6 +29,36 @@ public class LegalCaseController {
                 .status(200)
                 .message("Thành công")
                 .data(legalCaseService.getAll())
+                .build();
+    }
+
+    @PostMapping("")
+    public ApiResponse<Void> create(@RequestBody @Valid LegalCaseRequest request){
+        legalCaseService.create(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Thêm án thành công")
+                .build();
+    }
+
+    @PatchMapping("")
+    public ApiResponse<Void> update(@RequestBody @Valid LegalCaseRequest request){
+        legalCaseService.update(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Cập nhật án thành công")
+                .build();
+    }
+
+    @DeleteMapping("")
+    public ApiResponse<Void> delete(@RequestBody @Valid LegalCaseRequest request){
+        legalCaseService.delete(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Xóa án thành công")
                 .build();
     }
 }

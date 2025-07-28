@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
     AuthenticationService authenticationService;
 
-
     @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> customerLogin(@RequestBody LoginRequest request) {
         AuthenticationResponse authenticationResponse = authenticationService.login(request);
@@ -39,7 +38,7 @@ public class AuthenticationController {
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
-                .message("Token valid")
+                .message("Token hợp lệ")
                 .build();
     }
 
@@ -50,7 +49,7 @@ public class AuthenticationController {
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
-                .message("Logout successful")
+                .message("Đăng xuất thành công")
                 .build();
     }
 
@@ -60,7 +59,7 @@ public class AuthenticationController {
                 .data(authenticationService.refreshToken(request))
                 .success(true)
                 .status(200)
-                .message("Logout successful")
+                .message("Mở rộng phiên đăng nhập thành công")
                 .build();
     }
 }

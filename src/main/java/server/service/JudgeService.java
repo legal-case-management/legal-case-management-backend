@@ -1,6 +1,7 @@
 package server.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.JudgeRequest;
 import server.dto.response.JudgeResponse;
 import server.entity.*;
@@ -54,6 +55,7 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN MANAGER')")
+    @Transactional
     public void create(JudgeRequest request){
         Judge judge = judgeMapper.toJudge(request);
         judge.setStatusOfJudge(StatusOfJudge.WORKING);

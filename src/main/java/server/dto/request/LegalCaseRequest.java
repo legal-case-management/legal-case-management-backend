@@ -1,0 +1,28 @@
+package server.dto.request;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import server.entity.enums.*;
+
+import java.time.LocalDate;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString
+public class LegalCaseRequest {
+    String legalCaseId;
+    String acceptanceNumber;
+    LocalDate acceptanceDate;
+    LocalDate expiredDate;
+    String plaintiff;
+    String defendant;
+    String legalRelationship;
+    TypeOfLegalCase typeOfLegalCase;
+    Assignment assignment;
+    StatusOfLegalCase statusOfLegalCase;
+    String judgeId;
+}

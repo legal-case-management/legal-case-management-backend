@@ -1,5 +1,6 @@
 package server.service;
 
+import org.springframework.scheduling.annotation.Async;
 import server.dto.request.IntrospectRequest;
 import server.dto.request.authentication.LoginRequest;
 import server.dto.request.authentication.LogoutRequest;
