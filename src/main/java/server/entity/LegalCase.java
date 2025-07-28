@@ -5,12 +5,19 @@ import server.entity.enums.Assignment;
 import server.entity.enums.StatusOfLegalCase;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "legal_cases")
+@Table(
+        name = "legal_cases",
+        indexes = {
+                @Index(name = "idx_acceptance_number", columnList = "acceptance_number"),
+                @Index(name = "idx_time", columnList = "acceptance_date, acceptance_number")
+        }
+)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -34,7 +41,8 @@ public class LegalCase {
     @Column(name = "legal_relationship")
     String legalRelationship;
     @Column(name = "type_of_legal_case")
-    String typeOfLegalCase;
+    @Enumerated(EnumType.STRING)
+    TypeOfLegalCase typeOfLegalCase;
     @Enumerated(EnumType.STRING)
     Assignment assignment;
     @Enumerated(EnumType.STRING)
