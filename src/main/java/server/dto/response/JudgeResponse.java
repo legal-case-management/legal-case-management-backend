@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JudgeResponse {
     String judgeId;
-    String fistName;
+    String firstName;
     String lastName;
     long maxNumberOfLegalCase;
 }

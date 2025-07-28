@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.LegalCaseRequest;
-import server.dto.response.JudgeResponse;
+import server.dto.request.LegalCaseSearchRequest;
 import server.dto.response.LegalCaseResponse;
 import server.entity.Judge;
 import server.entity.LegalCase;
@@ -36,10 +36,18 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
-    public List<LegalCaseResponse> search() {
-        return legalCaseRepository
-                .findAll()
-                .stream().map(legalCaseMapper::toLegalCaseResponse)
+    public List<LegalCaseResponse> search(LegalCaseSearchRequest request) {
+        return legalCaseRepository.searchLegalCases(
+                request.getAcceptanceNumber(),
+                request.getStartAcceptanceDate(),
+                request.getEndAcceptanceDate(),
+                request.getPlaintiff(),
+                request.getDefendant(),
+                request.getTypeOfLegalCase(),
+                request.getJudgeName()
+        )
+                .stream()
+                .map(legalCaseMapper::toLegalCaseResponse)
                 .toList();
     }
 

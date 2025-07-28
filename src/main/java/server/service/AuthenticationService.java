@@ -1,6 +1,5 @@
 package server.service;
 
-import org.springframework.scheduling.annotation.Async;
 import server.dto.request.IntrospectRequest;
 import server.dto.request.authentication.LoginRequest;
 import server.dto.request.authentication.LogoutRequest;
@@ -148,7 +147,7 @@ public class AuthenticationService {
                 ))
                 .claim("username", account.getUsername())
                 .claim("displayName", account.getJudge() != null
-                        ? account.getJudge().getLastName() + " " + account.getJudge().getFistName()
+                        ? account.getJudge().getLastName() + " " + account.getJudge().getFirstName()
                         : null)
                 .claim("judge_id",
                         account.getJudge() != null

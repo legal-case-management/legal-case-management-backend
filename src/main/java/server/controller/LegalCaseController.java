@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import server.dto.request.JudgeRequest;
 import server.dto.request.LegalCaseRequest;
+import server.dto.request.LegalCaseSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.JudgeResponse;
 import server.dto.response.LegalCaseResponse;
@@ -29,6 +30,16 @@ public class LegalCaseController {
                 .status(200)
                 .message("Thành công")
                 .data(legalCaseService.getAll())
+                .build();
+    }
+
+    @PostMapping("search")
+    public ApiResponse<List<LegalCaseResponse>> search(@RequestBody @Valid LegalCaseSearchRequest request){
+        return ApiResponse.<List<LegalCaseResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(legalCaseService.search(request))
                 .build();
     }
 

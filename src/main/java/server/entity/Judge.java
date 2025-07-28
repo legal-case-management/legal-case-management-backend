@@ -21,10 +21,12 @@ public class Judge {
     @Column(name = "judge_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     String judgeId;
-    @Column(name = "fist_name")
-    String fistName;
+    @Column(name = "first_name")
+    String firstName;
     @Column(name = "last_name")
     String lastName;
+    @Column(name = "full_name", insertable = false, updatable = false)
+    String fullName;
     @Column(name = "max_number_of_legal_case")
     long maxNumberOfLegalCase;
 
@@ -37,6 +39,6 @@ public class Judge {
     Account account;
 
     private String getName() {
-        return lastName + " " + fistName;
+        return lastName + " " + firstName;
     }
 }
