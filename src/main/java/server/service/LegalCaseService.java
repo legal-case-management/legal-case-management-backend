@@ -37,7 +37,6 @@ public class LegalCaseService {
 
     @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
     public List<LegalCaseResponse> search(LegalCaseSearchRequest request) {
-        System.out.println(request);
         return legalCaseRepository.searchLegalCases(
                 request.getAcceptanceNumber(),
                 request.getStartAcceptanceDate(),
