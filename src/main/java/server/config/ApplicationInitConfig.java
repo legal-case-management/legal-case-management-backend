@@ -27,6 +27,7 @@ public class ApplicationInitConfig {
                 Account account = Account
                         .builder()
                         .username("admin")
+                        .email("daophuckhang090@gmail.com")
                         .password(passwordEncoder.encode("admin"))
                         .role(Role.ADMIN)
                         .build();

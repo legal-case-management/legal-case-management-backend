@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import server.entity.Judge;
 import server.entity.enums.Assignment;
 import server.entity.enums.StatusOfLegalCase;
+import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
 
@@ -24,7 +25,7 @@ public class LegalCaseResponse {
     String plaintiff;
     String defendant;
     String legalRelationship;
-    String typeOfLegalCase;
+    TypeOfLegalCase typeOfLegalCase;
     Assignment assignment;
     StatusOfLegalCase statusOfLegalCase;
     Judge judge;
