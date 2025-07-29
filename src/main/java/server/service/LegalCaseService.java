@@ -13,6 +13,7 @@ import server.dto.request.LegalCaseSearchRequest;
 import server.dto.response.LegalCaseResponse;
 import server.entity.Judge;
 import server.entity.LegalCase;
+import server.entity.enums.StatusOfLegalCase;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalCaseMapper;
@@ -65,6 +66,8 @@ public class LegalCaseService {
     public void create(LegalCaseRequest request) {
         LegalCase legalCase = LegalCase.builder().build();
         legalCaseMapper.toLegalCase(request, legalCase);
+        if(legalCase.getStatusOfLegalCase() == null)
+            legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);
         if (request.getJudgeId() != null)
             legalCase.setJudge(
                     Judge.builder()
