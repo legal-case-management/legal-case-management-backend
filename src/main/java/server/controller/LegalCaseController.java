@@ -19,11 +19,11 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("legal-case")
+@RequestMapping("/legal-case")
 @Slf4j
 public class LegalCaseController {
     LegalCaseService legalCaseService;
-    @GetMapping("all")
+    @GetMapping("/all")
     public ApiResponse<List<LegalCaseResponse>> getAll(){
         return ApiResponse.<List<LegalCaseResponse>>builder()
                 .success(true)
@@ -33,7 +33,7 @@ public class LegalCaseController {
                 .build();
     }
 
-    @GetMapping("top-50")
+    @GetMapping("/top-50")
     public ApiResponse<List<LegalCaseResponse>> top50(){
         return ApiResponse.<List<LegalCaseResponse>>builder()
                 .success(true)
@@ -43,7 +43,7 @@ public class LegalCaseController {
                 .build();
     }
 
-    @PostMapping("search")
+    @PostMapping("/search")
     public ApiResponse<List<LegalCaseResponse>> search(@RequestBody @Valid LegalCaseSearchRequest request){
         return ApiResponse.<List<LegalCaseResponse>>builder()
                 .success(true)
@@ -63,7 +63,7 @@ public class LegalCaseController {
                 .build();
     }
 
-    @PatchMapping("")
+    @PatchMapping("/")
     public ApiResponse<Void> update(@RequestBody @Valid LegalCaseRequest request){
         legalCaseService.update(request);
         return ApiResponse.<Void>builder()
@@ -73,7 +73,7 @@ public class LegalCaseController {
                 .build();
     }
 
-    @DeleteMapping("")
+    @DeleteMapping("/")
     public ApiResponse<Void> delete(@RequestBody @Valid LegalCaseRequest request){
         legalCaseService.delete(request);
         return ApiResponse.<Void>builder()

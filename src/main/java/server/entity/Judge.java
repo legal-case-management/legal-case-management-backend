@@ -37,8 +37,4 @@ public class Judge {
     List<LegalCase> legalCases;
     @OneToOne(mappedBy = "judge")
     Account account;
-
-    private String getName() {
-        return lastName + " " + firstName;
-    }
 }

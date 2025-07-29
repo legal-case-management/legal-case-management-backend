@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Entity
@@ -54,8 +55,16 @@ public class LegalCase {
     Judge judge;
 
     @OneToMany(mappedBy = "legalCase")
-    List<AdditionalAcceptanceNotice> additionalAcceptanceNotices;
+    List<Decision> decisions;
 
-    @OneToMany(mappedBy = "legalCase")
-    List<ExtendDecision> extendDecisions;
+    public boolean isExpired() {
+        return expiredDate != null && expiredDate.isBefore(LocalDate.now());
+    }
+
+    public long getDaysUntilExpired() {
+        if (expiredDate == null) {
+            return -1;
+        }
+        return ChronoUnit.DAYS.between(LocalDate.now(), expiredDate);
+    }
 }

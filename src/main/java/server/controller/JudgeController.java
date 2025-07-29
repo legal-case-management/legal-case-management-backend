@@ -49,5 +49,4 @@ public class JudgeController {
                 .message("Thêm thẩm phán thành công")
                 .build();
     }
-
 }

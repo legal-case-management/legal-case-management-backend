@@ -3,11 +3,12 @@ package server.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.entity.enums.TypeOfDecision;
 
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "extend_decisions")
+@Table(name = "decisions")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -15,15 +16,18 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @ToString
 @Builder
-public class ExtendDecision {
+public class Decision {
     @Id
-    @Column(name = "extend_decision_id")
+    @Column(name = "decision_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     String extendDecisionId;
     @Column(name = "acceptance_number", unique = true)
     String acceptanceNumber;
     @Column(name = "acceptance_date")
     LocalDate acceptanceDate;
+    @Column(name = "type_of_decision")
+    @Enumerated(EnumType.STRING)
+    TypeOfDecision typeOfDecision;
 
     @ManyToOne
     @JoinColumn(name = "legal_case_id")
