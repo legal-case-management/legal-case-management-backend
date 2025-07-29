@@ -63,7 +63,7 @@ public class LegalCaseController {
                 .build();
     }
 
-    @PatchMapping("/")
+    @PutMapping("/")
     public ApiResponse<Void> update(@RequestBody @Valid LegalCaseRequest request){
         legalCaseService.update(request);
         return ApiResponse.<Void>builder()

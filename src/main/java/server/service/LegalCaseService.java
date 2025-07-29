@@ -82,13 +82,12 @@ public class LegalCaseService {
     @Async
     @Transactional
     public void update(LegalCaseRequest request) {
-        legalCaseRepository.findById(request.getLegalCaseId())
+        LegalCase legalCaseSaved = legalCaseRepository.findById(request.getLegalCaseId())
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
-        LegalCase legalCase = LegalCase.builder().build();
-        legalCaseMapper.toLegalCase(request, legalCase);
+        legalCaseMapper.toLegalCase(request, legalCaseSaved);
 
-        legalCaseRepository.save(legalCase);
+        legalCaseRepository.save(legalCaseSaved);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
