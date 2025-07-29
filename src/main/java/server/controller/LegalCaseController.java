@@ -33,6 +33,16 @@ public class LegalCaseController {
                 .build();
     }
 
+    @GetMapping("top-50")
+    public ApiResponse<List<LegalCaseResponse>> top50(){
+        return ApiResponse.<List<LegalCaseResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(legalCaseService.getLatest50LegalCases())
+                .build();
+    }
+
     @PostMapping("search")
     public ApiResponse<List<LegalCaseResponse>> search(@RequestBody @Valid LegalCaseSearchRequest request){
         return ApiResponse.<List<LegalCaseResponse>>builder()

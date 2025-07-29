@@ -1,5 +1,6 @@
 package server.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import server.entity.LegalCase;
@@ -16,6 +17,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             "AND (:endAcceptanceDate IS NULL OR lc.acceptanceDate <= :endAcceptanceDate) " +
             "AND (:plaintiff IS NULL OR lc.plaintiff LIKE %:plaintiff%) " +
             "AND (:defendant IS NULL OR lc.defendant LIKE %:defendant%) " +
+            "AND (:legalRelationship IS NULL OR lc.legalRelationship LIKE %:legalRelationship%) " +
             "AND (:typeOfLegalCase IS NULL OR lc.typeOfLegalCase = :typeOfLegalCase) " +
             "AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))")
     List<LegalCase> searchLegalCases(
@@ -24,7 +26,11 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             LocalDate endAcceptanceDate,
             String plaintiff,
             String defendant,
+            String legalRelationship,
             TypeOfLegalCase typeOfLegalCase,
             String judgeName
     );
+
+    @Query("SELECT lc FROM LegalCase lc ORDER BY lc.acceptanceDate DESC")
+    List<LegalCase> getLatest50LegalCases(Pageable pageable);
 }

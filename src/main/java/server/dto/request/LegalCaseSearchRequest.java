@@ -2,6 +2,7 @@ package server.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.entity.enums.StatusOfLegalCase;
 import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
@@ -19,6 +20,8 @@ public class LegalCaseSearchRequest {
     LocalDate endAcceptanceDate;
     String plaintiff;
     String defendant;
+    String legalRelationship;
     TypeOfLegalCase typeOfLegalCase;
+    StatusOfLegalCase statusOfLegalCase;
     String judgeName;
 }

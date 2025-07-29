@@ -3,6 +3,7 @@ package server.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,14 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
+    public List<LegalCaseResponse> getLatest50LegalCases() {
+        return legalCaseRepository
+                .getLatest50LegalCases(PageRequest.of(0, 50))
+                .stream().map(legalCaseMapper::toLegalCaseResponse)
+                .toList();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
     public List<LegalCaseResponse> search(LegalCaseSearchRequest request) {
         return legalCaseRepository.searchLegalCases(
                 request.getAcceptanceNumber(),
@@ -43,6 +52,7 @@ public class LegalCaseService {
                 request.getEndAcceptanceDate(),
                 request.getPlaintiff(),
                 request.getDefendant(),
+                request.getLegalRelationship(),
                 request.getTypeOfLegalCase(),
                 request.getJudgeName()
         )
