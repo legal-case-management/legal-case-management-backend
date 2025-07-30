@@ -29,7 +29,6 @@ import java.util.List;
 public class LegalCase {
     @Id
     @Column(name = "legal_case_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
     String legalCaseId;
     @Column(name = "acceptance_number", unique = true)
     String acceptanceNumber;

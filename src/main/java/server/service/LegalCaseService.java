@@ -19,6 +19,8 @@ import server.exception.ErrorCode;
 import server.mapper.LegalCaseMapper;
 import server.repository.LegalCaseRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -62,10 +64,29 @@ public class LegalCaseService {
                 .toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Async
+    @Transactional
     public void create(LegalCaseRequest request) {
         LegalCase legalCase = LegalCase.builder().build();
         legalCaseMapper.toLegalCase(request, legalCase);
+
+        Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxAcceptanceNumber(String.format("%04d", legalCase.getAcceptanceDate().getYear()), legalCase.getTypeOfLegalCase().getSimpleName())
+                .orElse(0);
+
+        System.out.println(legalCaseMaxNumberOfId);
+
+        String legalCaseId = String.format("%04d%s%04d", legalCase.getAcceptanceDate().getYear(), legalCase.getTypeOfLegalCase().getSimpleName(), legalCaseMaxNumberOfId + 1);
+        System.out.println(legalCaseId);
+        legalCase.setLegalCaseId(legalCaseId);
+
+        if (legalCaseRepository.existsById(legalCaseId)) {
+            throw new AppException(ErrorCode.LEGAL_CASE_EXISTED);
+        }
+
+        if (legalCase.getStatusOfLegalCase() == null)
+            legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);
+
         if(legalCase.getStatusOfLegalCase() == null)
             legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);
         if (request.getJudgeId() != null)
@@ -75,10 +96,11 @@ public class LegalCaseService {
                             .build()
             );
 
+
         legalCaseRepository.save(legalCase);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Transactional
     public void update(LegalCaseRequest request) {
@@ -86,11 +108,18 @@ public class LegalCaseService {
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
         legalCaseMapper.toLegalCase(request, legalCaseSaved);
+        if(request.getAcceptanceDate() != null
+                && !legalCaseSaved.getStatusOfLegalCase().equals(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT)
+                && legalCaseSaved.getDecisions().isEmpty()
+        ) {
+            LocalDate expiredDate = legalCaseSaved.getAcceptanceDate().plusMonths(4);
+            legalCaseSaved.setExpiredDate(expiredDate);
+        }
 
         legalCaseRepository.save(legalCaseSaved);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Transactional
     public void delete(LegalCaseRequest request) {

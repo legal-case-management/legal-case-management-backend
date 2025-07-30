@@ -19,7 +19,6 @@ import java.time.LocalDate;
 public class Decision {
     @Id
     @Column(name = "decision_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
     String extendDecisionId;
     @Column(name = "acceptance_number", unique = true)
     String acceptanceNumber;

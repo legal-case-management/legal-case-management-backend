@@ -37,6 +37,7 @@ public enum ErrorCode {
     REFRESH_TOKEN_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Gia hạn phiên đăng nhập thất bại"),
 
     LEGAL_CASE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Vụ án không tồn tại"),
+    LEGAL_CASE_EXISTED(404, HttpStatus.BAD_REQUEST, "Vụ án đã tồn tại"),
 
     ;
 

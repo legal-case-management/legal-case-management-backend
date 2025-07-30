@@ -1,5 +1,6 @@
 package server.repository;
 
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,7 @@ import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     @Query("SELECT lc FROM LegalCase lc " +
@@ -33,4 +35,15 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
 
     @Query("SELECT lc FROM LegalCase lc ORDER BY lc.acceptanceDate DESC")
     List<LegalCase> getLatest50LegalCases(Pageable pageable);
+
+    @Query("""
+                SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 7, 4) AS int))
+                FROM LegalCase lc
+                WHERE SUBSTRING(lc.legalCaseId, 1, 4) = :year
+                  AND SUBSTRING(lc.legalCaseId, 5, 2) = :typeCode
+            """)
+    Optional<Integer> getMaxAcceptanceNumber(
+            @Param("year") String year,
+            @Param("typeCode") String typeCode
+    );
 }

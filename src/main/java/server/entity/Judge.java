@@ -19,7 +19,6 @@ import java.util.List;
 public class Judge {
     @Id
     @Column(name = "judge_id")
-    @GeneratedValue(strategy = GenerationType.UUID)
     String judgeId;
     @Column(name = "first_name")
     String firstName;
