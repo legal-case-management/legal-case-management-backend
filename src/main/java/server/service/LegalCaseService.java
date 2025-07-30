@@ -71,7 +71,7 @@ public class LegalCaseService {
         LegalCase legalCase = LegalCase.builder().build();
         legalCaseMapper.toLegalCase(request, legalCase);
 
-        Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxAcceptanceNumber(String.format("%04d", legalCase.getAcceptanceDate().getYear()), legalCase.getTypeOfLegalCase().getSimpleName())
+        Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxLegalCaseId(String.format("%04d", legalCase.getAcceptanceDate().getYear()), legalCase.getTypeOfLegalCase().getSimpleName())
                 .orElse(0);
 
         System.out.println(legalCaseMaxNumberOfId);

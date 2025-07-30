@@ -16,12 +16,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("judge")
+@RequestMapping("/judge")
 @Slf4j
 public class JudgeController {
     JudgeService judgeService;
 
-    @GetMapping("all")
+    @GetMapping("/all")
     public ApiResponse<List<JudgeResponse>> getAll(){
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
@@ -31,7 +31,7 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("myInfo")
+    @GetMapping("/myInfo")
     public ApiResponse<JudgeResponse> getMyInfo(){
         return ApiResponse.<JudgeResponse>builder()
                 .success(true)
@@ -40,7 +40,7 @@ public class JudgeController {
                 .data(judgeService.getMyInfo())
                 .build();
     }
-    @PostMapping("")
+    @PostMapping("/")
     public ApiResponse<Void> create(@RequestBody @Valid JudgeRequest request){
         judgeService.create(request);
         return ApiResponse.<Void>builder()

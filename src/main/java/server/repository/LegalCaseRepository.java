@@ -12,16 +12,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
-    @Query("SELECT lc FROM LegalCase lc " +
-            "LEFT JOIN lc.judge j " +
-            "WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber LIKE %:acceptanceNumber%) " +
-            "AND (:startAcceptanceDate IS NULL OR lc.acceptanceDate >= :startAcceptanceDate) " +
-            "AND (:endAcceptanceDate IS NULL OR lc.acceptanceDate <= :endAcceptanceDate) " +
-            "AND (:plaintiff IS NULL OR lc.plaintiff LIKE %:plaintiff%) " +
-            "AND (:defendant IS NULL OR lc.defendant LIKE %:defendant%) " +
-            "AND (:legalRelationship IS NULL OR lc.legalRelationship LIKE %:legalRelationship%) " +
-            "AND (:typeOfLegalCase IS NULL OR lc.typeOfLegalCase = :typeOfLegalCase) " +
-            "AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))")
+    @Query("""
+SELECT lc FROM LegalCase lc 
+            LEFT JOIN lc.judge j 
+            WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber LIKE %:acceptanceNumber%) 
+            AND (:startAcceptanceDate IS NULL OR lc.acceptanceDate >= :startAcceptanceDate) 
+            AND (:endAcceptanceDate IS NULL OR lc.acceptanceDate <= :endAcceptanceDate) 
+            AND (:plaintiff IS NULL OR lc.plaintiff LIKE %:plaintiff%) 
+            AND (:defendant IS NULL OR lc.defendant LIKE %:defendant%) 
+            AND (:legalRelationship IS NULL OR lc.legalRelationship LIKE %:legalRelationship%) 
+            AND (:typeOfLegalCase IS NULL OR lc.typeOfLegalCase = :typeOfLegalCase) 
+            AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))
+            """)
     List<LegalCase> searchLegalCases(
             String acceptanceNumber,
             LocalDate startAcceptanceDate,
@@ -42,7 +44,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
                 WHERE SUBSTRING(lc.legalCaseId, 1, 4) = :year
                   AND SUBSTRING(lc.legalCaseId, 5, 2) = :typeCode
             """)
-    Optional<Integer> getMaxAcceptanceNumber(
+    Optional<Integer> getMaxLegalCaseId(
             @Param("year") String year,
             @Param("typeCode") String typeCode
     );

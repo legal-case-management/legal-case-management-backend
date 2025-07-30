@@ -3,6 +3,7 @@ package server.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.entity.enums.StatusOfJudge;
 
 @Getter
 @Setter
@@ -12,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JudgeResponse {
     String judgeId;
-    String firstName;
-    String lastName;
+    String fullName;
     long maxNumberOfLegalCase;
+    StatusOfJudge statusOfJudge;
 }

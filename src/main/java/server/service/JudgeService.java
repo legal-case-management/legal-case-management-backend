@@ -1,5 +1,9 @@
 package server.service;
 
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.JudgeRequest;
@@ -34,10 +38,26 @@ public class JudgeService {
 
     PasswordEncoder passwordEncoder;
 
-    @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
+    @Value("${auth.default-password}")
+    @NonFinal
+    String DEFAULT_PASSWORD;
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Async
+    @Transactional
     public List<JudgeResponse> getAll() {
         return judgeRepository
                 .findAll()
+                .stream().map(judgeMapper::toJudgeResponse)
+                .toList();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Async
+    @Transactional
+    public List<JudgeResponse> get50Judge() {
+        return judgeRepository
+                .get50Judge(PageRequest.of(0, 50))
                 .stream().map(judgeMapper::toJudgeResponse)
                 .toList();
     }
@@ -54,16 +74,41 @@ public class JudgeService {
         );
     }
 
-    @PreAuthorize("hasAnyAuthority('ADMIN MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Async
     @Transactional
     public void create(JudgeRequest request){
         Judge judge = judgeMapper.toJudge(request);
+
         judge.setStatusOfJudge(StatusOfJudge.WORKING);
         Judge judgeSaved = judgeRepository.save(judge);
 
         Account account = accountMapper.toAccount(request);
-        account.setPassword(passwordEncoder.encode(request.getPassword()));
+        account.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
         account.setJudge(judgeSaved);
         accountRepository.save(account);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Transactional
+    public void update(String judgeId, JudgeRequest request) {
+        Judge judgeSaved = judgeRepository
+                .findById(judgeId)
+                .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
+
+        judgeMapper.updateJudgeFromRequest(request, judgeSaved);
+        judgeRepository.save(judgeSaved);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Transactional
+    public void delete(String judgeId) {
+        Judge judge = judgeRepository
+                .findById(judgeId)
+                .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
+
+        judgeRepository.deleteById(judge.getJudgeId());
     }
 }

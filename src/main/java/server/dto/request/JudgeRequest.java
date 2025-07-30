@@ -18,7 +18,5 @@ public class JudgeRequest {
     String firstName;
     String lastName;
     long maxNumberOfLegalCase;
-    String username;
-    String password;
     String email;
 }
