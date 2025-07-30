@@ -57,9 +57,7 @@ public class JudgeService {
     @Transactional
     public List<JudgeResponse> get50Judge() {
         return judgeRepository
-                .get50Judge(PageRequest.of(0, 50))
-                .stream().map(judgeMapper::toJudgeResponse)
-                .toList();
+                .get50Judge(PageRequest.of(0, 50));
     }
 
 
@@ -77,7 +75,7 @@ public class JudgeService {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Async
     @Transactional
-    public void create(JudgeRequest request){
+    public void create(JudgeRequest request) {
         Judge judge = judgeMapper.toJudge(request);
 
         judge.setStatusOfJudge(StatusOfJudge.WORKING);
@@ -92,9 +90,9 @@ public class JudgeService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Transactional
-    public void update(String judgeId, JudgeRequest request) {
+    public void update(JudgeRequest request) {
         Judge judgeSaved = judgeRepository
-                .findById(judgeId)
+                .findById(request.getJudgeId())
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
         judgeMapper.updateJudgeFromRequest(request, judgeSaved);
@@ -104,9 +102,9 @@ public class JudgeService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Transactional
-    public void delete(String judgeId) {
+    public void delete(JudgeRequest request) {
         Judge judge = judgeRepository
-                .findById(judgeId)
+                .findById(request.getJudgeId())
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
         judgeRepository.deleteById(judge.getJudgeId());

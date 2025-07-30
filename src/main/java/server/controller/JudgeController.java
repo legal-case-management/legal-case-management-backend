@@ -31,6 +31,16 @@ public class JudgeController {
                 .build();
     }
 
+    @GetMapping("/list-50")
+    public ApiResponse<List<JudgeResponse>> get50Judge(){
+        return ApiResponse.<List<JudgeResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Successful")
+                .data(judgeService.get50Judge())
+                .build();
+    }
+
     @GetMapping("/myInfo")
     public ApiResponse<JudgeResponse> getMyInfo(){
         return ApiResponse.<JudgeResponse>builder()
@@ -47,6 +57,26 @@ public class JudgeController {
                 .success(true)
                 .status(200)
                 .message("Thêm thẩm phán thành công")
+                .build();
+    }
+
+    @PutMapping("/")
+    public ApiResponse<Void> update(@RequestBody @Valid JudgeRequest request){
+        judgeService.update(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Cập nhật thẩm phán thành công")
+                .build();
+    }
+
+    @DeleteMapping("/")
+    public ApiResponse<Void> delete(@PathVariable JudgeRequest request){
+        judgeService.delete(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Xoá thẩm phán thành công")
                 .build();
     }
 }

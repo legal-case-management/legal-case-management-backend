@@ -15,5 +15,6 @@ public class JudgeResponse {
     String judgeId;
     String fullName;
     long maxNumberOfLegalCase;
+    long numberOfLegalCases;
     StatusOfJudge statusOfJudge;
 }

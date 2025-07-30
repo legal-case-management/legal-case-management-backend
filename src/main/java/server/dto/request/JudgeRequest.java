@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 public class JudgeRequest {
+    String judgeId;
     String firstName;
     String lastName;
     long maxNumberOfLegalCase;

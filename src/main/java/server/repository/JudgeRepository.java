@@ -2,6 +2,7 @@ package server.repository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import server.dto.response.JudgeResponse;
 import server.entity.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
 import server.entity.enums.StatusOfJudge;
@@ -25,8 +26,19 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             StatusOfJudge statusOfJudge
     );
 
-    @Query("SELECT j FROM Judge j ORDER BY j.judgeId DESC")
-    List<Judge> get50Judge(Pageable pageable);
+    @Query("""
+    SELECT new server.dto.response.JudgeResponse(
+        j.judgeId,
+        j.fullName,
+        j.maxNumberOfLegalCase,
+        SIZE(j.legalCases),
+        j.statusOfJudge
+    )
+    FROM Judge j
+    ORDER BY j.judgeId DESC
+""")
+    List<JudgeResponse> get50Judge(Pageable pageable);
+
 
     @Query("""
               SELECT MAX(CAST(SUBSTRING(j.judgeId, 3, 2) AS int))

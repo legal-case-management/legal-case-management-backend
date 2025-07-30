@@ -9,12 +9,6 @@ import lombok.experimental.FieldDefaults;
 public enum TypeOfLegalCase {
     CRIMINAL("Hình sự", "HS"),
     CIVIL("Dân sự", "DS"),
-    /*
-    * Quyền sử dụng đất là một phần nằm trong dân sự
-    * Do tính chất phức tạp nên cần phải tách riêng ra khỏi dân sự
-    * Khi thống kê sẽ vẫn tính vào dân sự
-    * */
-    LAND("Quyền sử dụng đất", "DD"),
     FAMILY("Hôn nhân gia đình", "HN"),
     COMMERCIAL("Kinh doanh thương mại", "KT"),
     LABOR("Lao động", "LD"),

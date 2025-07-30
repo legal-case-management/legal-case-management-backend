@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum StatusOfJudge {
     WORKING("Đang làm việc"),
-    NO_WORKING("Không còn làm việc"),
+    NOT_WORKING("Không còn làm việc"),
     ON_BUSINESS_TRIP("Đang công tác"),
     ON_LEAVE("Đang nghĩ phép"),
     DISCIPLINED("Đang bị kĩ luật");
