@@ -2,6 +2,7 @@ package server.controller;
 
 import jakarta.validation.Valid;
 import server.dto.request.JudgeRequest;
+import server.dto.request.JudgeSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.JudgeResponse;
 import server.service.JudgeService;
@@ -38,6 +39,16 @@ public class JudgeController {
                 .status(200)
                 .message("Successful")
                 .data(judgeService.get50Judge())
+                .build();
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<List<JudgeResponse>> search(@RequestParam JudgeSearchRequest request){
+        return ApiResponse.<List<JudgeResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Successful")
+                .data(judgeService.search(request))
                 .build();
     }
 

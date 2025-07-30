@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.JudgeRequest;
+import server.dto.request.JudgeSearchRequest;
 import server.dto.response.JudgeResponse;
 import server.entity.*;
 import server.entity.enums.StatusOfJudge;
@@ -58,6 +59,17 @@ public class JudgeService {
     public List<JudgeResponse> get50Judge() {
         return judgeRepository
                 .get50Judge(PageRequest.of(0, 50));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Async
+    @Transactional
+    public List<JudgeResponse> search(JudgeSearchRequest request) {
+        return judgeRepository.searchJudge(
+                request.getJudgeId(),
+                request.getFullName(),
+                request.getStatusOfJudge()
+        ).stream().map(judgeMapper::toJudgeResponse).toList();
     }
 
 
