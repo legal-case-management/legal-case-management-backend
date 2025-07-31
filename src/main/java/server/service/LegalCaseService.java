@@ -78,12 +78,14 @@ public class LegalCaseService {
                 .orElse(0);
 
         String legalCaseId = String.format("%04d%s%04d", legalCase.getAcceptanceDate().getYear(), legalCase.getTypeOfLegalCase().getSimpleName(), legalCaseMaxNumberOfId + 1);
-        legalCase.setLegalCaseId(legalCaseId);
-        legalCase.setStorageDate(LocalDateTime.now());
-
         if (legalCaseRepository.existsById(legalCaseId)) {
             throw new AppException(ErrorCode.LEGAL_CASE_EXISTED);
         }
+
+        legalCase.setLegalCaseId(legalCaseId);
+        legalCase.setStorageDate(LocalDateTime.now());
+
+
 
         if (legalCase.getStatusOfLegalCase() == null)
             legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);

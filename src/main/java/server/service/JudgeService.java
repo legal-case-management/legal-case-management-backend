@@ -88,10 +88,21 @@ public class JudgeService {
     public void create(JudgeRequest request) {
         Judge judge = judgeMapper.toJudge(request);
 
+
+        Integer judgeNumberOfId = judgeRepository.getMaxJudgeId()
+                .orElse(0);
+        String judgeId = String.format("%s%02d", "TP", judgeNumberOfId + 1);
+        if (judgeRepository.existsById(judgeId)) {
+            throw new AppException(ErrorCode.JUDGE_EXISTED);
+        }
+
+        judge.setJudgeId(judgeId);
+
         judge.setStatusOfJudge(StatusOfJudge.WORKING);
         Judge judgeSaved = judgeRepository.save(judge);
 
         Account account = accountMapper.toAccount(request);
+        account.setUsername(judgeSaved.getJudgeId());
         account.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
         account.setJudge(judgeSaved);
         accountRepository.save(account);
