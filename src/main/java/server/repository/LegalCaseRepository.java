@@ -23,11 +23,11 @@ SELECT lc FROM LegalCase lc
             AND (:plaintiff IS NULL OR lc.plaintiff LIKE %:plaintiff%) 
             AND (:defendant IS NULL OR lc.defendant LIKE %:defendant%) 
             AND (:typeOfLegalCase IS NULL OR lc.typeOfLegalCase = :typeOfLegalCase) 
-            AND (:typeOfLegalCase IS NULL OR :legalRelationship IS NULL OR lc.legalRelationship = :legalRelationship)
+            AND (:legalRelationship IS NULL OR lc.legalRelationship = :legalRelationship)
             AND (:statusOfLegalCase IS NULL OR lc.statusOfLegalCase = :statusOfLegalCase)
             AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))
             AND (:batchId IS NULL OR (lc.batch IS NULL AND lc.batch.batchId = :batchId))
-            AND (:storageDate IS NULL OR lc.storageDate = :storageDate)
+            AND (:storageDate IS NULL OR (YEAR(lc.storageDate) = YEAR(:storageDate) AND MONTH(lc.storageDate) = MONTH(:storageDate) AND DAY(lc.storageDate) = DAY(:storageDate)))
             """)
     List<LegalCase> searchLegalCases(
             String acceptanceNumber,

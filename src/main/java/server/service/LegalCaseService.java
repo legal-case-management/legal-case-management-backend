@@ -77,11 +77,9 @@ public class LegalCaseService {
         Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxLegalCaseId(String.format("%04d", legalCase.getAcceptanceDate().getYear()), legalCase.getTypeOfLegalCase().getSimpleName())
                 .orElse(0);
 
-        System.out.println(legalCaseMaxNumberOfId);
-
         String legalCaseId = String.format("%04d%s%04d", legalCase.getAcceptanceDate().getYear(), legalCase.getTypeOfLegalCase().getSimpleName(), legalCaseMaxNumberOfId + 1);
-        System.out.println(legalCaseId);
         legalCase.setLegalCaseId(legalCaseId);
+        legalCase.setStorageDate(LocalDateTime.now());
 
         if (legalCaseRepository.existsById(legalCaseId)) {
             throw new AppException(ErrorCode.LEGAL_CASE_EXISTED);
