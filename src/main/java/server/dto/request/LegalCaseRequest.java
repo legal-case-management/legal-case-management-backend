@@ -20,7 +20,7 @@ public class LegalCaseRequest {
     LocalDate expiredDate;
     String plaintiff;
     String defendant;
-    String legalRelationship;
+    LegalRelationship legalRelationship;
     TypeOfLegalCase typeOfLegalCase;
     Assignment assignment;
     StatusOfLegalCase statusOfLegalCase;

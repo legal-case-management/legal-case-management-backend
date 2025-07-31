@@ -2,6 +2,7 @@ package server.entity;
 
 import jakarta.persistence.*;
 import server.entity.enums.Assignment;
+import server.entity.enums.LegalRelationship;
 import server.entity.enums.StatusOfLegalCase;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -39,11 +40,11 @@ public class LegalCase {
     String plaintiff;
     String defendant;
     @Column(name = "legal_relationship")
-    String legalRelationship;
+    @Enumerated(EnumType.STRING)
+    LegalRelationship legalRelationship;
     @Column(name = "type_of_legal_case")
     @Enumerated(EnumType.STRING)
     TypeOfLegalCase typeOfLegalCase;
-    @Enumerated(EnumType.STRING)
     Assignment assignment;
     @Enumerated(EnumType.STRING)
     @Column(name = "status_of_legal_case")

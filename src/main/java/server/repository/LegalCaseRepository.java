@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import server.entity.LegalCase;
+import server.entity.enums.LegalRelationship;
 import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
@@ -20,8 +21,8 @@ SELECT lc FROM LegalCase lc
             AND (:endAcceptanceDate IS NULL OR lc.acceptanceDate <= :endAcceptanceDate) 
             AND (:plaintiff IS NULL OR lc.plaintiff LIKE %:plaintiff%) 
             AND (:defendant IS NULL OR lc.defendant LIKE %:defendant%) 
-            AND (:legalRelationship IS NULL OR lc.legalRelationship LIKE %:legalRelationship%) 
             AND (:typeOfLegalCase IS NULL OR lc.typeOfLegalCase = :typeOfLegalCase) 
+            AND (:typeOfLegalCase IS NULL OR :legalRelationship IS NULL OR lc.legalRelationship = :legalRelationship)
             AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))
             """)
     List<LegalCase> searchLegalCases(
@@ -30,7 +31,7 @@ SELECT lc FROM LegalCase lc
             LocalDate endAcceptanceDate,
             String plaintiff,
             String defendant,
-            String legalRelationship,
+            LegalRelationship legalRelationship,
             TypeOfLegalCase typeOfLegalCase,
             String judgeName
     );
