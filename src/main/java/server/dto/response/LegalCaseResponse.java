@@ -1,5 +1,6 @@
 package server.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,14 +25,18 @@ import java.util.List;
 public class LegalCaseResponse {
     String legalCaseId;
     String acceptanceNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate acceptanceDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate expiredDate;
     String plaintiff;
     String defendant;
     LegalRelationship legalRelationship;
     TypeOfLegalCase typeOfLegalCase;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime storageDate;
     Assignment assignment;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime assignmentDate;
     StatusOfLegalCase statusOfLegalCase;
     Batch batch;
