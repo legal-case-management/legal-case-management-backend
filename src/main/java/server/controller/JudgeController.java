@@ -43,7 +43,7 @@ public class JudgeController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<List<JudgeResponse>> search(@RequestParam JudgeSearchRequest request){
+    public ApiResponse<List<JudgeResponse>> search(@RequestBody @Valid JudgeSearchRequest request){
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
