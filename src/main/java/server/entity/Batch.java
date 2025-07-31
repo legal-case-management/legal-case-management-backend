@@ -1,13 +1,11 @@
 package server.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "batches")
@@ -29,4 +27,7 @@ public class Batch {
     LocalDateTime storageDate;
 
     String note;
+
+    @OneToMany(mappedBy = "batch")
+    List<LegalCase> legalCases;
 }

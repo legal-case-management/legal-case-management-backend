@@ -63,6 +63,10 @@ public class LegalCase {
     @OneToMany(mappedBy = "legalCase")
     List<Decision> decisions;
 
+    @ManyToOne
+    @JoinColumn(name = "batch_id")
+    Batch batch;
+
     public boolean isExpired() {
         return expiredDate != null && expiredDate.isBefore(LocalDate.now());
     }
