@@ -13,18 +13,18 @@ VALUES ('2025LD0001', '61/2025', '2025-06-15', '2025-12-15', 'Huỳnh Văn G', '
 INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, defendant, legal_relationship, type_of_legal_case, status_of_legal_case, storage_date)
 VALUES ('2025DS0001', '62/2025', '2025-06-20', '2025-12-20', 'Phan Thị I', 'Võ Văn K', 'LR02_037', 'CIVIL', 'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
 
-INSERT INTO judges (judge_id, first_name, last_name, max_number_of_legal_case, status_of_judge)
+INSERT INTO judges (judge_id, last_name, first_name, max_number_of_legal_case, status_of_judge)
 VALUES ('TP01', 'Nguyễn Văn', 'A', 10, 'WORKING');
 
-INSERT INTO judges (judge_id, first_name, last_name, max_number_of_legal_case, status_of_judge)
+INSERT INTO judges (judge_id, last_name, first_name, max_number_of_legal_case, status_of_judge)
 VALUES ('TP02', 'Trần Thị', 'B', 4, 'WORKING');
 
-INSERT INTO judges (judge_id, first_name, last_name, max_number_of_legal_case, status_of_judge)
+INSERT INTO judges (judge_id, last_name, first_name, max_number_of_legal_case, status_of_judge)
 VALUES ('TP03', 'Lê Văn', 'C', 3, 'WORKING');
 
-INSERT INTO judges (judge_id, first_name, last_name, max_number_of_legal_case, status_of_judge)
+INSERT INTO judges (judge_id, last_name, first_name, max_number_of_legal_case, status_of_judge)
 VALUES ('TP04', 'Phạm Văn', 'D', 5, 'NOT_WORKING');
 
-INSERT INTO judges (judge_id, first_name, last_name, max_number_of_legal_case, status_of_judge)
+INSERT INTO judges (judge_id, last_name, first_name, max_number_of_legal_case, status_of_judge)
 VALUES ('TP05', 'Đỗ Thị', 'E', 6, 'ON_LEAVE');
 

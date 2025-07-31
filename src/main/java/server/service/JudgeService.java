@@ -62,8 +62,6 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Async
-    @Transactional
     public List<JudgeResponse> search(JudgeSearchRequest request) {
         return judgeRepository.searchJudge(
                 request.getJudgeId(),

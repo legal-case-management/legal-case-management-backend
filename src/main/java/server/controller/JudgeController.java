@@ -42,7 +42,7 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ApiResponse<List<JudgeResponse>> search(@RequestParam JudgeSearchRequest request){
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
