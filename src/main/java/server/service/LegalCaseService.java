@@ -55,9 +55,12 @@ public class LegalCaseService {
                 request.getEndAcceptanceDate(),
                 request.getPlaintiff(),
                 request.getDefendant(),
-                request.getLegalRelationship(),
                 request.getTypeOfLegalCase(),
-                request.getJudgeName()
+                request.getLegalRelationship(),
+                request.getStatusOfLegalCase(),
+                request.getJudgeName(),
+                request.getBatchId(),
+                request.getStorageDate()
         )
                 .stream()
                 .map(legalCaseMapper::toLegalCaseResponse)

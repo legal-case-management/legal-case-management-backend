@@ -24,6 +24,7 @@ public class LegalCaseSearchRequest {
     TypeOfLegalCase typeOfLegalCase;
     LegalRelationship legalRelationship;
     StatusOfLegalCase statusOfLegalCase;
-    String batchId;
     String judgeName;
+    String batchId;
+    LocalDate storageDate;
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import server.entity.LegalCase;
 import server.entity.enums.LegalRelationship;
+import server.entity.enums.StatusOfLegalCase;
 import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
@@ -23,7 +24,10 @@ SELECT lc FROM LegalCase lc
             AND (:defendant IS NULL OR lc.defendant LIKE %:defendant%) 
             AND (:typeOfLegalCase IS NULL OR lc.typeOfLegalCase = :typeOfLegalCase) 
             AND (:typeOfLegalCase IS NULL OR :legalRelationship IS NULL OR lc.legalRelationship = :legalRelationship)
+            AND (:statusOfLegalCase IS NULL OR lc.statusOfLegalCase = :statusOfLegalCase)
             AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))
+            AND (:batchId IS NULL OR (lc.batch IS NULL AND lc.batch.batchId = :batchId))
+            AND (:storageDate IS NULL OR lc.storageDate = :storageDate)
             """)
     List<LegalCase> searchLegalCases(
             String acceptanceNumber,
@@ -31,9 +35,12 @@ SELECT lc FROM LegalCase lc
             LocalDate endAcceptanceDate,
             String plaintiff,
             String defendant,
-            LegalRelationship legalRelationship,
             TypeOfLegalCase typeOfLegalCase,
-            String judgeName
+            LegalRelationship legalRelationship,
+            StatusOfLegalCase statusOfLegalCase,
+            String judgeName,
+            String batchId,
+            LocalDate storageDate
     );
 
     @Query("SELECT lc FROM LegalCase lc ORDER BY lc.acceptanceDate DESC")
