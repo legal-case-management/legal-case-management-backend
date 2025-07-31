@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -29,25 +30,30 @@ import java.util.List;
 @Builder
 public class LegalCase {
     @Id
-    @Column(name = "legal_case_id")
+    @Column(name = "legal_case_id", nullable = false)
     String legalCaseId;
-    @Column(name = "acceptance_number", unique = true)
+    @Column(name = "acceptance_number", nullable = false, unique = true)
     String acceptanceNumber;
-    @Column(name = "acceptance_date")
+    @Column(name = "acceptance_date", nullable = false)
     LocalDate acceptanceDate;
     @Column(name = "expired_date")
     LocalDate expiredDate;
+    @Column(nullable = false)
     String plaintiff;
     String defendant;
-    @Column(name = "legal_relationship")
-    @Enumerated(EnumType.STRING)
-    LegalRelationship legalRelationship;
-    @Column(name = "type_of_legal_case")
+    @Column(name = "type_of_legal_case", nullable = false)
     @Enumerated(EnumType.STRING)
     TypeOfLegalCase typeOfLegalCase;
-    Assignment assignment;
+    @Column(name = "legal_relationship", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_of_legal_case")
+    LegalRelationship legalRelationship;
+    @Column(name = "storage_date", nullable = false)
+    LocalDateTime storageDate;
+    Assignment assignment;
+    @Column(name = "assignment_date")
+    LocalDateTime assignmentDate;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_of_legal_case", nullable = false)
     StatusOfLegalCase statusOfLegalCase;
 
     @ManyToOne

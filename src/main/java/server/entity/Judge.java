@@ -20,9 +20,9 @@ public class Judge {
     @Id
     @Column(name = "judge_id")
     String judgeId;
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     String firstName;
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     String lastName;
     @Column(name = "full_name", insertable = false, updatable = false)
     String fullName;
@@ -30,6 +30,7 @@ public class Judge {
     long maxNumberOfLegalCase;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status_of_judge", nullable = false)
     StatusOfJudge statusOfJudge;
 
     @OneToMany(mappedBy = "judge")

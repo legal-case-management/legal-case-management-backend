@@ -18,13 +18,13 @@ import java.time.LocalDate;
 @Builder
 public class Decision {
     @Id
-    @Column(name = "decision_id")
+    @Column(name = "decision_id", nullable = false)
     String extendDecisionId;
     @Column(name = "acceptance_number", unique = true)
     String acceptanceNumber;
-    @Column(name = "acceptance_date")
+    @Column(name = "acceptance_date", nullable = false)
     LocalDate acceptanceDate;
-    @Column(name = "type_of_decision")
+    @Column(name = "type_of_decision", nullable = false)
     @Enumerated(EnumType.STRING)
     TypeOfDecision typeOfDecision;
 

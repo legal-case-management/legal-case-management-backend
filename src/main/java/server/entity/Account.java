@@ -19,6 +19,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "account_id")
     String accountId;
+    @Column(unique = true, nullable = false)
     String username;
     String password;
     String email;
