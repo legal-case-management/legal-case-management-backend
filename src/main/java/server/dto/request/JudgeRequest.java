@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.entity.enums.StatusOfJudge;
 
 @Getter
 @Setter
@@ -19,5 +20,6 @@ public class JudgeRequest {
     String firstName;
     String lastName;
     long maxNumberOfLegalCase;
+    StatusOfJudge statusOfJudge;
     String email;
 }
