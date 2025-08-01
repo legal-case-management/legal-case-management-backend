@@ -14,32 +14,37 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     Optional<Judge> findByAccount_AccountId(String accountId);
 
     @Query("""
-            SELECT j FROM Judge j 
-                        WHERE (:judgeId IS NULL OR j.judgeId LIKE %:judgeId%) 
-                        AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
-                        AND (:statusOfJudge IS NULL OR j.statusOfJudge = :statusOfJudge) 
-                        ORDER BY j.judgeId DESC
+            SELECT new server.dto.response.JudgeResponse(
+                 j.judgeId,
+                 j.lastName,
+                 j.firstName,
+                 j.fullName,
+                 j.maxNumberOfLegalCase,
+                 SIZE(j.legalCases),
+                 j.statusOfJudge,
+                 j.account.email
+             ) FROM Judge j 
+             WHERE (:judgeId IS NULL OR j.judgeId LIKE %:judgeId%) 
+             AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
+             AND (:statusOfJudge IS NULL OR j.statusOfJudge = :statusOfJudge) 
+             ORDER BY j.judgeId DESC
             """)
-    List<Judge> searchJudge(
-            String judgeId,
-            String fullName,
-            StatusOfJudge statusOfJudge
-    );
+    List<JudgeResponse> searchJudge(String judgeId, String fullName, StatusOfJudge statusOfJudge);
 
     @Query("""
-    SELECT new server.dto.response.JudgeResponse(
-        j.judgeId,
-        j.lastName,
-        j.fullName,
-        j.fullName,
-        j.maxNumberOfLegalCase,
-        SIZE(j.legalCases),
-        j.statusOfJudge,
-        j.account.email
-    )
-    FROM Judge j
-    ORDER BY j.judgeId DESC
-""")
+                SELECT new server.dto.response.JudgeResponse(
+                    j.judgeId,
+                    j.lastName,
+                    j.firstName,
+                    j.fullName,
+                    j.maxNumberOfLegalCase,
+                    SIZE(j.legalCases),
+                    j.statusOfJudge,
+                    j.account.email
+                )
+                FROM Judge j
+                ORDER BY j.judgeId DESC
+            """)
     List<JudgeResponse> get50Judge(Pageable pageable);
 
 

@@ -4,3 +4,9 @@ ALTER TABLE judges
 ALTER TABLE judges
     ADD FULLTEXT INDEX idx_full_name (full_name);
 
+ALTER TABLE legal_cases
+    ADD FULLTEXT INDEX idx_plaintiff (plaintiff);
+
+ALTER TABLE legal_cases
+    ADD FULLTEXT INDEX idx_defendant (defendant);
+

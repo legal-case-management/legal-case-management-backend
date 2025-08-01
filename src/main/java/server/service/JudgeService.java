@@ -44,8 +44,6 @@ public class JudgeService {
     String DEFAULT_PASSWORD;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Async
-    @Transactional
     public List<JudgeResponse> getAll() {
         return judgeRepository
                 .findAll()
@@ -54,8 +52,6 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Async
-    @Transactional
     public List<JudgeResponse> get50Judge() {
         return judgeRepository
                 .get50Judge(PageRequest.of(0, 50));
@@ -67,7 +63,7 @@ public class JudgeService {
                 request.getJudgeId(),
                 request.getFullName(),
                 request.getStatusOfJudge()
-        ).stream().map(judgeMapper::toJudgeResponse).toList();
+        );
     }
 
 

@@ -22,9 +22,11 @@ public class Account {
     @Column(unique = true, nullable = false)
     String username;
     String password;
+    @Column(unique = true, nullable = false)
     String email;
+    @Enumerated(EnumType.STRING)
     Role role;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "judge_id")
     Judge judge;
 }

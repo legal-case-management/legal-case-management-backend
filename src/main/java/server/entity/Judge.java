@@ -35,6 +35,6 @@ public class Judge {
 
     @OneToMany(mappedBy = "judge")
     List<LegalCase> legalCases;
-    @OneToOne(mappedBy = "judge")
+    @OneToOne(mappedBy = "judge", cascade = CascadeType.REMOVE, orphanRemoval = true)
     Account account;
 }
