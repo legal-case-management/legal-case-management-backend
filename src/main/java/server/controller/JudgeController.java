@@ -82,7 +82,7 @@ public class JudgeController {
     }
 
     @DeleteMapping("/")
-    public ApiResponse<Void> delete(@PathVariable JudgeRequest request){
+    public ApiResponse<Void> delete(@RequestBody @Valid  JudgeRequest request){
         judgeService.delete(request);
         return ApiResponse.<Void>builder()
                 .success(true)

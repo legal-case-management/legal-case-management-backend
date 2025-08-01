@@ -29,10 +29,13 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     @Query("""
     SELECT new server.dto.response.JudgeResponse(
         j.judgeId,
+        j.lastName,
+        j.fullName,
         j.fullName,
         j.maxNumberOfLegalCase,
         SIZE(j.legalCases),
-        j.statusOfJudge
+        j.statusOfJudge,
+        j.account.email
     )
     FROM Judge j
     ORDER BY j.judgeId DESC

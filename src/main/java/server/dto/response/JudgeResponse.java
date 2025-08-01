@@ -13,8 +13,11 @@ import server.entity.enums.StatusOfJudge;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JudgeResponse {
     String judgeId;
+    String lastName;;
+    String firstName;
     String fullName;
     long maxNumberOfLegalCase;
     long numberOfLegalCases;
     StatusOfJudge statusOfJudge;
+    String email;
 }
