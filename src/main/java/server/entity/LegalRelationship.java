@@ -19,7 +19,7 @@ public class LegalRelationship {
     @Id
     @Column(name = "legal_relationship_id", nullable = false)
     String legalRelationshipId;
-    @Column(name = "legal_relationship_name", nullable = false)
+    @Column(name = "legal_relationship_name", nullable = false, length = 500)
     String legalRelationshipName;
 
     @ManyToOne
@@ -27,7 +27,7 @@ public class LegalRelationship {
     TypeOfLegalCase typeOfLegalCase;
 
     @ManyToOne
-    @Column(name = "legal_relationship_group_id", nullable = false)
+    @JoinColumn(name = "legal_relationship_group_id", nullable = false)
     LegalRelationshipGroup legalRelationshipGroup;
 
     @OneToMany(mappedBy = "legalRelationship")

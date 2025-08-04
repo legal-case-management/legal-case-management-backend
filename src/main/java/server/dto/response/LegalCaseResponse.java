@@ -26,8 +26,7 @@ public class LegalCaseResponse {
     LocalDate expiredDate;
     String plaintiff;
     String defendant;
-    LegalRelationship legalRelationship;
-    TypeOfLegalCase typeOfLegalCase;
+//    String legalRelationshipId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime storageDate;
     Assignment assignment;
