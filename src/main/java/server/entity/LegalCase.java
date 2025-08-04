@@ -1,12 +1,9 @@
 package server.entity;
 
 import jakarta.persistence.*;
-import server.entity.enums.Assignment;
-import server.entity.enums.LegalRelationship;
-import server.entity.enums.StatusOfLegalCase;
+import server.entity.enums.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,11 +38,8 @@ public class LegalCase {
     @Column(nullable = false)
     String plaintiff;
     String defendant;
-    @Column(name = "type_of_legal_case", nullable = false)
-    @Enumerated(EnumType.STRING)
-    TypeOfLegalCase typeOfLegalCase;
-    @Column(name = "legal_relationship", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "legal_relationship_id", nullable = false)
     LegalRelationship legalRelationship;
     @Column(name = "storage_date", nullable = false)
     LocalDateTime storageDate;

@@ -5,9 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import server.entity.LegalCase;
-import server.entity.enums.LegalRelationship;
 import server.entity.enums.StatusOfLegalCase;
-import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,15 +13,17 @@ import java.util.Optional;
 
 public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     @Query("""
-SELECT lc FROM LegalCase lc 
-            LEFT JOIN lc.judge j 
+            SELECT lc FROM LegalCase lc 
+            LEFT JOIN lc.judge j
+            LEFT JOIN lc.legalRelationship lr
             WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber LIKE %:acceptanceNumber%) 
             AND (:startAcceptanceDate IS NULL OR lc.acceptanceDate >= :startAcceptanceDate) 
             AND (:endAcceptanceDate IS NULL OR lc.acceptanceDate <= :endAcceptanceDate) 
             AND (:plaintiff IS NULL OR lc.plaintiff LIKE %:plaintiff%) 
             AND (:defendant IS NULL OR lc.defendant LIKE %:defendant%) 
-            AND (:typeOfLegalCase IS NULL OR lc.typeOfLegalCase = :typeOfLegalCase) 
-            AND (:legalRelationship IS NULL OR lc.legalRelationship = :legalRelationship)
+            AND (:legalRelationshipId IS NULL OR lr.legalRelationshipId = :legalRelationshipId)
+            AND (:typeOfLegalCaseId IS NULL OR lr.typeOfLegalCase.typeOfLegalCaseId = :typeOfLegalCaseId)
+            AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId)
             AND (:statusOfLegalCase IS NULL OR lc.statusOfLegalCase = :statusOfLegalCase)
             AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))
             AND (:batchId IS NULL OR (lc.batch IS NULL AND lc.batch.batchId = :batchId))
@@ -35,8 +35,9 @@ SELECT lc FROM LegalCase lc
             LocalDate endAcceptanceDate,
             String plaintiff,
             String defendant,
-            TypeOfLegalCase typeOfLegalCase,
-            LegalRelationship legalRelationship,
+            String legalRelationshipId,
+            String typeOfLegalCaseId,
+            String legalRelationshipGroupId,
             StatusOfLegalCase statusOfLegalCase,
             String judgeName,
             String batchId,

@@ -1,20 +1,15 @@
 package server.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.entity.Batch;
 import server.entity.Judge;
 import server.entity.enums.Assignment;
-import server.entity.enums.LegalRelationship;
 import server.entity.enums.StatusOfLegalCase;
-import server.entity.enums.TypeOfLegalCase;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter

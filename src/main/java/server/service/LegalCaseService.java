@@ -13,11 +13,13 @@ import server.dto.request.LegalCaseSearchRequest;
 import server.dto.response.LegalCaseResponse;
 import server.entity.Judge;
 import server.entity.LegalCase;
+import server.entity.LegalRelationship;
 import server.entity.enums.StatusOfLegalCase;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalCaseMapper;
 import server.repository.LegalCaseRepository;
+import server.repository.LegalRelationshipRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +30,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class LegalCaseService {
     LegalCaseRepository legalCaseRepository;
+    LegalRelationshipRepository legalRelationshipRepository;
 
     LegalCaseMapper legalCaseMapper;
 
@@ -50,18 +53,19 @@ public class LegalCaseService {
     @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
     public List<LegalCaseResponse> search(LegalCaseSearchRequest request) {
         return legalCaseRepository.searchLegalCases(
-                request.getAcceptanceNumber(),
-                request.getStartAcceptanceDate(),
-                request.getEndAcceptanceDate(),
-                request.getPlaintiff(),
-                request.getDefendant(),
-                request.getTypeOfLegalCase(),
-                request.getLegalRelationship(),
-                request.getStatusOfLegalCase(),
-                request.getJudgeName(),
-                request.getBatchId(),
-                request.getStorageDate()
-        )
+                        request.getAcceptanceNumber(),
+                        request.getStartAcceptanceDate(),
+                        request.getEndAcceptanceDate(),
+                        request.getPlaintiff(),
+                        request.getDefendant(),
+                        request.getLegalRelationshipId(),
+                        request.getTypeOfLegalCaseId(),
+                        request.getLegalRelationshipGroupId(),
+                        request.getStatusOfLegalCase(),
+                        request.getJudgeName(),
+                        request.getBatchId(),
+                        request.getStorageDate()
+                )
                 .stream()
                 .map(legalCaseMapper::toLegalCaseResponse)
                 .toList();
@@ -74,10 +78,20 @@ public class LegalCaseService {
         LegalCase legalCase = LegalCase.builder().build();
         legalCaseMapper.toLegalCase(request, legalCase);
 
-        Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxLegalCaseId(String.format("%04d", legalCase.getAcceptanceDate().getYear()), legalCase.getTypeOfLegalCase().getSimpleName())
-                .orElse(0);
+        LegalRelationship legalRelationship = legalRelationshipRepository.findById(request.getLegalRelationshipId())
+                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
 
-        String legalCaseId = String.format("%04d%s%04d", legalCase.getAcceptanceDate().getYear(), legalCase.getTypeOfLegalCase().getSimpleName(), legalCaseMaxNumberOfId + 1);
+        Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxLegalCaseId(
+                String.format("%04d", legalCase.getAcceptanceDate().getYear()),
+                legalRelationship.getLegalRelationshipId()
+        ).orElse(0);
+
+        String legalCaseId = String.format(
+                "%04d%s%04d",
+                legalCase.getAcceptanceDate().getYear(),
+                legalRelationship.getLegalRelationshipId(),
+                legalCaseMaxNumberOfId + 1
+        );
         if (legalCaseRepository.existsById(legalCaseId)) {
             throw new AppException(ErrorCode.LEGAL_CASE_EXISTED);
         }
@@ -85,12 +99,10 @@ public class LegalCaseService {
         legalCase.setLegalCaseId(legalCaseId);
         legalCase.setStorageDate(LocalDateTime.now());
 
-
-
         if (legalCase.getStatusOfLegalCase() == null)
             legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);
 
-        if(legalCase.getStatusOfLegalCase() == null)
+        if (legalCase.getStatusOfLegalCase() == null)
             legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);
         if (request.getJudgeId() != null)
             legalCase.setJudge(
@@ -111,7 +123,7 @@ public class LegalCaseService {
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
         legalCaseMapper.toLegalCase(request, legalCaseSaved);
-        if(request.getAcceptanceDate() != null
+        if (request.getAcceptanceDate() != null
                 && !legalCaseSaved.getStatusOfLegalCase().equals(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT)
                 && legalCaseSaved.getDecisions().isEmpty()
         ) {
