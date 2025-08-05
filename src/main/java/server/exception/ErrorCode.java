@@ -44,8 +44,13 @@ public enum ErrorCode {
     JUDGE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Thẩm phán không tồn tại"),
     JUDGE_EXISTED(404, HttpStatus.BAD_REQUEST, "Thẩm phán đã tồn tại"),
 
+    /* Legal relationship */
     LEGAL_RELATIONSHIP_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Quan hệ pháp luật không tồn tại"),
 
+    /* Type of legal case */
+    TYPE_OF_LEGAL_CASE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Loại vụ án không tồn tại"),
+    TYPE_OF_LEGAL_CASE_NAME_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên loại vụ án đã tồn tại"),
+    TYPE_OF_LEGAL_CASE_ID_EXISTED(404, HttpStatus.BAD_REQUEST, "Mã loại vụ án đã tồn tại")
     ;
 
     int status;
