@@ -50,7 +50,7 @@ public enum ErrorCode {
     /* Type of legal case */
     TYPE_OF_LEGAL_CASE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Loại vụ án không tồn tại"),
     TYPE_OF_LEGAL_CASE_NAME_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên loại vụ án đã tồn tại"),
-    TYPE_OF_LEGAL_CASE_ID_EXISTED(404, HttpStatus.BAD_REQUEST, "Mã loại vụ án đã tồn tại")
+    TYPE_OF_LEGAL_CASE_CODE_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên viết tắt loại vụ án đã tồn tại")
     ;
 
     int status;

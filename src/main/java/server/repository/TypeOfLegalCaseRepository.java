@@ -5,4 +5,5 @@ import server.entity.TypeOfLegalCase;
 
 public interface TypeOfLegalCaseRepository extends JpaRepository<TypeOfLegalCase, String> {
     boolean existsByTypeOfLegalCaseName(String name);
+    boolean existsByCodeName(String codeName);
 }

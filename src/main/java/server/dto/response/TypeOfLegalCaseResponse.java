@@ -13,4 +13,5 @@ import lombok.experimental.FieldDefaults;
 public class TypeOfLegalCaseResponse {
     String typeOfLegalCaseId;
     String typeOfLegalCaseName;
+    String codeName;
 }

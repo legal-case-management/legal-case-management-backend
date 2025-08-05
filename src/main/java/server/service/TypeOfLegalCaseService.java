@@ -39,8 +39,8 @@ public class TypeOfLegalCaseService {
     public void create(TypeOfLegalCaseRequest request){
         TypeOfLegalCase typeOfLegalCase = TypeOfLegalCase.builder().build();
         typeOfLegalCaseMapper.toTypeOfLegalCase(request, typeOfLegalCase);
-        if (typeOfLegalCaseRepository.existsById(typeOfLegalCase.getTypeOfLegalCaseId())) {
-            throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_ID_EXISTED);
+        if (typeOfLegalCaseRepository.existsByCodeName(typeOfLegalCase.getCodeName())) {
+            throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_CODE_EXISTED);
         }
 
         if (typeOfLegalCaseRepository.existsByTypeOfLegalCaseName(typeOfLegalCase.getTypeOfLegalCaseName())) {

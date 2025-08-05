@@ -14,6 +14,7 @@ import server.dto.response.LegalCaseResponse;
 import server.entity.Judge;
 import server.entity.LegalCase;
 import server.entity.LegalRelationship;
+import server.entity.TypeOfLegalCase;
 import server.entity.enums.StatusOfLegalCase;
 import server.exception.AppException;
 import server.exception.ErrorCode;
@@ -83,13 +84,13 @@ public class LegalCaseService {
 
         Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxLegalCaseId(
                 String.format("%04d", legalCase.getAcceptanceDate().getYear()),
-                legalRelationship.getLegalRelationshipId()
+                legalRelationship.getTypeOfLegalCase().getCodeName()
         ).orElse(0);
 
         String legalCaseId = String.format(
                 "%04d%s%04d",
                 legalCase.getAcceptanceDate().getYear(),
-                legalRelationship.getLegalRelationshipId(),
+                legalRelationship.getTypeOfLegalCase().getCodeName(),
                 legalCaseMaxNumberOfId + 1
         );
         if (legalCaseRepository.existsById(legalCaseId)) {
@@ -102,8 +103,6 @@ public class LegalCaseService {
         if (legalCase.getStatusOfLegalCase() == null)
             legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);
 
-        if (legalCase.getStatusOfLegalCase() == null)
-            legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);
         if (request.getJudgeId() != null)
             legalCase.setJudge(
                     Judge.builder()
