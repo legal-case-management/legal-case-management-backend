@@ -23,6 +23,9 @@ public class TypeOfLegalCase {
     @Column(name = "type_of_legal_case_name", nullable = false, unique = true)
     String typeOfLegalCaseName;
 
+    @Column(name = "code_name", nullable = false, unique = true)
+    String codeName;
+
     @OneToMany(mappedBy = "typeOfLegalCase")
     List<LegalRelationship> legalRelationships;
 }
