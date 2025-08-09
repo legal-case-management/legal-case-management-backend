@@ -1,6 +1,7 @@
 package server.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import server.dto.request.JudgeRequest;
 import server.dto.request.JudgeSearchRequest;
 import server.dto.response.ApiResponse;

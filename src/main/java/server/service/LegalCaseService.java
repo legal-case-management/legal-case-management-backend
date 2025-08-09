@@ -117,8 +117,8 @@ public class LegalCaseService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Transactional
-    public void update(LegalCaseRequest request) {
-        LegalCase legalCaseSaved = legalCaseRepository.findById(request.getLegalCaseId())
+    public void update(String id, LegalCaseRequest request) {
+        LegalCase legalCaseSaved = legalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
         legalCaseMapper.toLegalCase(request, legalCaseSaved);
@@ -136,10 +136,10 @@ public class LegalCaseService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Transactional
-    public void delete(LegalCaseRequest request) {
-        legalCaseRepository.findById(request.getLegalCaseId())
+    public void delete(String id) {
+        legalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
-        legalCaseRepository.deleteById(request.getLegalCaseId());
+        legalCaseRepository.deleteById(id);
     }
 }

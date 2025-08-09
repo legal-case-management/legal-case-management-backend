@@ -49,4 +49,36 @@ public class TypeOfLegalCaseService {
 
         typeOfLegalCaseRepository.save(typeOfLegalCase);
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Transactional
+    public void update(String id, TypeOfLegalCaseRequest request) {
+        TypeOfLegalCase existing = typeOfLegalCaseRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
+
+        // Kiểm tra trùng mã codeName nếu có thay đổi
+        if (!existing.getCodeName().equals(request.getCodeName()) &&
+                typeOfLegalCaseRepository.existsByCodeName(request.getCodeName())) {
+            throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_CODE_EXISTED);
+        }
+
+        // Kiểm tra trùng tên nếu có thay đổi
+        if (!existing.getTypeOfLegalCaseName().equals(request.getTypeOfLegalCaseName()) &&
+                typeOfLegalCaseRepository.existsByTypeOfLegalCaseName(request.getTypeOfLegalCaseName())) {
+            throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NAME_EXISTED);
+        }
+
+        typeOfLegalCaseMapper.toTypeOfLegalCase(request, existing);
+        typeOfLegalCaseRepository.save(existing);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Transactional
+    public void delete(String id) {
+        TypeOfLegalCase existing = typeOfLegalCaseRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
+
+        typeOfLegalCaseRepository.delete(existing);
+    }
+
 }

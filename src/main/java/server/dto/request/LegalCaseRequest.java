@@ -3,6 +3,7 @@ package server.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.entity.enums.*;
+import server.validator.DateOfBirthConstraint;
 
 import java.time.LocalDate;
 

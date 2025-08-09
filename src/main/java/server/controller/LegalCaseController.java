@@ -6,11 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import server.dto.request.JudgeRequest;
 import server.dto.request.LegalCaseRequest;
 import server.dto.request.LegalCaseSearchRequest;
 import server.dto.response.ApiResponse;
-import server.dto.response.JudgeResponse;
 import server.dto.response.LegalCaseResponse;
 import server.service.LegalCaseService;
 
@@ -63,9 +61,9 @@ public class LegalCaseController {
                 .build();
     }
 
-    @PutMapping("/")
-    public ApiResponse<Void> update(@RequestBody @Valid LegalCaseRequest request){
-        legalCaseService.update(request);
+    @PutMapping("/{id}")
+    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid LegalCaseRequest request){
+        legalCaseService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -73,9 +71,9 @@ public class LegalCaseController {
                 .build();
     }
 
-    @DeleteMapping("/")
-    public ApiResponse<Void> delete(@RequestBody @Valid LegalCaseRequest request){
-        legalCaseService.delete(request);
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> delete(@PathVariable String id, @RequestBody @Valid LegalCaseRequest request){
+        legalCaseService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
