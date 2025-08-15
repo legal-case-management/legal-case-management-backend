@@ -1,9 +1,5 @@
-package server.dto.request;
+package server.dto.request.judge;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.entity.enums.StatusOfJudge;
@@ -16,7 +12,6 @@ import server.entity.enums.StatusOfJudge;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 public class JudgeRequest {
-    String judgeId;
     String firstName;
     String lastName;
     long maxNumberOfLegalCase;

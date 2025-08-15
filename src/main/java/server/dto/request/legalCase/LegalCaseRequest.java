@@ -1,9 +1,7 @@
-package server.dto.request;
+package server.dto.request.legalCase;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.*;
-import server.validator.DateOfBirthConstraint;
 
 import java.time.LocalDate;
 
@@ -15,7 +13,6 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 public class LegalCaseRequest {
-    String legalCaseId;
     String acceptanceNumber;
     LocalDate acceptanceDate;
     String plaintiff;

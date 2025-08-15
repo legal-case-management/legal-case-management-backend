@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import server.dto.request.LegalCaseRequest;
-import server.dto.request.LegalCaseSearchRequest;
+import server.dto.request.legalCase.LegalCaseRequest;
+import server.dto.request.legalCase.LegalCaseSearchRequest;
 import server.dto.response.ApiResponse;
-import server.dto.response.LegalCaseResponse;
+import server.dto.response.legalCase.LegalCaseResponse;
 import server.service.LegalCaseService;
 
 import java.util.List;
@@ -72,7 +72,7 @@ public class LegalCaseController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable String id, @RequestBody @Valid LegalCaseRequest request){
+    public ApiResponse<Void> delete(@PathVariable String id){
         legalCaseService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)

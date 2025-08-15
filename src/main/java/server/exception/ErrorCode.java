@@ -50,7 +50,10 @@ public enum ErrorCode {
     /* Type of legal case */
     TYPE_OF_LEGAL_CASE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Loại vụ án không tồn tại"),
     TYPE_OF_LEGAL_CASE_NAME_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên loại vụ án đã tồn tại"),
-    TYPE_OF_LEGAL_CASE_CODE_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên viết tắt loại vụ án đã tồn tại")
+    TYPE_OF_LEGAL_CASE_CODE_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên viết tắt loại vụ án đã tồn tại"),
+
+    /* Legal relationship group*/
+    LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Nhóm quan hệ pháp luật không tồn tại")
     ;
 
     int status;

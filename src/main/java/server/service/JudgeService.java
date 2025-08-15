@@ -6,9 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import server.dto.request.JudgeRequest;
-import server.dto.request.JudgeSearchRequest;
-import server.dto.response.JudgeResponse;
+import server.dto.request.judge.JudgeRequest;
+import server.dto.request.judge.JudgeSearchRequest;
+import server.dto.response.judge.JudgeResponse;
 import server.entity.*;
 import server.entity.enums.StatusOfJudge;
 import server.exception.AppException;
@@ -59,7 +59,7 @@ public class JudgeService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> search(JudgeSearchRequest request) {
-        return judgeRepository.searchJudge(
+        return judgeRepository.search(
                 request.getJudgeId(),
                 request.getFullName(),
                 request.getStatusOfJudge()
@@ -107,9 +107,9 @@ public class JudgeService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Transactional
-    public void update(JudgeRequest request) {
+    public void update(String id, JudgeRequest request) {
         Judge judgeSaved = judgeRepository
-                .findById(request.getJudgeId())
+                .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
         judgeMapper.updateJudgeFromRequest(request, judgeSaved);
@@ -119,9 +119,9 @@ public class JudgeService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Transactional
-    public void delete(JudgeRequest request) {
+    public void delete(String id) {
         Judge judge = judgeRepository
-                .findById(request.getJudgeId())
+                .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
         judgeRepository.deleteById(judge.getJudgeId());

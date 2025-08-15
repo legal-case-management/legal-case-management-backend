@@ -1,11 +1,10 @@
 package server.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import server.dto.request.JudgeRequest;
-import server.dto.request.JudgeSearchRequest;
+import server.dto.request.judge.JudgeRequest;
+import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.response.ApiResponse;
-import server.dto.response.JudgeResponse;
+import server.dto.response.judge.JudgeResponse;
 import server.service.JudgeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -72,9 +71,9 @@ public class JudgeController {
                 .build();
     }
 
-    @PutMapping("/")
-    public ApiResponse<Void> update(@RequestBody @Valid JudgeRequest request){
-        judgeService.update(request);
+    @PutMapping("/{id}")
+    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid JudgeRequest request){
+        judgeService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -82,9 +81,9 @@ public class JudgeController {
                 .build();
     }
 
-    @DeleteMapping("/")
-    public ApiResponse<Void> delete(@RequestBody @Valid  JudgeRequest request){
-        judgeService.delete(request);
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> delete(@PathVariable String id){
+        judgeService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)

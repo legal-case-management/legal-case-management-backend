@@ -6,9 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import server.dto.request.TypeOfLegalCaseRequest;
+import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
+import server.dto.request.typeOfLegalCase.TypeOfLegalCaseSearchRequest;
 import server.dto.response.ApiResponse;
-import server.dto.response.TypeOfLegalCaseResponse;
+import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
 import server.service.TypeOfLegalCaseService;
 
 import java.util.List;
@@ -58,6 +59,16 @@ public class TypeOfLegalCaseController {
                 .success(true)
                 .status(200)
                 .message("Xóa loại án thành công")
+                .build();
+    }
+
+    @PostMapping("/search")
+    public ApiResponse<List<TypeOfLegalCaseResponse>> search(@RequestBody @Valid TypeOfLegalCaseSearchRequest request) {
+        return ApiResponse.<List<TypeOfLegalCaseResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Tìm kiếm thành công")
+                .data(typeOfLegalCaseService.search(request))
                 .build();
     }
 }

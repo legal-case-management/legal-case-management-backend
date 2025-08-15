@@ -7,9 +7,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import server.dto.request.TypeOfLegalCaseRequest;
-import server.dto.response.LegalCaseResponse;
-import server.dto.response.TypeOfLegalCaseResponse;
+import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
+import server.dto.request.typeOfLegalCase.TypeOfLegalCaseSearchRequest;
+import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
 import server.entity.TypeOfLegalCase;
 import server.exception.AppException;
 import server.exception.ErrorCode;
@@ -36,7 +36,7 @@ public class TypeOfLegalCaseService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Transactional
-    public void create(TypeOfLegalCaseRequest request){
+    public void create(TypeOfLegalCaseRequest request) {
         TypeOfLegalCase typeOfLegalCase = TypeOfLegalCase.builder().build();
         typeOfLegalCaseMapper.toTypeOfLegalCase(request, typeOfLegalCase);
         if (typeOfLegalCaseRepository.existsByCodeName(typeOfLegalCase.getCodeName())) {
@@ -46,6 +46,9 @@ public class TypeOfLegalCaseService {
         if (typeOfLegalCaseRepository.existsByTypeOfLegalCaseName(typeOfLegalCase.getTypeOfLegalCaseName())) {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NAME_EXISTED);
         }
+
+        Integer maxId = typeOfLegalCaseRepository.getMaxTypeOfLegalCaseId().orElse(0);
+        typeOfLegalCase.setTypeOfLegalCaseId("L" + String.format("%02d", maxId + 1));
 
         typeOfLegalCaseRepository.save(typeOfLegalCase);
     }
@@ -79,6 +82,17 @@ public class TypeOfLegalCaseService {
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
         typeOfLegalCaseRepository.delete(existing);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public List<TypeOfLegalCaseResponse> search(TypeOfLegalCaseSearchRequest request) {
+        return typeOfLegalCaseRepository.search(
+                        request.getTypeOfLegalCaseId(),
+                        request.getCodeName(),
+                        request.getTypeOfLegalCaseName()
+                ).stream()
+                .map(typeOfLegalCaseMapper::toTypeOfLegalCaseResponse)
+                .toList();
     }
 
 }

@@ -1,8 +1,7 @@
-package server.dto.request;
+package server.dto.request.typeOfLegalCase;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.StatusOfJudge;
 
 @Getter
 @Setter
@@ -11,8 +10,7 @@ import server.entity.enums.StatusOfJudge;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-public class JudgeSearchRequest {
-    String judgeId;
-    String fullName;
-    StatusOfJudge statusOfJudge;
+public class TypeOfLegalCaseRequest {
+    String typeOfLegalCaseName;
+    String codeName;
 }

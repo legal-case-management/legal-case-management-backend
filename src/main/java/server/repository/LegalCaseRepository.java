@@ -29,7 +29,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND (:batchId IS NULL OR (lc.batch IS NULL AND lc.batch.batchId = :batchId))
             AND (:storageDate IS NULL OR (YEAR(lc.storageDate) = YEAR(:storageDate) AND MONTH(lc.storageDate) = MONTH(:storageDate) AND DAY(lc.storageDate) = DAY(:storageDate)))
             """)
-    List<LegalCase> searchLegalCases(
+    List<LegalCase> search(
             String acceptanceNumber,
             LocalDate startAcceptanceDate,
             LocalDate endAcceptanceDate,

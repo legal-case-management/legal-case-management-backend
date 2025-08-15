@@ -8,13 +8,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import server.dto.request.LegalCaseRequest;
-import server.dto.request.LegalCaseSearchRequest;
-import server.dto.response.LegalCaseResponse;
+import server.dto.request.legalCase.LegalCaseRequest;
+import server.dto.request.legalCase.LegalCaseSearchRequest;
+import server.dto.response.legalCase.LegalCaseResponse;
 import server.entity.Judge;
 import server.entity.LegalCase;
 import server.entity.LegalRelationship;
-import server.entity.TypeOfLegalCase;
 import server.entity.enums.StatusOfLegalCase;
 import server.exception.AppException;
 import server.exception.ErrorCode;
@@ -53,7 +52,7 @@ public class LegalCaseService {
 
     @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
     public List<LegalCaseResponse> search(LegalCaseSearchRequest request) {
-        return legalCaseRepository.searchLegalCases(
+        return legalCaseRepository.search(
                         request.getAcceptanceNumber(),
                         request.getStartAcceptanceDate(),
                         request.getEndAcceptanceDate(),

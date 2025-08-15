@@ -1,4 +1,4 @@
-package server.dto.response;
+package server.dto.response.legalCase;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;

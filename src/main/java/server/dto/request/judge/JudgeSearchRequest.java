@@ -1,6 +1,5 @@
-package server.dto.response;
+package server.dto.request.judge;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.entity.enums.StatusOfJudge;
@@ -11,13 +10,9 @@ import server.entity.enums.StatusOfJudge;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class JudgeResponse {
+@ToString
+public class JudgeSearchRequest {
     String judgeId;
-    String lastName;;
-    String firstName;
     String fullName;
-    long maxNumberOfLegalCase;
-    long numberOfLegalCases;
     StatusOfJudge statusOfJudge;
-    String email;
 }

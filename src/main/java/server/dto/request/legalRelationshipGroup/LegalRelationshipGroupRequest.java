@@ -1,4 +1,4 @@
-package server.dto.response;
+package server.dto.request.legalRelationshipGroup;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,8 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-public class TypeOfLegalCaseResponse {
-    String typeOfLegalCaseId;
-    String typeOfLegalCaseName;
-    String codeName;
+public class LegalRelationshipGroupRequest {
+    String legalRelationshipGroupName;
+    String description;
 }

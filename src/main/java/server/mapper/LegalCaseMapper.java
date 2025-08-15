@@ -4,8 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
-import server.dto.request.LegalCaseRequest;
-import server.dto.response.LegalCaseResponse;
+import server.dto.request.legalCase.LegalCaseRequest;
+import server.dto.response.legalCase.LegalCaseResponse;
 import server.entity.LegalCase;
 
 @Mapper(

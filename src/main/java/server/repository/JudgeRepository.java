@@ -2,7 +2,7 @@ package server.repository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import server.dto.response.JudgeResponse;
+import server.dto.response.judge.JudgeResponse;
 import server.entity.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
 import server.entity.enums.StatusOfJudge;
@@ -29,7 +29,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
              AND (:statusOfJudge IS NULL OR j.statusOfJudge = :statusOfJudge) 
              ORDER BY j.judgeId DESC
             """)
-    List<JudgeResponse> searchJudge(String judgeId, String fullName, StatusOfJudge statusOfJudge);
+    List<JudgeResponse> search(String judgeId, String fullName, StatusOfJudge statusOfJudge);
 
     @Query("""
                 SELECT new server.dto.response.JudgeResponse(

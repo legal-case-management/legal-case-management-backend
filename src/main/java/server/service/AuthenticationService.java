@@ -1,6 +1,6 @@
 package server.service;
 
-import server.dto.request.IntrospectRequest;
+import server.dto.request.authentication.IntrospectRequest;
 import server.dto.request.authentication.LoginRequest;
 import server.dto.request.authentication.LogoutRequest;
 import server.dto.request.authentication.RefreshTokenRequest;
