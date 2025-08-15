@@ -3,12 +3,14 @@ package server.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
 import server.dto.request.typeOfLegalCase.TypeOfLegalCaseSearchRequest;
+import server.dto.response.legalRelationshipGroup.LegalRelationshipGroupResponse;
 import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
 import server.entity.TypeOfLegalCase;
 import server.exception.AppException;
@@ -95,4 +97,11 @@ public class TypeOfLegalCaseService {
                 .toList();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public List<TypeOfLegalCaseResponse> getTop50TypeOfLegalCases() {
+        return typeOfLegalCaseRepository
+                .getTop50TypeOfLegalCases(PageRequest.of(0, 50))
+                .stream().map(typeOfLegalCaseMapper::toTypeOfLegalCaseResponse)
+                .toList();
+    }
 }

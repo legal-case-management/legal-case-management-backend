@@ -138,7 +138,6 @@ public class LegalCaseService {
     public void delete(String id) {
         legalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
-
         legalCaseRepository.deleteById(id);
     }
 }

@@ -3,9 +3,13 @@ package server.service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import server.dto.request.legalCase.LegalCaseSearchRequest;
 import server.dto.request.legalRelationshipGroup.LegalRelationshipGroupRequest;
+import server.dto.request.legalRelationshipGroup.LegalRelationshipGroupSearchRequest;
+import server.dto.response.legalCase.LegalCaseResponse;
 import server.dto.response.legalRelationshipGroup.LegalRelationshipGroupResponse;
 import server.entity.LegalRelationshipGroup;
 import server.exception.AppException;
@@ -47,9 +51,27 @@ public class LegalRelationshipGroupService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalRelationshipGroupResponse>  getAll() {
+    public List<LegalRelationshipGroupResponse> getAll() {
         return legalRelationshipGroupRepository
                 .findAll()
+                .stream().map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
+                .toList();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public List<LegalRelationshipGroupResponse> search(LegalRelationshipGroupSearchRequest request) {
+        return legalRelationshipGroupRepository.search(
+                        request.getLegalRelationshipGroupId(),
+                        request.getLegalRelationshipGroupName()
+                )
+                .stream().map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
+                .toList();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public List<LegalRelationshipGroupResponse> getTop50LegalRelationshipGroups() {
+        return legalRelationshipGroupRepository
+                .getTop50LegalRelationshipGroups(PageRequest.of(0, 50))
                 .stream().map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
                 .toList();
     }
