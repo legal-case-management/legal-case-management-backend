@@ -32,8 +32,8 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("/list-50")
-    public ApiResponse<List<JudgeResponse>> get50Judge(){
+    @GetMapping("/top-50")
+    public ApiResponse<List<JudgeResponse>> getTop50(){
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
                 .status(200)

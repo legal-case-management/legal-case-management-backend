@@ -14,7 +14,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     Optional<Judge> findByAccount_AccountId(String accountId);
 
     @Query("""
-            SELECT JudgeResponse(
+            SELECT new server.dto.response.judge.JudgeResponse(
                  j.judgeId,
                  j.lastName,
                  j.firstName,
@@ -32,7 +32,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     List<JudgeResponse> search(String judgeId, String fullName, StatusOfJudge statusOfJudge);
 
     @Query("""
-                SELECT JudgeResponse(
+                SELECT new server.dto.response.judge.JudgeResponse(
                     j.judgeId,
                     j.lastName,
                     j.firstName,

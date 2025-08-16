@@ -91,7 +91,7 @@ public class LegalRelationshipService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalRelationshipResponse> top50() {
+    public List<LegalRelationshipResponse> getTop50() {
         return legalRelationshipRepository
                 .getTop50(PageRequest.of(0, 50))
                 .stream()
