@@ -21,7 +21,7 @@ public interface LegalRelationshipRepository extends JpaRepository<LegalRelation
             @Param("codeName") String codeName
     );
 
-    @Query("SELECT lr FROM LegalRelationship lr ORDER BY lr.legalRelationshipId DESC")
+    @Query("SELECT lr FROM LegalRelationship lr ORDER BY lr.legalRelationshipId")
     List<LegalRelationship> getTop50(Pageable pageable);
 
     @Query("""

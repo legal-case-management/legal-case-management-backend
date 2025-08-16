@@ -16,7 +16,7 @@ public interface LegalRelationshipGroupRepository extends JpaRepository<LegalRel
             """)
     Optional<Integer> getMaxId();
 
-    @Query("SELECT lrg FROM LegalRelationshipGroup lrg ORDER BY lrg.legalRelationshipGroupId DESC")
+    @Query("SELECT lrg FROM LegalRelationshipGroup lrg ORDER BY lrg.legalRelationshipGroupId")
     List<LegalRelationshipGroup> getTop50(Pageable pageable);
 
     @Query("""

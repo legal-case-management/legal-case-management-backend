@@ -43,7 +43,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                     j.account.email
                 )
                 FROM Judge j
-                ORDER BY j.judgeId DESC
+                ORDER BY j.judgeId
             """)
     List<JudgeResponse> getTop50(Pageable pageable);
 
