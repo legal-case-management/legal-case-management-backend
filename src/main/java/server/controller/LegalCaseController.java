@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import server.dto.request.legalCase.LegalCaseAssignmentRequest;
+import server.dto.request.legalCase.LegalCaseAssignmentsRequest;
 import server.dto.request.legalCase.LegalCaseRequest;
 import server.dto.request.legalCase.LegalCaseSearchRequest;
 import server.dto.response.ApiResponse;
@@ -78,6 +80,26 @@ public class LegalCaseController {
                 .success(true)
                 .status(200)
                 .message("Xóa án thành công")
+                .build();
+    }
+
+    @PostMapping("/random-assignment")
+    public ApiResponse<Void> randomAssignment(@RequestBody @Valid LegalCaseAssignmentsRequest request) {
+        legalCaseService.randomAssignment(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Phân công án ngẫu nhiên thành công")
+                .build();
+    }
+
+    @PostMapping("/assign-assignment")
+    public ApiResponse<Void> assignAssignment(@RequestBody @Valid LegalCaseAssignmentRequest request) {
+        legalCaseService.assignAssignment(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Phân công án chỉ định thành công")
                 .build();
     }
 }

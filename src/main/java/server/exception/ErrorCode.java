@@ -39,6 +39,9 @@ public enum ErrorCode {
     /* Legal case */
     LEGAL_CASE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Vụ án không tồn tại"),
     LEGAL_CASE_EXISTED(404, HttpStatus.BAD_REQUEST, "Vụ án đã tồn tại"),
+    LEGAL_CASE_NOT_WAITING_FOR_ASSIGNMENT(400, HttpStatus.BAD_REQUEST, "Vụ án không ở trạng thái chờ phân công"),
+
+    RANDOM_ASSIGNMENT_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Phân công án ngẫu nhiên thất bại"),
 
     /* Judge */
     JUDGE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Thẩm phán không tồn tại"),

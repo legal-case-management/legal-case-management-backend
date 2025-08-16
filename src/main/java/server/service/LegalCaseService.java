@@ -8,16 +8,20 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.dto.request.legalCase.LegalCaseAssignmentRequest;
+import server.dto.request.legalCase.LegalCaseAssignmentsRequest;
 import server.dto.request.legalCase.LegalCaseRequest;
 import server.dto.request.legalCase.LegalCaseSearchRequest;
 import server.dto.response.legalCase.LegalCaseResponse;
 import server.entity.Judge;
 import server.entity.LegalCase;
 import server.entity.LegalRelationship;
+import server.entity.enums.Assignment;
 import server.entity.enums.StatusOfLegalCase;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalCaseMapper;
+import server.repository.JudgeRepository;
 import server.repository.LegalCaseRepository;
 import server.repository.LegalRelationshipRepository;
 
@@ -31,6 +35,7 @@ import java.util.List;
 public class LegalCaseService {
     LegalCaseRepository legalCaseRepository;
     LegalRelationshipRepository legalRelationshipRepository;
+    JudgeRepository judgeRepository;
 
     LegalCaseMapper legalCaseMapper;
 
@@ -139,5 +144,46 @@ public class LegalCaseService {
         legalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
         legalCaseRepository.deleteById(id);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public void randomAssignment(LegalCaseAssignmentsRequest request) {
+        if (
+                request == null
+                        || request.getLegalCaseAssignments() == null
+                        || request.getLegalCaseAssignments().isEmpty()
+        ) {
+            throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
+        }
+        request.getLegalCaseAssignments().forEach(
+                legalCaseAssignmentRequest -> assignment(legalCaseAssignmentRequest, Assignment.RANDOM)
+        );
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public void assignAssignment(LegalCaseAssignmentRequest request) {
+        if (request == null) {
+            throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
+        }
+        assignment(request, Assignment.ASSIGN);
+    }
+
+    private void assignment(LegalCaseAssignmentRequest request, Assignment assignment) {
+        LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
+                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
+
+        if (assignment.equals(Assignment.RANDOM) && legalCase.getStatusOfLegalCase() != StatusOfLegalCase.WAITING_FOR_ASSIGNMENT) {
+            throw new AppException(ErrorCode.LEGAL_CASE_NOT_WAITING_FOR_ASSIGNMENT);
+        }
+
+        Judge judge = judgeRepository.findById(request.getJudgeId())
+                .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
+
+        legalCase.setAssignment(assignment);
+        legalCase.setAssignmentDate(LocalDateTime.now());
+        legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
+        legalCase.setJudge(judge);
+
+        legalCaseRepository.save(legalCase);
     }
 }
