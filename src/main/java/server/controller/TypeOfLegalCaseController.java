@@ -72,7 +72,7 @@ public class TypeOfLegalCaseController {
                 .build();
     }
 
-    @PostMapping("/top-50")
+    @GetMapping("/top-50")
     public ApiResponse<List<TypeOfLegalCaseResponse>> getTop50TypeOfLegalCases() {
         return ApiResponse.<List<TypeOfLegalCaseResponse>>builder()
                 .success(true)
