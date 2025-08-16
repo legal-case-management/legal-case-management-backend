@@ -54,7 +54,7 @@ public class JudgeService {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> get50Judge() {
         return judgeRepository
-                .get50Judge(PageRequest.of(0, 50));
+                .getTop50(PageRequest.of(0, 50));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -85,7 +85,7 @@ public class JudgeService {
         Judge judge = judgeMapper.toJudge(request);
 
 
-        Integer judgeNumberOfId = judgeRepository.getMaxJudgeId()
+        Integer judgeNumberOfId = judgeRepository.getMaxId()
                 .orElse(0);
         String judgeId = String.format("%s%02d", "TP", judgeNumberOfId + 1);
         if (judgeRepository.existsById(judgeId)) {

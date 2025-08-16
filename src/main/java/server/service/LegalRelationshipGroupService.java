@@ -6,10 +6,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import server.dto.request.legalCase.LegalCaseSearchRequest;
 import server.dto.request.legalRelationshipGroup.LegalRelationshipGroupRequest;
 import server.dto.request.legalRelationshipGroup.LegalRelationshipGroupSearchRequest;
-import server.dto.response.legalCase.LegalCaseResponse;
 import server.dto.response.legalRelationshipGroup.LegalRelationshipGroupResponse;
 import server.entity.LegalRelationshipGroup;
 import server.exception.AppException;
@@ -30,7 +28,7 @@ public class LegalRelationshipGroupService {
     public void create(LegalRelationshipGroupRequest request) {
         LegalRelationshipGroup legalRelationshipGroup = LegalRelationshipGroup.builder().build();
         legalRelationshipGroupMapper.toLegalRelationshipGroup(request, legalRelationshipGroup);
-        Integer maxId = legalRelationshipGroupRepository.getMaxLegalRelationshipGroupId().orElse(0);
+        Integer maxId = legalRelationshipGroupRepository.getMaxId().orElse(0);
         legalRelationshipGroup.setLegalRelationshipGroupId("N" + String.format("%02d", maxId + 1));
         legalRelationshipGroupRepository.save(legalRelationshipGroup);
     }
@@ -71,7 +69,7 @@ public class LegalRelationshipGroupService {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<LegalRelationshipGroupResponse> getTop50LegalRelationshipGroups() {
         return legalRelationshipGroupRepository
-                .getTop50LegalRelationshipGroups(PageRequest.of(0, 50))
+                .getTop50(PageRequest.of(0, 50))
                 .stream().map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
                 .toList();
     }

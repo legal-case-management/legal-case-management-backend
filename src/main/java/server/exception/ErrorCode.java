@@ -46,6 +46,7 @@ public enum ErrorCode {
 
     /* Legal relationship */
     LEGAL_RELATIONSHIP_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Quan hệ pháp luật không tồn tại"),
+    LEGAL_RELATIONSHIP_NAME_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên quan hệ pháp luật đã tồn tại"),
 
     /* Type of legal case */
     TYPE_OF_LEGAL_CASE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Loại vụ án không tồn tại"),

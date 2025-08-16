@@ -15,4 +15,6 @@ public class LegalRelationshipResponse {
     String legalRelationshipName;
     String typeOfLegalCaseId;
     String typeOfLegalCaseName;
+    String legalRelationshipGroupId;
+    String legalRelationshipGroupName;
 }

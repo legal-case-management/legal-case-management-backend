@@ -14,7 +14,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     Optional<Judge> findByAccount_AccountId(String accountId);
 
     @Query("""
-            SELECT new server.dto.response.JudgeResponse(
+            SELECT JudgeResponse(
                  j.judgeId,
                  j.lastName,
                  j.firstName,
@@ -32,7 +32,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     List<JudgeResponse> search(String judgeId, String fullName, StatusOfJudge statusOfJudge);
 
     @Query("""
-                SELECT new server.dto.response.JudgeResponse(
+                SELECT JudgeResponse(
                     j.judgeId,
                     j.lastName,
                     j.firstName,
@@ -45,7 +45,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 FROM Judge j
                 ORDER BY j.judgeId DESC
             """)
-    List<JudgeResponse> get50Judge(Pageable pageable);
+    List<JudgeResponse> getTop50(Pageable pageable);
 
 
     @Query("""
@@ -53,5 +53,5 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
               FROM Judge j
               WHERE SUBSTRING(j.judgeId, 1, 2) = 'TP'
             """)
-    Optional<Integer> getMaxJudgeId();
+    Optional<Integer> getMaxId();
 }

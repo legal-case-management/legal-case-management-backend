@@ -45,7 +45,7 @@ public class LegalCaseService {
     @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
     public List<LegalCaseResponse> getLatest50LegalCases() {
         return legalCaseRepository
-                .getLatest50LegalCases(PageRequest.of(0, 50))
+                .getTop50(PageRequest.of(0, 50))
                 .stream().map(legalCaseMapper::toLegalCaseResponse)
                 .toList();
     }
@@ -81,7 +81,7 @@ public class LegalCaseService {
         LegalRelationship legalRelationship = legalRelationshipRepository.findById(request.getLegalRelationshipId())
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
 
-        Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxLegalCaseId(
+        Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxId(
                 String.format("%04d", legalCase.getAcceptanceDate().getYear()),
                 legalRelationship.getTypeOfLegalCase().getCodeName()
         ).orElse(0);

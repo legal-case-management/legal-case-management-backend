@@ -1,10 +1,8 @@
 package server.repository;
 
-import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import server.entity.LegalRelationshipGroup;
 import server.entity.TypeOfLegalCase;
 
 import java.util.List;
@@ -32,8 +30,8 @@ public interface TypeOfLegalCaseRepository extends JpaRepository<TypeOfLegalCase
               FROM TypeOfLegalCase t
               WHERE SUBSTRING(t.typeOfLegalCaseId, 1, 1) = 'L'
             """)
-    Optional<Integer> getMaxTypeOfLegalCaseId();
+    Optional<Integer> getMaxId();
 
     @Query("SELECT tol FROM TypeOfLegalCase tol ORDER BY tol.typeOfLegalCaseId DESC")
-    List<TypeOfLegalCase> getTop50TypeOfLegalCases(Pageable pageable);
+    List<TypeOfLegalCase> getTop50(Pageable pageable);
 }

@@ -45,7 +45,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     );
 
     @Query("SELECT lc FROM LegalCase lc ORDER BY lc.acceptanceDate DESC")
-    List<LegalCase> getLatest50LegalCases(Pageable pageable);
+    List<LegalCase> getTop50(Pageable pageable);
 
     @Query("""
                 SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 7, 4) AS int))
@@ -53,7 +53,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
                 WHERE SUBSTRING(lc.legalCaseId, 1, 4) = :year
                   AND SUBSTRING(lc.legalCaseId, 5, 2) = :typeCode
             """)
-    Optional<Integer> getMaxLegalCaseId(
+    Optional<Integer> getMaxId(
             @Param("year") String year,
             @Param("typeCode") String typeCode
     );
