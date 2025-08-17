@@ -37,7 +37,11 @@ public class LegalCase {
     LocalDate expiredDate;
     @Column(nullable = false)
     String plaintiff;
+    @Column(name = "plaintiff_address")
+    String plaintiffAddress;
     String defendant;
+    @Column(name = "defendant_address")
+    String defendantAddress;
     @ManyToOne
     @JoinColumn(name = "legal_relationship_id", nullable = false)
     LegalRelationship legalRelationship;

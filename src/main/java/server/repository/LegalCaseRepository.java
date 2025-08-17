@@ -20,7 +20,9 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND (:startAcceptanceDate IS NULL OR lc.acceptanceDate >= :startAcceptanceDate) 
             AND (:endAcceptanceDate IS NULL OR lc.acceptanceDate <= :endAcceptanceDate) 
             AND (:plaintiff IS NULL OR lc.plaintiff LIKE %:plaintiff%) 
+            AND (:plaintiffAddress IS NULL OR lc.plaintiffAddress LIKE %:plaintiffAddress%) 
             AND (:defendant IS NULL OR lc.defendant LIKE %:defendant%) 
+            AND (:defendantAddress IS NULL OR lc.defendantAddress LIKE %:defendantAddress%)
             AND (:legalRelationshipId IS NULL OR lr.legalRelationshipId = :legalRelationshipId)
             AND (:typeOfLegalCaseId IS NULL OR lr.typeOfLegalCase.typeOfLegalCaseId = :typeOfLegalCaseId)
             AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId)
@@ -34,7 +36,9 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             LocalDate startAcceptanceDate,
             LocalDate endAcceptanceDate,
             String plaintiff,
+            String plaintiffAddress,
             String defendant,
+            String defendantAddress,
             String legalRelationshipId,
             String typeOfLegalCaseId,
             String legalRelationshipGroupId,

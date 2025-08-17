@@ -18,7 +18,9 @@ public class LegalCaseSearchRequest {
     LocalDate startAcceptanceDate;
     LocalDate endAcceptanceDate;
     String plaintiff;
+    String plaintiffAddress;
     String defendant;
+    String defendantAddress;
     String legalRelationshipId;
     String typeOfLegalCaseId;
     String legalRelationshipGroupId;
