@@ -1,5 +1,7 @@
 package server.config;
 
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import server.dto.response.ApiResponse;
 import server.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +27,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import org.apache.catalina.connector.Connector;
+
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -113,6 +118,18 @@ public class SecurityConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
+    }
+
+    @Bean
+    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> servletContainer() {
+        return factory -> {
+            Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
+            connector.setScheme("http");
+            connector.setPort(8080); // Cổng HTTP
+            connector.setSecure(false);
+            connector.setRedirectPort(8081); // Chuyển hướng tới cổng HTTPS
+            factory.addAdditionalTomcatConnectors(connector);
+        };
     }
 
     @Bean
