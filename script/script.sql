@@ -1,17 +1,17 @@
-INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, defendant, legal_relationship, type_of_legal_case, status_of_legal_case, storage_date)
-VALUES ('2025KT0001', '58/2025', '2025-06-01', '2025-08-03', 'Nguyễn Văn A', 'Trần Thị B', 'LR04_001', 'COMMERCIAL', 'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
+INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, plaintiff_address, defendant, defendant_address, legal_relationship_id, status_of_legal_case, storage_date)
+VALUES ('2025KT0001', '58', '2025-06-01', '2025-08-03', 'Nguyễn Văn A', 'Đồng Tháp', 'Trần Thị B', 'Vĩnh Long', 'HN001', 'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
 
-INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, defendant, legal_relationship, type_of_legal_case, status_of_legal_case, storage_date)
-VALUES ('2025DS0001', '59/2025', '2025-06-05', '2025-07-30', 'Lê Văn C', 'Phạm Văn D', 'LR02_048', 'CIVIL', 'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
+INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, plaintiff_address, defendant, defendant_address, legal_relationship_id, status_of_legal_case, storage_date)
+VALUES ('2025DS0001', '59', '2025-06-05', '2025-07-30', 'Lê Văn C', 'Xã Mỹ Thọ, tỉnh Đồng Tháp', 'Phạm Văn D', 'Xã Trường Xuân, tỉnh Đồng Tháp', 'DS048', 'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
 
-INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, defendant, legal_relationship, type_of_legal_case, status_of_legal_case, storage_date)
-VALUES ('2025HN0001', '60/2025', '2025-06-10', '2025-12-10', 'Đỗ Thị E', 'Ngô Văn F', 'LR03_002', 'FAMILY', 'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
+INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, plaintiff_address, defendant, defendant_address, legal_relationship_id, status_of_legal_case, storage_date)
+VALUES ('2025HN0001', '60', '2025-06-10', '2025-12-10', 'Đỗ Thị E', 'Vĩnh Long', 'Ngô Văn F', 'Đồng Tháp', 'HN002',  'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
 
-INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, defendant, legal_relationship, type_of_legal_case, status_of_legal_case, storage_date)
-VALUES ('2025LD0001', '61/2025', '2025-06-15', '2025-12-15', 'Huỳnh Văn G', 'Bùi Thị H', 'LR05_002', 'LABOR', 'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
+INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, plaintiff_address, defendant, defendant_address, legal_relationship_id, status_of_legal_case, storage_date)
+VALUES ('2025LD0001', '61', '2025-06-15', '2025-12-15', 'Huỳnh Văn G', 'An Giang', 'Bùi Thị H', 'Đồng Tháp', 'LD002',  'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
 
-INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, defendant, legal_relationship, type_of_legal_case, status_of_legal_case, storage_date)
-VALUES ('2025DS0002', '62/2025', '2025-06-20', '2025-12-20', 'Phan Thị I', 'Võ Văn K', 'LR02_037', 'CIVIL', 'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
+INSERT INTO legal_cases (legal_case_id, acceptance_number, acceptance_date, expired_date, plaintiff, plaintiff_address, defendant, defendant_address, legal_relationship_id, status_of_legal_case, storage_date)
+VALUES ('2025DS0002', '62', '2025-06-20', '2025-12-20', 'Phan Thị I', 'Võ Văn K', 'Đồng Tháp', 'TP. Hồ Chí Minh', 'DS037', 'WAITING_FOR_ASSIGNMENT', CURRENT_TIMESTAMP);
 
 INSERT INTO judges (judge_id, last_name, first_name, max_number_of_legal_case, status_of_judge)
 VALUES ('TP01', 'Nguyễn Văn', 'A', 10, 'WORKING');
