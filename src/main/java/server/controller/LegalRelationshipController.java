@@ -42,7 +42,7 @@ public class LegalRelationshipController {
                 .build();
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ApiResponse<List<LegalRelationshipResponse>> search(@RequestBody @Valid LegalRelationshipSearchRequest request) {
         return ApiResponse.<List<LegalRelationshipResponse>>builder()
                 .success(true)

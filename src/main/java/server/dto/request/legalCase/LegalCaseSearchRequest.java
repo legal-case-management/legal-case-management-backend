@@ -21,8 +21,8 @@ public class LegalCaseSearchRequest {
     String plaintiffAddress;
     String defendant;
     String defendantAddress;
-    String legalRelationshipId;
     String typeOfLegalCaseId;
+    String legalRelationshipId;
     String legalRelationshipGroupId;
     StatusOfLegalCase statusOfLegalCase;
     String judgeName;
