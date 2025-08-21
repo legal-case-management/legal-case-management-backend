@@ -35,6 +35,7 @@ public interface LegalRelationshipRepository extends JpaRepository<LegalRelation
             AND (:typeOfLegalCaseName IS NULL OR tolc.typeOfLegalCaseName LIKE %:typeOfLegalCaseName%)
             AND (:legalRelationshipGroupId IS NULL OR lrg.legalRelationshipGroupId LIKE %:legalRelationshipGroupId%)
             AND (:legalRelationshipGroupName IS NULL OR lrg.legalRelationshipGroupName LIKE %:legalRelationshipGroupName%)
+            ORDER BY tolc.typeOfLegalCaseId, lr.legalRelationshipId
             """)
     List<LegalRelationship> search(
             String legalRelationshipId,
@@ -44,4 +45,9 @@ public interface LegalRelationshipRepository extends JpaRepository<LegalRelation
             String legalRelationshipGroupId,
             String legalRelationshipGroupName
     );
+
+    @Query("""
+            SELECT lr FROM LegalRelationship lr ORDER BY lr.typeOfLegalCase.typeOfLegalCaseId, lr.legalRelationshipId
+            """)
+    List<LegalRelationship> getAll();
 }

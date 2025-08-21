@@ -31,7 +31,7 @@ public class LegalRelationshipService {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<LegalRelationshipResponse> getAll() {
         return legalRelationshipRepository
-                .findAll()
+                .getAll()
                 .stream().map(legalRelationshipMapper::toLegalRelationshipResponse)
                 .toList();
     }
