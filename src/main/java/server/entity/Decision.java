@@ -28,7 +28,7 @@ public class Decision {
     @Enumerated(EnumType.STRING)
     TypeOfDecision typeOfDecision;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "legal_case_id")
     LegalCase legalCase;
 }

@@ -54,14 +54,14 @@ public class LegalCase {
     @Column(name = "status_of_legal_case", nullable = false)
     StatusOfLegalCase statusOfLegalCase;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "judge_id")
     Judge judge;
 
     @OneToMany(mappedBy = "legalCase")
     List<Decision> decisions;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "batch_id")
     Batch batch;
 

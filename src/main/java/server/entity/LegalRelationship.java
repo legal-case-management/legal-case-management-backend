@@ -22,11 +22,11 @@ public class LegalRelationship {
     @Column(name = "legal_relationship_name", nullable = false, length = 500)
     String legalRelationshipName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_of_legal_case_id", nullable = false)
     TypeOfLegalCase typeOfLegalCase;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "legal_relationship_group_id", nullable = false)
     LegalRelationshipGroup legalRelationshipGroup;
 

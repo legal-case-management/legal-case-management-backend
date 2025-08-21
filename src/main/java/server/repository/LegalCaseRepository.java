@@ -48,7 +48,12 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             LocalDate storageDate
     );
 
-    @Query("SELECT lc FROM LegalCase lc ORDER BY lc.acceptanceDate DESC")
+    @Query("""
+            SELECT lc FROM LegalCase lc
+            LEFT JOIN lc.judge j
+            LEFT JOIN lc.legalRelationship lr
+            ORDER BY (lc.expiredDate - lc.acceptanceDate), YEAR(lc.acceptanceDate) DESC, lc.acceptanceDate DESC
+            """)
     List<LegalCase> getTop50(Pageable pageable);
 
     @Query("""
