@@ -29,7 +29,7 @@ public class LegalCase {
     @Id
     @Column(name = "legal_case_id", nullable = false)
     String legalCaseId;
-    @Column(name = "acceptance_number", nullable = false, unique = true)
+    @Column(name = "acceptance_number", nullable = false)
     String acceptanceNumber;
     @Column(name = "acceptance_date", nullable = false)
     LocalDate acceptanceDate;
