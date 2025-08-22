@@ -48,7 +48,7 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
-    public List<LegalCaseResponse> getLatest50LegalCases() {
+    public List<LegalCaseResponse> getTop50() {
         return legalCaseRepository
                 .getTop50(PageRequest.of(0, 50))
                 .stream().map(legalCaseMapper::toLegalCaseResponse)
@@ -71,7 +71,8 @@ public class LegalCaseService {
                         request.getStatusOfLegalCase(),
                         request.getJudgeName(),
                         request.getBatchId(),
-                        request.getStorageDate()
+                        request.getStorageDate(),
+                        PageRequest.of(0, 50)
                 )
                 .stream()
                 .map(legalCaseMapper::toLegalCaseResponse)

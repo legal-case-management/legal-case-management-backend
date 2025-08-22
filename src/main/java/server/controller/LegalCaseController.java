@@ -39,7 +39,7 @@ public class LegalCaseController {
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalCaseService.getLatest50LegalCases())
+                .data(legalCaseService.getTop50())
                 .build();
     }
 

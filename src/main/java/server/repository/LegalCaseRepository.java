@@ -45,7 +45,8 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             StatusOfLegalCase statusOfLegalCase,
             String judgeName,
             String batchId,
-            LocalDate storageDate
+            LocalDate storageDate,
+            Pageable pageable
     );
 
     @Query("""
