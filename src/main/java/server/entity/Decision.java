@@ -20,7 +20,7 @@ public class Decision {
     @Id
     @Column(name = "decision_id", nullable = false)
     String extendDecisionId;
-    @Column(name = "acceptance_number", unique = true)
+    @Column(name = "acceptance_number")
     String acceptanceNumber;
     @Column(name = "acceptance_date", nullable = false)
     LocalDate acceptanceDate;
