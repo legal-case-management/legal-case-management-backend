@@ -106,6 +106,7 @@ public class LegalCaseService {
 
         legalCase.setLegalCaseId(legalCaseId);
         legalCase.setStorageDate(LocalDateTime.now());
+        legalCase.setLegalRelationship(legalRelationship);
 
         if (legalCase.getStatusOfLegalCase() == null)
             legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);

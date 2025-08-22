@@ -30,6 +30,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -191,12 +192,10 @@ public class AuthenticationService {
 
     private void addTokenToRedis(SignedJWT signedJWT) throws ParseException {
         String jwtId = signedJWT.getJWTClaimsSet().getJWTID();
-
         Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         long currentMillis = System.currentTimeMillis();
         long expirationMillis = expirationTime.getTime();
         long remainingTime = (expirationMillis - currentMillis) / 1000;
-
-        redisTemplate.opsForValue().set("blacklist:" + jwtId, true, remainingTime, java.util.concurrent.TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set("blacklist:" + jwtId, true, remainingTime, TimeUnit.SECONDS);
     }
 }

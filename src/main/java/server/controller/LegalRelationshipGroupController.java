@@ -37,7 +37,7 @@ public class LegalRelationshipGroupController {
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalRelationshipGroupService.getTop50LegalRelationshipGroups())
+                .data(legalRelationshipGroupService.getTop50())
                 .build();
     }
 
