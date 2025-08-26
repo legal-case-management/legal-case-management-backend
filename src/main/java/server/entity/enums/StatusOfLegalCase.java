@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 public enum StatusOfLegalCase {
     TEMPORARY_SUSPENSION("Tạm đình chỉ"),
     OVERDUE("Quá hạn"),
-    EXPIRING_SOON("Sắp hết hạn"),
     CANCELED_LEGAL_CASE("Án hủy"),
     EDIT_LEGAL_CASE("Án sửa"),
     WAITING_FOR_ASSIGNMENT("Chờ được phân công"),
