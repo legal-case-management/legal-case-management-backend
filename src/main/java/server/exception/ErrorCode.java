@@ -57,7 +57,11 @@ public enum ErrorCode {
     TYPE_OF_LEGAL_CASE_CODE_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên viết tắt loại vụ án đã tồn tại"),
 
     /* Legal relationship group*/
-    LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Nhóm quan hệ pháp luật không tồn tại")
+    LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Nhóm quan hệ pháp luật không tồn tại"),
+
+    /* Batch */
+    BATCH_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Đợt nhập án không tồn tại"),
+    BATCH_EXISTED(404, HttpStatus.BAD_REQUEST, "Đợt nhập án đã tồn tại")
     ;
 
     int status;
