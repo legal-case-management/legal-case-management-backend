@@ -50,10 +50,6 @@ public class AuthenticationService {
 
     RedisTemplate<String, Boolean> redisTemplate;
     AccountRepository accountRepository;
-    JudgeRepository judgeRepository;
-
-    AccountMapper accountMapper;
-    JudgeMapper judgeMapper;
 
     PasswordEncoder passwordEncoder;
 

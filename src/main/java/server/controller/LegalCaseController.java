@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import server.dto.request.legalCase.LegalCaseAssignmentRequest;
-import server.dto.request.legalCase.LegalCaseAssignmentsRequest;
-import server.dto.request.legalCase.LegalCaseRequest;
-import server.dto.request.legalCase.LegalCaseSearchRequest;
+import server.dto.request.legalCase.*;
 import server.dto.response.ApiResponse;
 import server.dto.response.legalCase.LegalCaseResponse;
 import server.service.LegalCaseService;
@@ -56,6 +53,16 @@ public class LegalCaseController {
     @PostMapping("/")
     public ApiResponse<Void> create(@RequestBody @Valid LegalCaseRequest request){
         legalCaseService.create(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Thêm án thành công")
+                .build();
+    }
+
+    @PostMapping("/import-excel")
+    public ApiResponse<Void> importFromExcel(@RequestBody @Valid LegalCasesRequest request){
+        legalCaseService.importFromExcel(request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)

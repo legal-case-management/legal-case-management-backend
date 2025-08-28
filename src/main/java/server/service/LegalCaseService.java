@@ -8,10 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import server.dto.request.legalCase.LegalCaseAssignmentRequest;
-import server.dto.request.legalCase.LegalCaseAssignmentsRequest;
-import server.dto.request.legalCase.LegalCaseRequest;
-import server.dto.request.legalCase.LegalCaseSearchRequest;
+import server.dto.request.legalCase.*;
 import server.dto.response.legalCase.LegalCaseResponse;
 import server.entity.Judge;
 import server.entity.LegalCase;
@@ -83,6 +80,20 @@ public class LegalCaseService {
     @Async
     @Transactional
     public void create(LegalCaseRequest request) {
+        createSingle(request);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Async
+    @Transactional
+    public void importFromExcel(LegalCasesRequest request) {
+        for(LegalCaseRequest legalCaseRequest : request.getLegalCases()) {
+            createSingle(legalCaseRequest);
+        }
+
+    }
+
+    private void createSingle(LegalCaseRequest request) {
         LegalCase legalCase = LegalCase.builder().build();
         legalCaseMapper.toLegalCase(request, legalCase);
 
@@ -118,9 +129,9 @@ public class LegalCaseService {
                             .build()
             );
 
-
         legalCaseRepository.save(legalCase);
     }
+
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
