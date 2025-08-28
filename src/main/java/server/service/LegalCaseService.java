@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.legalCase.*;
 import server.dto.response.legalCase.LegalCaseResponse;
+import server.entity.Batch;
 import server.entity.Judge;
 import server.entity.LegalCase;
 import server.entity.LegalRelationship;
@@ -17,7 +18,9 @@ import server.entity.enums.Assignment;
 import server.entity.enums.StatusOfLegalCase;
 import server.exception.AppException;
 import server.exception.ErrorCode;
+import server.mapper.BatchMapper;
 import server.mapper.LegalCaseMapper;
+import server.repository.BatchRepository;
 import server.repository.JudgeRepository;
 import server.repository.LegalCaseRepository;
 import server.repository.LegalRelationshipRepository;
@@ -32,9 +35,12 @@ import java.util.List;
 public class LegalCaseService {
     LegalCaseRepository legalCaseRepository;
     LegalRelationshipRepository legalRelationshipRepository;
+
     JudgeRepository judgeRepository;
 
     LegalCaseMapper legalCaseMapper;
+
+    BatchService batchService;
 
     @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
     public List<LegalCaseResponse> getAll() {
@@ -80,20 +86,22 @@ public class LegalCaseService {
     @Async
     @Transactional
     public void create(LegalCaseRequest request) {
-        createSingle(request);
+        createSingle(request, null);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Async
     @Transactional
     public void importFromExcel(LegalCasesRequest request) {
-        for(LegalCaseRequest legalCaseRequest : request.getLegalCases()) {
-            createSingle(legalCaseRequest);
+        Batch batch = batchService.create(request.getBatch());
+
+        for (LegalCaseRequest legalCaseRequest : request.getLegalCases()) {
+            createSingle(legalCaseRequest, batch);
         }
 
     }
 
-    private void createSingle(LegalCaseRequest request) {
+    private void createSingle(LegalCaseRequest request, Batch batch) {
         LegalCase legalCase = LegalCase.builder().build();
         legalCaseMapper.toLegalCase(request, legalCase);
 
@@ -128,6 +136,9 @@ public class LegalCaseService {
                             .judgeId(request.getJudgeId())
                             .build()
             );
+
+        if(batch != null)
+            legalCase.setBatch(batch);
 
         legalCaseRepository.save(legalCase);
     }

@@ -10,12 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.batch.BatchRequest;
 import server.dto.request.batch.BatchSearchRequest;
-import server.dto.request.judge.JudgeRequest;
 import server.dto.response.batch.BatchResponse;
-import server.entity.Account;
 import server.entity.Batch;
-import server.entity.Judge;
-import server.entity.enums.StatusOfJudge;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.BatchMapper;
@@ -33,9 +29,8 @@ public class BatchService {
     BatchMapper batchMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Async
     @Transactional
-    public void create(BatchRequest request) {
+    synchronized public Batch create(BatchRequest request) {
         Batch batch = Batch.builder().build();
         batchMapper.updateBatchFromRequest(request, batch);
         batch.setStorageDate(LocalDateTime.now());
@@ -48,6 +43,7 @@ public class BatchService {
         }
 
         batch.setBatchId(batchId);
+       return batchRepository.save(batch);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
