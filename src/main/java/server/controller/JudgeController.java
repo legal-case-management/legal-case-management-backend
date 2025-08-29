@@ -38,7 +38,7 @@ public class JudgeController {
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(judgeService.get50Judge())
+                .data(judgeService.getTop50())
                 .build();
     }
 

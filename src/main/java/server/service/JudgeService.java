@@ -10,6 +10,7 @@ import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.response.judge.JudgeResponse;
 import server.entity.*;
+import server.entity.enums.Role;
 import server.entity.enums.StatusOfJudge;
 import server.exception.AppException;
 import server.exception.ErrorCode;
@@ -52,7 +53,7 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<JudgeResponse> get50Judge() {
+    public List<JudgeResponse> getTop50() {
         return judgeRepository
                 .getTop50(PageRequest.of(0, 50));
     }
@@ -100,7 +101,9 @@ public class JudgeService {
         Account account = accountMapper.toAccount(request);
         account.setUsername(judgeSaved.getJudgeId());
         account.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
+        System.out.println(DEFAULT_PASSWORD);
         account.setJudge(judgeSaved);
+        account.setRole(Role.JUDGE);
         accountRepository.save(account);
     }
 
