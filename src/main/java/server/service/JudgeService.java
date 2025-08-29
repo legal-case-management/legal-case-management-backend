@@ -46,10 +46,7 @@ public class JudgeService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> getAll() {
-        return judgeRepository
-                .findAll()
-                .stream().map(judgeMapper::toJudgeResponse)
-                .toList();
+        return judgeRepository.getAll();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
