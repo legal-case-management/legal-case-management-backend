@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import server.dto.request.authentication.AccountRequest;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.response.judge.JudgeResponse;
@@ -32,11 +33,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JudgeService {
-    AccountRepository accountRepository;
     JudgeRepository judgeRepository;
 
-    AccountMapper accountMapper;
     JudgeMapper judgeMapper;
+
+    AuthenticationService authenticationService;
 
     PasswordEncoder passwordEncoder;
 
@@ -76,7 +77,7 @@ public class JudgeService {
         );
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Transactional
     public void create(JudgeRequest request) {
@@ -95,13 +96,15 @@ public class JudgeService {
         judge.setStatusOfJudge(StatusOfJudge.WORKING);
         Judge judgeSaved = judgeRepository.save(judge);
 
-        Account account = accountMapper.toAccount(request);
-        account.setUsername(judgeSaved.getJudgeId());
-        account.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
-        System.out.println(DEFAULT_PASSWORD);
-        account.setJudge(judgeSaved);
-        account.setRole(Role.JUDGE);
-        accountRepository.save(account);
+        Account account = Account.builder()
+                .username(judgeSaved.getJudgeId())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(DEFAULT_PASSWORD))
+                .judge(judgeSaved)
+                .role(Role.JUDGE)
+                .build();
+
+        authenticationService.createAccount(account);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")

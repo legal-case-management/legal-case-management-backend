@@ -1,11 +1,12 @@
 package server.service;
 
-import server.dto.request.authentication.IntrospectRequest;
-import server.dto.request.authentication.LoginRequest;
-import server.dto.request.authentication.LogoutRequest;
-import server.dto.request.authentication.RefreshTokenRequest;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import server.dto.request.authentication.*;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.entity.Account;
+import server.entity.Judge;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.AccountMapper;
@@ -48,8 +49,14 @@ public class AuthenticationService {
     @Value("${jwt.refreshable-duration}")
     long REFRESHABLE_DURATION;
 
+    @Value("${auth.default-password}")
+    @NonFinal
+    String DEFAULT_PASSWORD;
+
     RedisTemplate<String, Boolean> redisTemplate;
     AccountRepository accountRepository;
+
+    AccountMapper accountMapper;
 
     PasswordEncoder passwordEncoder;
 
@@ -130,6 +137,26 @@ public class AuthenticationService {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Transactional
+    public void createAccount(AccountRequest request){
+        createAccount(accountMapper.toAccount(request));
+    }
+
+    public void createAccount(Account account){
+        if(accountRepository.existsByUsername(account.getUsername())){
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
+        }
+
+        if(accountRepository.existsByEmail(account.getEmail())){
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+
+        account.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
+        accountRepository.save(account);
+    }
+
     public String generateToken(Account account) throws JOSEException {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS256);
 
@@ -185,6 +212,8 @@ public class AuthenticationService {
         if (Boolean.TRUE.equals(isBlacklisted))
             throw new AppException(ErrorCode.TOKEN_LOGGED_OUT);
     }
+
+
 
     private void addTokenToRedis(SignedJWT signedJWT) throws ParseException {
         String jwtId = signedJWT.getJWTClaimsSet().getJWTID();
