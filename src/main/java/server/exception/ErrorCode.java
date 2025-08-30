@@ -61,7 +61,10 @@ public enum ErrorCode {
 
     /* Batch */
     BATCH_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Đợt nhập án không tồn tại"),
-    BATCH_EXISTED(404, HttpStatus.BAD_REQUEST, "Đợt nhập án đã tồn tại")
+    BATCH_EXISTED(404, HttpStatus.BAD_REQUEST, "Đợt nhập án đã tồn tại"),
+
+    NO_JUDGES_AVAILABLE(400, HttpStatus.BAD_REQUEST, "Không có thẩm phán thỏa điều kiện phân công"),
+    NO_LEGAL_CASES_FOUND(404, HttpStatus.NOT_FOUND, "Không tìm thấy vụ án"),
     ;
 
     int status;

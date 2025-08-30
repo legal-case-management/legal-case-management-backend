@@ -14,5 +14,4 @@ import java.util.List;
 @ToString
 public class LegalCaseRandomAssignmentRequest {
     List<String> legalCaseIds;
-    List<String> judgeIds;
 }
