@@ -54,6 +54,11 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public List<JudgeResponse> listAssignment() {
+        return judgeRepository.getAssignAssignment(LocalDate.now().minusYears(1));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> getTop50() {
         return judgeRepository
                 .getTop50(PageRequest.of(0, 50), LocalDate.now().minusYears(1));

@@ -4,6 +4,8 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import reactor.util.annotation.NonNull;
+import reactor.util.annotation.NonNullApi;
 import server.entity.LegalCase;
 import server.entity.enums.StatusOfLegalCase;
 
@@ -74,4 +76,11 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
               AND lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
     """)
     List<LegalCase> getAssignAssignment(Iterable<String> legalCaseIds);
+
+    @Query("""
+            SELECT lc FROM LegalCase lc
+            LEFT JOIN FETCH lc.judge j
+            WHERE lc.legalCaseId IN :legalCaseIds
+    """)
+    List<LegalCase> getAssignAssigned(Iterable<String> legalCaseIds);
 }

@@ -52,6 +52,16 @@ public class JudgeController {
                 .build();
     }
 
+    @GetMapping("/list-assignment")
+    public ApiResponse<List<JudgeResponse>> listAssignment(){
+        return ApiResponse.<List<JudgeResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Successful")
+                .data(judgeService.listAssignment())
+                .build();
+    }
+
     @GetMapping("/myInfo")
     public ApiResponse<JudgeResponse> getMyInfo(){
         return ApiResponse.<JudgeResponse>builder()

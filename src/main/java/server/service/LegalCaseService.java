@@ -28,10 +28,8 @@ import server.repository.LegalRelationshipRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -182,10 +180,9 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Async
     @Synchronized
     @Transactional
-    public void randomAssignment(LegalCaseRandomAssignmentRequest request) {
+    public List<LegalCaseResponse> randomAssignment(LegalCaseRandomAssignmentRequest request) {
         if (request == null)
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
 
@@ -198,6 +195,8 @@ public class LegalCaseService {
         List<LegalCase> legalCases = legalCaseRepository.getAssignAssignment(request.getLegalCaseIds());
         if (legalCases.isEmpty())
             throw new AppException(ErrorCode.NO_LEGAL_CASES_FOUND);
+
+        List<LegalCase> legalCasesAssigned = new ArrayList<>();
 
         Random random = new Random();
         int judgeIndex = 0;
@@ -224,6 +223,7 @@ public class LegalCaseService {
                 legalCaseRepository.save(legalCase);
                 judge.setNumberOfLegalCases(currentCases + 1); // Cập nhật số vụ án
                 legalCases.remove(caseIndex);
+                legalCasesAssigned.add(legalCase);
             }
 
             // Chuyển sang thẩm phán tiếp theo
@@ -234,6 +234,12 @@ public class LegalCaseService {
                 break;
             }
         }
+
+        return legalCaseRepository
+                .getAssignAssigned(legalCasesAssigned.stream().map(LegalCase::getLegalCaseId).collect(Collectors.toList()))
+                .stream()
+                .map(legalCaseMapper::toLegalCaseResponse)
+                .toList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
