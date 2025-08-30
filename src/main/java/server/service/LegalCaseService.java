@@ -182,7 +182,7 @@ public class LegalCaseService {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Synchronized
     @Transactional
-    public List<LegalCaseResponse> randomAssignment(LegalCaseRandomAssignmentRequest request) {
+    public List<LegalCaseResponse> randomAssignment(RandomAssignmentRequest request) {
         if (request == null)
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
 
@@ -246,7 +246,7 @@ public class LegalCaseService {
     @Async
     @Synchronized
     @Transactional
-    public void assignAssignment(LegalCaseAssignAssignmentRequest request) {
+    public void assignAssignment(AssignAssignmentRequest request) {
         if (request == null) {
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
         }

@@ -3,8 +3,6 @@ package server.dto.request.legalCase;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -12,6 +10,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-public class LegalCaseRandomAssignmentRequest {
-    List<String> legalCaseIds;
+public class AssignAssignmentRequest {
+    String legalCaseId;
+    String judgeId;
 }

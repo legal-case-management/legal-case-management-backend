@@ -91,7 +91,7 @@ public class LegalCaseController {
     }
 
     @PostMapping("/random-assignment")
-    public ApiResponse<List<LegalCaseResponse>> randomAssignment(@RequestBody @Valid LegalCaseRandomAssignmentRequest request) {
+    public ApiResponse<List<LegalCaseResponse>> randomAssignment(@RequestBody @Valid RandomAssignmentRequest request) {
         return ApiResponse.<List<LegalCaseResponse>>builder()
                 .success(true)
                 .status(200)
@@ -101,7 +101,7 @@ public class LegalCaseController {
     }
 
     @PostMapping("/assign-assignment")
-    public ApiResponse<Void> assignAssignment(@RequestBody @Valid LegalCaseAssignAssignmentRequest request) {
+    public ApiResponse<Void> assignAssignment(@RequestBody @Valid AssignAssignmentRequest request) {
         legalCaseService.assignAssignment(request);
         return ApiResponse.<Void>builder()
                 .success(true)
