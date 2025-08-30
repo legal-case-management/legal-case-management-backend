@@ -224,14 +224,13 @@ public class LegalCaseService {
                 legalCaseRepository.save(legalCase);
                 judge.setNumberOfLegalCases(currentCases + 1); // Cập nhật số vụ án
                 legalCases.remove(caseIndex);
-                initialSize = legalCases.size(); // Cập nhật kích thước
             }
 
             // Chuyển sang thẩm phán tiếp theo
             judgeIndex = (judgeIndex + 1) % judges.size();
 
             // Nếu duyệt hết một vòng mà không phân công được
-            if (judgeIndex == 0 && legalCases.size() == initialSize && !legalCases.isEmpty()) {
+            if (!legalCases.isEmpty() && legalCases.size() == initialSize) {
                 break;
             }
         }
