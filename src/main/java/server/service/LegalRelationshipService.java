@@ -2,10 +2,13 @@ package server.service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.legalRelationship.LegalRelationshipRequest;
 import server.dto.request.legalRelationship.LegalRelationshipSearchRequest;
 import server.dto.response.legalRelationship.LegalRelationshipResponse;
@@ -37,6 +40,9 @@ public class LegalRelationshipService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Async
+    @Synchronized
+    @Transactional
     public void create(LegalRelationshipRequest request) {
         LegalRelationship legalRelationship = LegalRelationship.builder().build();
         legalRelationshipMapper.toLegalRelationship(request, legalRelationship);
@@ -56,6 +62,9 @@ public class LegalRelationshipService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Synchronized
+    @Transactional
     public void update(String id, LegalRelationshipRequest request) {
         LegalRelationship legalRelationshipSaved = legalRelationshipRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
@@ -69,6 +78,9 @@ public class LegalRelationshipService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Synchronized
+    @Transactional
     public void delete(String id) {
         LegalRelationship legalRelationship = legalRelationshipRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));

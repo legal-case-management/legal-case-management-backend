@@ -2,6 +2,7 @@ package server.service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
@@ -18,9 +19,7 @@ import server.entity.enums.Assignment;
 import server.entity.enums.StatusOfLegalCase;
 import server.exception.AppException;
 import server.exception.ErrorCode;
-import server.mapper.BatchMapper;
 import server.mapper.LegalCaseMapper;
-import server.repository.BatchRepository;
 import server.repository.JudgeRepository;
 import server.repository.LegalCaseRepository;
 import server.repository.LegalRelationshipRepository;
@@ -84,6 +83,7 @@ public class LegalCaseService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Async
+    @Synchronized
     @Transactional
     public void create(LegalCaseRequest request) {
         createSingle(request, null);
@@ -91,6 +91,7 @@ public class LegalCaseService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Async
+    @Synchronized
     @Transactional
     public void importFromExcel(LegalCasesRequest request) {
         Batch batch = batchService.create(request.getBatch());
@@ -146,6 +147,7 @@ public class LegalCaseService {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
+    @Synchronized
     @Transactional
     public void update(String id, LegalCaseRequest request) {
         LegalCase legalCaseSaved = legalCaseRepository.findById(id)
@@ -165,6 +167,7 @@ public class LegalCaseService {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
+    @Synchronized
     @Transactional
     public void delete(String id) {
         legalCaseRepository.findById(id)
@@ -173,39 +176,32 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public void randomAssignment(LegalCaseAssignmentsRequest request) {
-        if (
-                request == null
-                        || request.getLegalCaseAssignments() == null
-                        || request.getLegalCaseAssignments().isEmpty()
-        ) {
+    @Async
+    @Synchronized
+    @Transactional
+    public void randomAssignment(LegalCaseRandomAssignmentRequest request) {
+        if (request == null)
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
-        }
-        request.getLegalCaseAssignments().forEach(
-                legalCaseAssignmentRequest -> assignment(legalCaseAssignmentRequest, Assignment.RANDOM)
-        );
+
+
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public void assignAssignment(LegalCaseAssignmentRequest request) {
+    @Async
+    @Synchronized
+    @Transactional
+    public void assignAssignment(LegalCaseAssignAssignmentRequest request) {
         if (request == null) {
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
         }
-        assignment(request, Assignment.ASSIGN);
-    }
-
-    private void assignment(LegalCaseAssignmentRequest request, Assignment assignment) {
         LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
-        if (assignment.equals(Assignment.RANDOM) && legalCase.getStatusOfLegalCase() != StatusOfLegalCase.WAITING_FOR_ASSIGNMENT) {
-            throw new AppException(ErrorCode.LEGAL_CASE_NOT_WAITING_FOR_ASSIGNMENT);
-        }
 
         Judge judge = judgeRepository.findById(request.getJudgeId())
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
-        legalCase.setAssignment(assignment);
+        legalCase.setAssignment(Assignment.ASSIGN);
         legalCase.setAssignmentDate(LocalDateTime.now());
         legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
         legalCase.setJudge(judge);

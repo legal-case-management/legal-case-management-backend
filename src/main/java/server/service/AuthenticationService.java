@@ -1,5 +1,6 @@
 package server.service;
 
+import lombok.Synchronized;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -139,6 +140,7 @@ public class AuthenticationService {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
+    @Synchronized
     @Transactional
     public void createAccount(AccountRequest request){
         createAccount(accountMapper.toAccount(request));

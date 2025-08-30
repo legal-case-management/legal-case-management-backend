@@ -1,5 +1,6 @@
 package server.service;
 
+import lombok.Synchronized;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -45,15 +47,16 @@ public class JudgeService {
     @NonFinal
     String DEFAULT_PASSWORD;
 
+
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> getAll() {
-        return judgeRepository.getAll();
+        return judgeRepository.getAll(LocalDate.now().minusYears(1));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> getTop50() {
         return judgeRepository
-                .getTop50(PageRequest.of(0, 50));
+                .getTop50(PageRequest.of(0, 50), LocalDate.now().minusYears(1));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -61,7 +64,8 @@ public class JudgeService {
         return judgeRepository.search(
                 request.getJudgeId(),
                 request.getFullName(),
-                request.getStatusOfJudge()
+                request.getStatusOfJudge(),
+                LocalDate.now().minusYears(1)
         );
     }
 
@@ -79,6 +83,7 @@ public class JudgeService {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
+    @Synchronized
     @Transactional
     public void create(JudgeRequest request) {
         Judge judge = judgeMapper.toJudge(request);
@@ -109,6 +114,7 @@ public class JudgeService {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
+    @Synchronized
     @Transactional
     public void update(String id, JudgeRequest request) {
         Judge judgeSaved = judgeRepository
@@ -121,6 +127,7 @@ public class JudgeService {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
+    @Synchronized
     @Transactional
     public void delete(String id) {
         Judge judge = judgeRepository

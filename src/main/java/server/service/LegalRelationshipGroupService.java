@@ -2,10 +2,13 @@ package server.service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.legalRelationshipGroup.LegalRelationshipGroupRequest;
 import server.dto.request.legalRelationshipGroup.LegalRelationshipGroupSearchRequest;
 import server.dto.response.legalRelationshipGroup.LegalRelationshipGroupResponse;
@@ -25,6 +28,9 @@ public class LegalRelationshipGroupService {
     LegalRelationshipGroupMapper legalRelationshipGroupMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Async
+    @Synchronized
+    @Transactional
     public void create(LegalRelationshipGroupRequest request) {
         LegalRelationshipGroup legalRelationshipGroup = LegalRelationshipGroup.builder().build();
         legalRelationshipGroupMapper.toLegalRelationshipGroup(request, legalRelationshipGroup);
@@ -34,6 +40,9 @@ public class LegalRelationshipGroupService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Synchronized
+    @Transactional
     public void update(String id, LegalRelationshipGroupRequest request) {
         LegalRelationshipGroup existing = legalRelationshipGroupRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
@@ -42,6 +51,9 @@ public class LegalRelationshipGroupService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Synchronized
+    @Transactional
     public void delete(String id) {
         LegalRelationshipGroup existing = legalRelationshipGroupRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));

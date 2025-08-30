@@ -2,6 +2,7 @@ package server.service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
@@ -29,8 +30,9 @@ public class BatchService {
     BatchMapper batchMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Synchronized
     @Transactional
-    synchronized public Batch create(BatchRequest request) {
+    public Batch create(BatchRequest request) {
         Batch batch = Batch.builder().build();
         batchMapper.updateBatchFromRequest(request, batch);
         batch.setStorageDate(LocalDateTime.now());
@@ -48,6 +50,7 @@ public class BatchService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Async
+    @Synchronized
     @Transactional
     public void update(String id, BatchRequest request) {
         Batch existing = batchRepository.findById(id)
@@ -58,6 +61,7 @@ public class BatchService {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
+    @Synchronized
     @Transactional
     public void delete(String id) {
         Batch existing = batchRepository.findById(id)

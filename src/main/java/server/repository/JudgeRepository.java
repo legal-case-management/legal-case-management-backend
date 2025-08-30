@@ -1,5 +1,6 @@
 package server.repository;
 
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import reactor.util.annotation.NonNull;
@@ -9,6 +10,7 @@ import server.entity.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
 import server.entity.enums.StatusOfJudge;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,41 +19,54 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
 
     @Query("""
             SELECT new server.dto.response.judge.JudgeResponse(
-                 j.judgeId,
-                 j.lastName,
-                 j.firstName,
-                 j.fullName,
-                 j.maxNumberOfLegalCase,
-                 SIZE(j.legalCases),
-                 j.statusOfJudge,
-                 j.account.email
-             ) FROM Judge j 
-             WHERE (:judgeId IS NULL OR j.judgeId LIKE %:judgeId%) 
-             AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
-             AND (:statusOfJudge IS NULL OR j.statusOfJudge = :statusOfJudge) 
-             ORDER BY j.judgeId DESC
+                j.judgeId,
+                j.lastName,
+                j.firstName,
+                j.fullName,
+                j.maxNumberOfLegalCase,
+                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
+                SUM(CASE
+                        WHEN lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED'
+                             AND lc.acceptanceDate >= :oneYearAgo
+                        THEN 1 ELSE 0
+                    END),
+                j.statusOfJudge,
+                j.account.email
+            )
+            FROM Judge j
+            LEFT JOIN j.legalCases lc
+            WHERE (:judgeId IS NULL OR j.judgeId LIKE %:judgeId%)
+            AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
+            AND (:statusOfJudge IS NULL OR j.statusOfJudge = :statusOfJudge)
+            ORDER BY j.judgeId
             """)
-    List<JudgeResponse> search(String judgeId, String fullName, StatusOfJudge statusOfJudge);
+    List<JudgeResponse> search(String judgeId, String fullName, StatusOfJudge statusOfJudge, @Param("oneYearAgo") LocalDate oneYearAgo);
 
     @Query("""
-    SELECT new server.dto.response.judge.JudgeResponse(
-        j.judgeId,
-        j.lastName,
-        j.firstName,
-        j.fullName,
-        j.maxNumberOfLegalCase,
-        (
-            SELECT COUNT(lc)
-            FROM j.legalCases lc
-            WHERE lc.statusOfLegalCase = 'IN_PROCESS'
-        ),
-        j.statusOfJudge,
-        j.account.email
-    )
-    FROM Judge j
-    ORDER BY j.judgeId
-    """)
-    List<JudgeResponse> getTop50(Pageable pageable);
+            SELECT new server.dto.response.judge.JudgeResponse(
+                j.judgeId,
+                j.lastName,
+                j.firstName,
+                j.fullName,
+                j.maxNumberOfLegalCase,
+                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
+                SUM(CASE
+                        WHEN lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED'
+                             AND lc.acceptanceDate >= :oneYearAgo
+                        THEN 1 ELSE 0
+                    END),
+                j.statusOfJudge,
+                j.account.email
+            )
+            FROM Judge j
+            LEFT JOIN j.legalCases lc
+            ORDER BY j.judgeId
+            """)
+    List<JudgeResponse> getTop50(Pageable pageable, @Param("oneYearAgo") LocalDate oneYearAgo);
 
     @Query("""
               SELECT MAX(CAST(SUBSTRING(j.judgeId, 3, 2) AS int))
@@ -62,22 +77,26 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
 
     @Query("""
             SELECT new server.dto.response.judge.JudgeResponse(
-                    j.judgeId,
-                    j.lastName,
-                    j.firstName,
-                    j.fullName,
-                    j.maxNumberOfLegalCase,
-                    (
-                        SELECT COUNT(lc)
-                        FROM j.legalCases lc
-                        WHERE lc.statusOfLegalCase = 'IN_PROCESS'
-                    ),
-                    j.statusOfJudge,
-                    j.account.email
-                )
-                FROM Judge j
-                ORDER BY j.judgeId
+                j.judgeId,
+                j.lastName,
+                j.firstName,
+                j.fullName,
+                j.maxNumberOfLegalCase,
+                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
+                SUM(CASE
+                        WHEN lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED'
+                             AND lc.acceptanceDate >= :oneYearAgo
+                        THEN 1 ELSE 0
+                    END),
+                j.statusOfJudge,
+                j.account.email
+            )
+            FROM Judge j
+            LEFT JOIN j.legalCases lc
+            ORDER BY j.judgeId
             """)
-    @NonNull
-    List<JudgeResponse> getAll();
+    List<JudgeResponse> getAll(@Param("oneYearAgo") LocalDate oneYearAgo);
+
 }

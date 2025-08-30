@@ -2,6 +2,7 @@ package server.service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
@@ -36,6 +37,7 @@ public class TypeOfLegalCaseService {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
+    @Synchronized
     @Transactional
     public void create(TypeOfLegalCaseRequest request) {
         TypeOfLegalCase typeOfLegalCase = TypeOfLegalCase.builder().build();
@@ -55,18 +57,18 @@ public class TypeOfLegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Synchronized
     @Transactional
     public void update(String id, TypeOfLegalCaseRequest request) {
         TypeOfLegalCase existing = typeOfLegalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
-        // Kiểm tra trùng mã codeName nếu có thay đổi
         if (!existing.getCodeName().equals(request.getCodeName()) &&
                 typeOfLegalCaseRepository.existsByCodeName(request.getCodeName())) {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_CODE_EXISTED);
         }
 
-        // Kiểm tra trùng tên nếu có thay đổi
         if (!existing.getTypeOfLegalCaseName().equals(request.getTypeOfLegalCaseName()) &&
                 typeOfLegalCaseRepository.existsByTypeOfLegalCaseName(request.getTypeOfLegalCaseName())) {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NAME_EXISTED);
@@ -77,6 +79,8 @@ public class TypeOfLegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Synchronized
     @Transactional
     public void delete(String id) {
         TypeOfLegalCase existing = typeOfLegalCaseRepository.findById(id)
