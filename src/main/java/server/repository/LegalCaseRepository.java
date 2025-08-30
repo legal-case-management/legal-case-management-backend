@@ -67,4 +67,11 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             @Param("year") String year,
             @Param("typeCode") String typeCode
     );
+
+    @Query("""
+            SELECT lc FROM LegalCase lc
+            WHERE lc.legalCaseId IN :legalCaseIds
+              AND lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
+    """)
+    List<LegalCase> getAssignAssignment(Iterable<String> legalCaseIds);
 }

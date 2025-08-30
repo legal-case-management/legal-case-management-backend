@@ -144,7 +144,7 @@ public class LegalCaseService {
                             .build()
             );
 
-        if(batch != null)
+        if (batch != null)
             legalCase.setBatch(batch);
 
         legalCaseRepository.save(legalCase);
@@ -194,46 +194,44 @@ public class LegalCaseService {
         if (judges.isEmpty())
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
 
-        // Lấy danh sách vụ án
-        List<LegalCase> legalCases = legalCaseRepository.findAllById(request.getLegalCaseIds());
+        // Lấy danh sách vụ án chờ phân công
+        List<LegalCase> legalCases = legalCaseRepository.getAssignAssignment(request.getLegalCaseIds());
         if (legalCases.isEmpty())
             throw new AppException(ErrorCode.NO_LEGAL_CASES_FOUND);
 
-        // Theo dõi số vụ án của mỗi thẩm phán
-        Map<String, Long> judgeCaseCount = new HashMap<>();
-        for (JudgeResponse judge : judges) {
-            judgeCaseCount.put(judge.getJudgeId(), judge.getNumberOfLegalCases());
-        }
-
         Random random = new Random();
         int judgeIndex = 0;
-        int initialSize = legalCases.size(); // Lưu kích thước ban đầu
+        int initialSize = legalCases.size();
 
         while (!legalCases.isEmpty()) {
             JudgeResponse judge = judges.get(judgeIndex);
-            String judgeId = judge.getJudgeId();
-            long currentCases = judgeCaseCount.getOrDefault(judgeId, 0L);
+            long currentCases = judge.getNumberOfLegalCases();
 
             // Phân công nếu thẩm phán còn nhận được vụ án
             if (currentCases < judge.getMaxNumberOfLegalCase()) {
                 int caseIndex = random.nextInt(legalCases.size());
-                LegalCase selectedCase = legalCases.get(caseIndex);
-                selectedCase.setJudge(Judge.builder().judgeId(judgeId).build()); // Set judgeId (String)
-                selectedCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
-                selectedCase.setAssignment(Assignment.ASSIGN);
-                selectedCase.setAssignmentDate(LocalDateTime.now());
-                legalCaseRepository.save(selectedCase);
+                LegalCase legalCase = legalCases.get(caseIndex);
 
-                judgeCaseCount.put(judgeId, currentCases + 1);
+                legalCase.setAssignment(Assignment.ASSIGN);
+                legalCase.setAssignmentDate(LocalDateTime.now());
+                legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
+                legalCase.setJudge(
+                        Judge.builder()
+                                .judgeId(judge.getJudgeId())
+                                .build()
+                );
+
+                legalCaseRepository.save(legalCase);
+                judge.setNumberOfLegalCases(currentCases + 1); // Cập nhật số vụ án
                 legalCases.remove(caseIndex);
-                initialSize = legalCases.size(); // Cập nhật kích thước sau khi phân công
+                initialSize = legalCases.size(); // Cập nhật kích thước
             }
 
             // Chuyển sang thẩm phán tiếp theo
             judgeIndex = (judgeIndex + 1) % judges.size();
 
             // Nếu duyệt hết một vòng mà không phân công được
-            if (judgeIndex == 0 && legalCases.size() == initialSize) {
+            if (judgeIndex == 0 && legalCases.size() == initialSize && !legalCases.isEmpty()) {
                 break;
             }
         }

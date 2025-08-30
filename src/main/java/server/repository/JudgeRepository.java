@@ -122,9 +122,11 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 )
                 FROM Judge j
                 LEFT JOIN j.legalCases lc
-                WHERE j.statusOfJudge = 'WORKING' AND (j.maxNumberOfLegalCase IS NULL OR
-                      SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END) < j.maxNumberOfLegalCase)
+                JOIN j.account a
+                WHERE j.statusOfJudge = 'WORKING'
                 GROUP BY j.judgeId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfJudge, j.account.email
+                HAVING j.maxNumberOfLegalCase IS NULL 
+                       OR SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END) < j.maxNumberOfLegalCase
                 ORDER BY
                     SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END) ASC,
                     SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END) DESC,
