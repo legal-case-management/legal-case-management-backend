@@ -28,7 +28,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
                 SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
                 SUM(CASE
-                        WHEN lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED'
+                        WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
                              AND lc.acceptanceDate >= :oneYearAgo
                         THEN 1 ELSE 0
                     END),
@@ -38,14 +38,15 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             FROM Judge j
             LEFT JOIN j.legalCases lc
             WHERE (:judgeId IS NULL OR j.judgeId LIKE %:judgeId%)
-            AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
-            AND (:statusOfJudge IS NULL OR j.statusOfJudge = :statusOfJudge)
+              AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
+              AND (:statusOfJudge IS NULL OR j.statusOfJudge = :statusOfJudge)
+            GROUP BY j.judgeId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfJudge, j.account.email
             ORDER BY j.judgeId
             """)
     List<JudgeResponse> search(String judgeId, String fullName, StatusOfJudge statusOfJudge, @Param("oneYearAgo") LocalDate oneYearAgo);
 
     @Query("""
-            SELECT new server.dto.response.judge.JudgeResponse(
+           SELECT new server.dto.response.judge.JudgeResponse(
                 j.judgeId,
                 j.lastName,
                 j.firstName,
@@ -55,7 +56,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
                 SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
                 SUM(CASE
-                        WHEN lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED'
+                        WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
                              AND lc.acceptanceDate >= :oneYearAgo
                         THEN 1 ELSE 0
                     END),
@@ -64,8 +65,9 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
+            GROUP BY j.judgeId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfJudge, j.account.email
             ORDER BY j.judgeId
-            """)
+           """)
     List<JudgeResponse> getTop50(Pageable pageable, @Param("oneYearAgo") LocalDate oneYearAgo);
 
     @Query("""
@@ -86,7 +88,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
                 SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
                 SUM(CASE
-                        WHEN lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED'
+                        WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
                              AND lc.acceptanceDate >= :oneYearAgo
                         THEN 1 ELSE 0
                     END),
@@ -95,6 +97,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
+            GROUP BY j.judgeId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfJudge, j.account.email
             ORDER BY j.judgeId
             """)
     List<JudgeResponse> getAll(@Param("oneYearAgo") LocalDate oneYearAgo);
