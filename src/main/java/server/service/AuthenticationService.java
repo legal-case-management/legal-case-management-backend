@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.authentication.*;
 import server.dto.response.authentication.AuthenticationResponse;
+import server.dto.response.authentication.RecoverPasswordResponse;
 import server.entity.Account;
 import server.entity.Judge;
 import server.exception.AppException;
@@ -145,6 +146,56 @@ public class AuthenticationService {
     public void createAccount(AccountRequest request){
         createAccount(accountMapper.toAccount(request));
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Synchronized
+    @Transactional
+    public void updateAccount(String id, AccountRequest request){
+        if(accountRepository.existsByUsername(request.getUsername()))
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
+
+        if(accountRepository.existsByEmail(request.getEmail()))
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        account.setUsername(request.getUsername());
+        account.setEmail(request.getEmail());
+        account.setRole(request.getRole());
+
+        accountRepository.save(account);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Synchronized
+    @Transactional
+    public void deleteAccount(String id){
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        accountRepository.delete(account);
+    }
+
+//    @PreAuthorize("hasAnyRole('ADMIN')")
+//    @Async
+//    @Synchronized
+//    @Transactional
+//    public RecoverPasswordResponse recoverPassword(RecoverPasswordRequest request) {
+//        Account account = accountRepository.findAccountByEmail(request.getEmail())
+//                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+//
+//        String newPassword = UUID.randomUUID().toString().substring(0, 8);
+//        account.setPassword(passwordEncoder.encode(newPassword));
+//        accountRepository.save(account);
+//
+//        return RecoverPasswordResponse
+//                .builder()
+//                .newPassword(newPassword)
+//                .build();
+//    }
 
     public void createAccount(Account account){
         if(accountRepository.existsByUsername(account.getUsername())){

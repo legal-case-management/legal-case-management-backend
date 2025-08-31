@@ -205,13 +205,12 @@ public class LegalCaseService {
             long currentCases = judge.getNumberOfLegalCases();
             long maxCases = judge.getMaxNumberOfLegalCase();
 
-            // Kiểm tra điều kiện: -1 là không giới hạn hoặc còn slot
             if (maxCases == -1 || currentCases < maxCases) {
-                // Chọn ngẫu nhiên 1 vụ án để phân công
                 int caseIndex = random.nextInt(legalCases.size());
                 LegalCase legalCase = legalCases.get(caseIndex);
 
-                legalCase.setAssignment(Assignment.ASSIGN);
+                legalCase.setAssignment(Assignment.RANDOM);
+                legalCase.setExpiredDate(legalCase.getAcceptanceDate().plusMonths(4));
                 legalCase.setAssignmentDate(LocalDateTime.now());
                 legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
                 legalCase.setJudge(
@@ -220,7 +219,6 @@ public class LegalCaseService {
                                 .build()
                 );
 
-                // Lưu và cập nhật số lượng vụ án
                 legalCaseRepository.save(legalCase);
                 if (maxCases != -1) {
                     judge.setNumberOfLegalCases(currentCases + 1);
@@ -230,15 +228,12 @@ public class LegalCaseService {
                 legalCasesAssigned.add(legalCase);
             }
 
-            // Chuyển sang thẩm phán tiếp theo
             judgeIndex = (judgeIndex + 1) % judges.size();
 
-            // Kiểm tra xem còn thẩm phán nào có thể nhận thêm vụ án không
             boolean anyJudgeAvailable = judges.stream()
                     .anyMatch(j -> j.getMaxNumberOfLegalCase() == -1 ||
                             j.getNumberOfLegalCases() < j.getMaxNumberOfLegalCase());
 
-            // Nếu tất cả đều đã đầy tải, dừng vòng lặp
             if (!anyJudgeAvailable) {
                 break;
             }
