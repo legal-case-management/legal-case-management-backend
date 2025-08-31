@@ -109,4 +109,15 @@ public class LegalCaseController {
                 .message("Phân công án chỉ định thành công")
                 .build();
     }
+
+    @PostMapping("/list-waiting-for-assignment")
+    public ApiResponse<List<LegalCaseResponse>> getAssignAssignmentByLegalRelationship(@RequestBody @Valid LegalCaseSearchRequest request){
+        return ApiResponse.<List<LegalCaseResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(legalCaseService.getAssignAssignmentByLegalRelationshipGroup(request))
+                .build();
+    }
+
 }

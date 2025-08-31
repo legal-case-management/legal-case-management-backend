@@ -71,16 +71,26 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     );
 
     @Query("""
-            SELECT lc FROM LegalCase lc
-            WHERE lc.legalCaseId IN :legalCaseIds
-              AND lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
-    """)
+                    SELECT lc FROM LegalCase lc
+                    WHERE lc.legalCaseId IN :legalCaseIds
+                      AND lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
+            """)
     List<LegalCase> getAssignAssignment(Iterable<String> legalCaseIds);
 
     @Query("""
-            SELECT lc FROM LegalCase lc
-            LEFT JOIN FETCH lc.judge j
-            WHERE lc.legalCaseId IN :legalCaseIds
-    """)
+                    SELECT lc FROM LegalCase lc
+                    LEFT JOIN FETCH lc.judge j
+                    WHERE lc.legalCaseId IN :legalCaseIds
+            """)
     List<LegalCase> getAssignAssigned(Iterable<String> legalCaseIds);
+
+
+    @Query("""
+            SELECT lc FROM LegalCase lc
+            LEFT JOIN lc.legalRelationship lr
+            WHERE lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
+            AND lc.judge IS NULL
+            AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId)
+            """)
+    List<LegalCase> getAssignAssignmentByLegalRelationshipGroup(String legalRelationshipGroupId);
 }

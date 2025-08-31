@@ -12,10 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.legalCase.*;
 import server.dto.response.judge.JudgeResponse;
 import server.dto.response.legalCase.LegalCaseResponse;
-import server.entity.Batch;
-import server.entity.Judge;
-import server.entity.LegalCase;
-import server.entity.LegalRelationship;
+import server.entity.*;
 import server.entity.enums.Assignment;
 import server.entity.enums.StatusOfLegalCase;
 import server.exception.AppException;
@@ -180,18 +177,15 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Synchronized
     @Transactional
     public List<LegalCaseResponse> randomAssignment(RandomAssignmentRequest request) {
         if (request == null)
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
 
-        // Lấy danh sách thẩm phán đã sắp xếp
         List<JudgeResponse> judges = judgeRepository.getAssignAssignment(LocalDate.now().minusYears(1));
         if (judges.isEmpty())
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
 
-        // Lấy danh sách vụ án chờ phân công
         List<LegalCase> legalCases = legalCaseRepository.getAssignAssignment(request.getLegalCaseIds());
         if (legalCases.isEmpty())
             throw new AppException(ErrorCode.NO_LEGAL_CASES_FOUND);
@@ -200,13 +194,11 @@ public class LegalCaseService {
 
         Random random = new Random();
         int judgeIndex = 0;
-        int initialSize = legalCases.size();
 
         while (!legalCases.isEmpty()) {
             JudgeResponse judge = judges.get(judgeIndex);
             long currentCases = judge.getNumberOfLegalCases();
 
-            // Phân công nếu thẩm phán còn nhận được vụ án
             if (currentCases < judge.getMaxNumberOfLegalCase()) {
                 int caseIndex = random.nextInt(legalCases.size());
                 LegalCase legalCase = legalCases.get(caseIndex);
@@ -226,17 +218,28 @@ public class LegalCaseService {
                 legalCasesAssigned.add(legalCase);
             }
 
-            // Chuyển sang thẩm phán tiếp theo
             judgeIndex = (judgeIndex + 1) % judges.size();
 
-            // Nếu duyệt hết một vòng mà không phân công được
-            if (!legalCases.isEmpty() && legalCases.size() == initialSize) {
+            boolean anyJudgeAvailable = judges.stream()
+                    .anyMatch(j -> j.getNumberOfLegalCases() < j.getMaxNumberOfLegalCase());
+
+            if (!anyJudgeAvailable) {
                 break;
             }
         }
 
+        return getAssignAssigned(
+                legalCasesAssigned
+                        .stream()
+                        .map(LegalCase::getLegalCaseId)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @Transactional
+    public List<LegalCaseResponse> getAssignAssigned(List<String> legalCaseIds) {
         return legalCaseRepository
-                .getAssignAssigned(legalCasesAssigned.stream().map(LegalCase::getLegalCaseId).collect(Collectors.toList()))
+                .findAllById(legalCaseIds)
                 .stream()
                 .map(legalCaseMapper::toLegalCaseResponse)
                 .toList();
@@ -263,5 +266,14 @@ public class LegalCaseService {
         legalCase.setJudge(judge);
 
         legalCaseRepository.save(legalCase);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public List<LegalCaseResponse> getAssignAssignmentByLegalRelationshipGroup(LegalCaseSearchRequest request) {
+        String legalRelationshipGroupId = request.getLegalRelationshipGroupId();
+        return legalCaseRepository
+                .getAssignAssignmentByLegalRelationshipGroup(legalRelationshipGroupId)
+                .stream().map(legalCaseMapper::toLegalCaseResponse)
+                .toList();
     }
 }
