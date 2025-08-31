@@ -177,29 +177,37 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Synchronized
     @Transactional
     public List<LegalCaseResponse> randomAssignment(RandomAssignmentRequest request) {
-        if (request == null)
+        if (request == null) {
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
+        }
 
+        // Lấy danh sách thẩm phán
         List<JudgeResponse> judges = judgeRepository.getAssignAssignment(LocalDate.now().minusYears(1));
-        if (judges.isEmpty())
+        if (judges.isEmpty()) {
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
+        }
 
+        // Lấy danh sách vụ án
         List<LegalCase> legalCases = legalCaseRepository.getAssignAssignment(request.getLegalCaseIds());
-        if (legalCases.isEmpty())
+        if (legalCases.isEmpty()) {
             throw new AppException(ErrorCode.NO_LEGAL_CASES_FOUND);
+        }
 
         List<LegalCase> legalCasesAssigned = new ArrayList<>();
-
         Random random = new Random();
         int judgeIndex = 0;
 
         while (!legalCases.isEmpty()) {
             JudgeResponse judge = judges.get(judgeIndex);
             long currentCases = judge.getNumberOfLegalCases();
+            long maxCases = judge.getMaxNumberOfLegalCase();
 
-            if (currentCases < judge.getMaxNumberOfLegalCase()) {
+            // Kiểm tra điều kiện: -1 là không giới hạn hoặc còn slot
+            if (maxCases == -1 || currentCases < maxCases) {
+                // Chọn ngẫu nhiên 1 vụ án để phân công
                 int caseIndex = random.nextInt(legalCases.size());
                 LegalCase legalCase = legalCases.get(caseIndex);
 
@@ -212,17 +220,25 @@ public class LegalCaseService {
                                 .build()
                 );
 
+                // Lưu và cập nhật số lượng vụ án
                 legalCaseRepository.save(legalCase);
-                judge.setNumberOfLegalCases(currentCases + 1); // Cập nhật số vụ án
+                if (maxCases != -1) {
+                    judge.setNumberOfLegalCases(currentCases + 1);
+                }
+
                 legalCases.remove(caseIndex);
                 legalCasesAssigned.add(legalCase);
             }
 
+            // Chuyển sang thẩm phán tiếp theo
             judgeIndex = (judgeIndex + 1) % judges.size();
 
+            // Kiểm tra xem còn thẩm phán nào có thể nhận thêm vụ án không
             boolean anyJudgeAvailable = judges.stream()
-                    .anyMatch(j -> j.getNumberOfLegalCases() < j.getMaxNumberOfLegalCase());
+                    .anyMatch(j -> j.getMaxNumberOfLegalCase() == -1 ||
+                            j.getNumberOfLegalCases() < j.getMaxNumberOfLegalCase());
 
+            // Nếu tất cả đều đã đầy tải, dừng vòng lặp
             if (!anyJudgeAvailable) {
                 break;
             }
@@ -235,6 +251,7 @@ public class LegalCaseService {
                         .collect(Collectors.toList())
         );
     }
+
 
     @Transactional
     public List<LegalCaseResponse> getAssignAssigned(List<String> legalCaseIds) {
