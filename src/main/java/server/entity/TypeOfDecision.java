@@ -28,6 +28,10 @@ public class TypeOfDecision {
     @Column(name = "the_end_decision", nullable = false)
     boolean theEndDecision;
 
+    @ManyToOne
+    @JoinColumn(name = "type_of_legal_case_id", nullable = false)
+    TypeOfLegalCase typeOfLegalCase;
+
     @OneToMany(mappedBy = "typeOfDecision")
     List<HandleTypeOfDecision> handleTypeOfDecisions;
 

@@ -28,4 +28,7 @@ public class TypeOfLegalCase {
 
     @OneToMany(mappedBy = "typeOfLegalCase")
     List<LegalRelationship> legalRelationships;
+
+    @OneToMany(mappedBy = "typeOfLegalCase")
+    List<TypeOfDecision> typeOfDecisions;
 }

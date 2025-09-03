@@ -101,7 +101,7 @@ public class TypeOfLegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<TypeOfLegalCaseResponse> getTop50TypeOfLegalCases() {
+    public List<TypeOfLegalCaseResponse> getTop50() {
         return typeOfLegalCaseRepository
                 .getTop50(PageRequest.of(0, 50))
                 .stream().map(typeOfLegalCaseMapper::toTypeOfLegalCaseResponse)

@@ -78,7 +78,7 @@ public class TypeOfLegalCaseController {
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(typeOfLegalCaseService.getTop50TypeOfLegalCases())
+                .data(typeOfLegalCaseService.getTop50())
                 .build();
     }
 }
