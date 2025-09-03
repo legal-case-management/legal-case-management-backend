@@ -14,7 +14,5 @@ public class LegalRelationshipSearchRequest {
     String legalRelationshipId;
     String legalRelationshipName;
     String typeOfLegalCaseId;
-    String typeOfLegalCaseName;
     String legalRelationshipGroupId;
-    String legalRelationshipGroupName;
 }

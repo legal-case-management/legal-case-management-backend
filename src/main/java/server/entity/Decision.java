@@ -3,7 +3,6 @@ package server.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.TypeOfDecision;
 
 import java.time.LocalDate;
 
@@ -24,8 +23,8 @@ public class Decision {
     String acceptanceNumber;
     @Column(name = "acceptance_date", nullable = false)
     LocalDate acceptanceDate;
-    @Column(name = "type_of_decision", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "type_of_decision_id", nullable = false)
     TypeOfDecision typeOfDecision;
 
     @ManyToOne(fetch = FetchType.EAGER)

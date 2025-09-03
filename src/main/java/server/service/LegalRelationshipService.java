@@ -93,9 +93,7 @@ public class LegalRelationshipService {
                         request.getLegalRelationshipId(),
                         request.getLegalRelationshipName(),
                         request.getTypeOfLegalCaseId(),
-                        request.getTypeOfLegalCaseName(),
-                        request.getLegalRelationshipGroupId(),
-                        request.getLegalRelationshipGroupName()
+                        request.getLegalRelationshipGroupId()
                 )
                 .stream()
                 .map(legalRelationshipMapper::toLegalRelationshipResponse)

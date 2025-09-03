@@ -15,7 +15,7 @@ import java.util.List;
         name = "legal_cases",
         indexes = {
                 @Index(name = "idx_acceptance_number", columnList = "acceptance_number"),
-                @Index(name = "idx_time", columnList = "acceptance_date, acceptance_number")
+                @Index(name = "idx_time", columnList = "acceptance_date")
         }
 )
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -64,15 +64,4 @@ public class LegalCase {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "batch_id")
     Batch batch;
-
-    public boolean isExpired() {
-        return expiredDate != null && expiredDate.isBefore(LocalDate.now());
-    }
-
-    public long getDaysUntilExpired() {
-        if (expiredDate == null) {
-            return -1;
-        }
-        return ChronoUnit.DAYS.between(LocalDate.now(), expiredDate);
-    }
 }

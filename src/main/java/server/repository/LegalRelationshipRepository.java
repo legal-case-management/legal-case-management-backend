@@ -32,18 +32,14 @@ public interface LegalRelationshipRepository extends JpaRepository<LegalRelation
             WHERE (:legalRelationshipId IS NULL OR lr.legalRelationshipId LIKE %:legalRelationshipId%)
             AND (:legalRelationshipName IS NULL OR lr.legalRelationshipName LIKE %:legalRelationshipName%)
             AND (:typeOfLegalCaseId IS NULL OR tolc.typeOfLegalCaseId LIKE %:typeOfLegalCaseId%)
-            AND (:typeOfLegalCaseName IS NULL OR tolc.typeOfLegalCaseName LIKE %:typeOfLegalCaseName%)
             AND (:legalRelationshipGroupId IS NULL OR lrg.legalRelationshipGroupId LIKE %:legalRelationshipGroupId%)
-            AND (:legalRelationshipGroupName IS NULL OR lrg.legalRelationshipGroupName LIKE %:legalRelationshipGroupName%)
             ORDER BY tolc.typeOfLegalCaseId, lr.legalRelationshipId
             """)
     List<LegalRelationship> search(
             String legalRelationshipId,
             String legalRelationshipName,
             String typeOfLegalCaseId,
-            String typeOfLegalCaseName,
-            String legalRelationshipGroupId,
-            String legalRelationshipGroupName
+            String legalRelationshipGroupId
     );
 
     @Query("""
