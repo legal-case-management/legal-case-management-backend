@@ -66,7 +66,13 @@ public enum ErrorCode {
     NO_JUDGES_AVAILABLE(400, HttpStatus.BAD_REQUEST, "Không có thẩm phán thỏa điều kiện phân công"),
     NO_LEGAL_CASES_FOUND(404, HttpStatus.NOT_FOUND, "Không tìm thấy vụ án"),
 
+    /* Type of decision */
     TYPE_OF_DECISION_NAME_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên loại quyết định đã tồn tại"),
+    TYPE_OF_DECISION_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Loại quyết định không tồn tại"),
+
+    /* Handle type of decision */
+    HANDLE_TYPE_OF_DECISION_EXISTED(404, HttpStatus.BAD_REQUEST, "Loại quyết định đã tồn tại"),
+    HANDLE_TYPE_OF_DECISION_NOT_EXISTED(404, HttpStatus.BAD_REQUEST, "Loại quyết định không tồn tại"),
     ;
 
     int status;

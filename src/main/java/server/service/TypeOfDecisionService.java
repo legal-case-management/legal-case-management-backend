@@ -10,8 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.typeOfDecision.TypeOfDecisionRequest;
-import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
-import server.dto.response.legalRelationship.LegalRelationshipResponse;
+import server.dto.request.typeOfDecision.TypeOfDecisionSearchRequest;
 import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
 import server.entity.TypeOfDecision;
 import server.entity.TypeOfLegalCase;
@@ -66,5 +65,45 @@ public class TypeOfDecisionService {
         typeOfLegalCase.setTypeOfLegalCaseId(String.format("%s%02d", typeOfLegalCase.getCodeName(), maxId + 1));
 
         typeOfLegalCaseRepository.save(typeOfLegalCase);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Synchronized
+    @Transactional
+    public void update(String id, TypeOfDecisionRequest request) {
+        TypeOfDecision existing = typeOfDecisionRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
+
+        if (typeOfDecisionRepository.existsByTypeOfDecisionName(existing.getTypeOfDecisionName())) {
+            throw new AppException(ErrorCode.TYPE_OF_DECISION_NAME_EXISTED);
+        }
+
+        typeOfDecisionMapper.toTypeOfDecision(request, existing);
+        typeOfDecisionRepository.save(existing);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Async
+    @Synchronized
+    @Transactional
+    public void delete(String id) {
+        TypeOfDecision existing = typeOfDecisionRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
+
+        typeOfDecisionRepository.delete(existing);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public List<TypeOfDecisionResponse> search(TypeOfDecisionSearchRequest request) {
+        return typeOfDecisionRepository.search(
+                        request.getTypeOfDecisionId(),
+                        request.getTypeOfDecisionName(),
+                        request.getTypeOfLegalCaseId(),
+                        request.getCourtIssued(),
+                        request.isTheEndDecision()
+                ).stream()
+                .map(typeOfDecisionMapper::toTypeOfDecisionResponse)
+                .toList();
     }
 }

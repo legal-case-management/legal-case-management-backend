@@ -6,6 +6,8 @@ import server.entity.enums.StatusOfLegalCase;
 
 import java.io.Serializable;
 
+@Getter
+@Setter
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
