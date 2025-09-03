@@ -18,14 +18,17 @@ import java.time.LocalDate;
 public class Decision {
     @Id
     @Column(name = "decision_id", nullable = false)
-    String extendDecisionId;
+    String decisionId;
     @Column(name = "acceptance_number")
     String acceptanceNumber;
     @Column(name = "acceptance_date", nullable = false)
     LocalDate acceptanceDate;
+    @Column(name = "added_date", nullable = false)
+    LocalDate addedDate;
     @ManyToOne
     @JoinColumn(name = "type_of_decision_id", nullable = false)
     TypeOfDecision typeOfDecision;
+    String note;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "legal_case_id")
