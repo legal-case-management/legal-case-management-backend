@@ -164,7 +164,7 @@ public class AuthenticationService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
-        if (request.getNewPassword().equals(request.getConfirmNewPassword()))
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword()))
             throw new AppException(ErrorCode.NEW_PASSWORD_NOT_MATCH);
 
         // Kiểm tra mật khẩu cũ
