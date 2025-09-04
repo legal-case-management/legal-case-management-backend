@@ -41,7 +41,9 @@ public class SecurityConfig {
             "auth/introspect",
             "auth/login",
             "auth/logout",
-            "auth/judge"
+            "auth/refresh-token",
+            "auth/forgot-password",
+            "auth/verify-otp",
     };
 
     @Value("${jwt.signerKey}")

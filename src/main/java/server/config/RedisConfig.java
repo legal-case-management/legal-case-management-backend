@@ -24,13 +24,13 @@ public class RedisConfig {
         return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisHost, redisPort));
     }
 
-    @Bean
-    @Primary
-    public RedisTemplate<String, Boolean> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Boolean> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
-        return template;
-    }
+//    @Bean
+//    @Primary
+//    public RedisTemplate<String, Boolean> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+//        RedisTemplate<String, Boolean> template = new RedisTemplate<>();
+//        template.setConnectionFactory(redisConnectionFactory);
+//        return template;
+//    }
 }
 
 

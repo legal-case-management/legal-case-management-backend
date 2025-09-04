@@ -323,10 +323,12 @@ public class AuthenticationService {
         if (savedOtp == null)
             throw new AppException(ErrorCode.OTP_EXPIRED);
 
-        if (savedOtp.equals(request.getOtp()))
+        if (!savedOtp.equals(request.getOtp()))
             throw new AppException(ErrorCode.OTP_INVALID);
 
         try {
+            // Xóa OTP sau khi xác thực thành công
+            otpRedis.delete("otp:" + account.getEmail());
             String token = generateToken(account, true);
             return VerifyOtpResponse.builder()
                     .verified(true)
@@ -342,7 +344,7 @@ public class AuthenticationService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
-        if (request.getNewPassword().equals(request.getConfirmNewPassword()))
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword()))
             throw new AppException(ErrorCode.NEW_PASSWORD_NOT_MATCH);
 
         account.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -372,11 +374,4 @@ public class AuthenticationService {
         int otp = 100000 + random.nextInt(900000);
         return String.valueOf(otp);
     }
-
-
-    public void removeOtp(String email) {
-        otpRedis.delete("otp:" + email);
-    }
-
-
 }
