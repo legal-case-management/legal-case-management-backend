@@ -20,6 +20,7 @@ import server.repository.DecisionRepository;
 import server.repository.LegalCaseRepository;
 import server.repository.TypeOfDecisionRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -49,6 +50,7 @@ public class DecisionService {
 
         decision.setTypeOfDecision(typeOfDecision);
         decision.setLegalCase(legalCase);
+        decision.setAddedDate(LocalDate.now());
 
         decisionRepository.save(decision);
     }
