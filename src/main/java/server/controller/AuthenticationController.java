@@ -1,9 +1,6 @@
 package server.controller;
 
-import server.dto.request.authentication.IntrospectRequest;
-import server.dto.request.authentication.LoginRequest;
-import server.dto.request.authentication.LogoutRequest;
-import server.dto.request.authentication.RefreshTokenRequest;
+import server.dto.request.authentication.*;
 import server.dto.response.ApiResponse;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.service.AuthenticationService;
@@ -14,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
@@ -32,7 +29,7 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("introspect")
+    @PostMapping("/introspect")
     public ApiResponse<Void> introspect(@RequestBody IntrospectRequest request) {
         authenticationService.introspect(request);
         return ApiResponse.<Void>builder()
@@ -42,7 +39,7 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("logout")
+    @PostMapping("/logout")
     public ApiResponse<Void> logout(@RequestBody LogoutRequest request) {
         authenticationService.logout(request);
 
@@ -53,13 +50,23 @@ public class AuthenticationController {
                 .build();
     }
 
-    @PostMapping("refresh-token")
+    @PostMapping("/refresh-token")
     public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
         return ApiResponse.<AuthenticationResponse>builder()
                 .data(authenticationService.refreshToken(request))
                 .success(true)
                 .status(200)
                 .message("Mở rộng phiên đăng nhập thành công")
+                .build();
+    }
+
+    @PostMapping("/change-password")
+    public ApiResponse<Void> refreshToken(@RequestBody ChangePasswordRequest request) {
+        authenticationService.changePassword(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Đổi mât khẩu thành công")
                 .build();
     }
 }

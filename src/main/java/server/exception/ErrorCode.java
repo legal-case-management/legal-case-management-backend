@@ -24,6 +24,7 @@ public enum ErrorCode {
     ACCESS_DENIED(403, HttpStatus.FORBIDDEN, "Bị từ chối truy cập"),
     TOKEN_GENERATION_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi sinh token"),
     AUTHENTICATION_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Xác thực thất bại"),
+    NEW_PASSWORD_NOT_MATCH(400, HttpStatus.BAD_REQUEST, "Mật khẩu mới và mật khẩu mới nhập lại không trùng khớp"),
 
     /* Verify token */
     TOKEN_EXPIRED(400, HttpStatus.BAD_REQUEST, "Token quá hạn"),
