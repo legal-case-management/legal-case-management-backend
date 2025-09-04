@@ -71,8 +71,11 @@ public enum ErrorCode {
     TYPE_OF_DECISION_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Loại quyết định không tồn tại"),
 
     /* Handle type of decision */
-    HANDLE_TYPE_OF_DECISION_EXISTED(404, HttpStatus.BAD_REQUEST, "Loại quyết định đã tồn tại"),
-    HANDLE_TYPE_OF_DECISION_NOT_EXISTED(404, HttpStatus.BAD_REQUEST, "Loại quyết định không tồn tại"),
+    HANDLE_TYPE_OF_DECISION_EXISTED(404, HttpStatus.BAD_REQUEST, "Loại quyết định, thông báo đã tồn tại"),
+    HANDLE_TYPE_OF_DECISION_NOT_EXISTED(404, HttpStatus.BAD_REQUEST, "Loại quyết định, thông báo không tồn tại"),
+
+    /* Decision */
+    DECISION_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Quyết định, thông báo không tồn tại"),
     ;
 
     int status;
