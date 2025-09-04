@@ -7,5 +7,5 @@ import server.entity.LegalCase;
 import java.util.List;
 
 public interface DecisionRepository extends JpaRepository<Decision, String> {
-    List<Decision> findDecisionByLegalCase(LegalCase legalCase);
+    List<Decision> findAllByLegalCase(LegalCase legalCase);
 }

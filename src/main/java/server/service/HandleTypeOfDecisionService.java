@@ -20,6 +20,7 @@ import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.HandleTypeOfDecisionMapper;
 import server.repository.HandleTypeOfDecisionRepository;
+import server.repository.TypeOfDecisionRepository;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class HandleTypeOfDecisionService {
     HandleTypeOfDecisionRepository handleTypeOfDecisionRepository;
+    TypeOfDecisionRepository typeOfDecisionRepository;
 
     HandleTypeOfDecisionMapper handleTypeOfDecisionMapper;
 
@@ -76,7 +78,10 @@ public class HandleTypeOfDecisionService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<HandleTypeOfDecisionResponse> getAllByTypeOfDecision(TypeOfDecision typeOfDecision) {
+    public List<HandleTypeOfDecisionResponse> getByTypeOfDecision(String typeOfDecisionId) {
+        TypeOfDecision typeOfDecision = typeOfDecisionRepository.findById(typeOfDecisionId)
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
+
         return handleTypeOfDecisionRepository
                 .findAllByTypeOfDecision(typeOfDecision)
                 .stream().map(handleTypeOfDecisionMapper::toHandleTypeOfDecisionResponse)

@@ -77,11 +77,11 @@ public class DecisionService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<DecisionResponse> getDecisionByLegalCase(DecisionRequest request) {
-        LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
+    public List<DecisionResponse> getByLegalCase(String legalCaseId) {
+        LegalCase legalCase = legalCaseRepository.findById(legalCaseId)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
         return decisionRepository
-                .findDecisionByLegalCase(legalCase)
+                .findAllByLegalCase(legalCase)
                 .stream().map(decisionMapper::toDecisionResponse)
                 .toList();
     }

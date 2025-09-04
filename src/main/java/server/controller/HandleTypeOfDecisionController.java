@@ -76,9 +76,7 @@ public class HandleTypeOfDecisionController {
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(handleTypeOfDecisionService.getAllByTypeOfDecision(
-                        TypeOfDecision.builder().typeOfDecisionId(typeOfDecisionId).build()
-                ))
+                .data(handleTypeOfDecisionService.getByTypeOfDecision(typeOfDecisionId))
                 .build();
     }
 }
