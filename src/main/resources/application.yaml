@@ -16,10 +16,25 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MariaDBDialect
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: qllstoaankhuvuc9dongthap@gmail.com
+    password: viok fkdj kfno stpi
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        debug: false
+
 # JWT
 jwt:
   signerKey: "hiaM4ISia63Ym/H7KUJ0YfgH5Ki3nU7Ss3+dsY9nRVUuFFBb/j2YD4Uz05K9DT1M"
   valid-duration: 7200            # seconds
+  reset-password-duration: 600    # seconds
   refreshable-duration: 9000      # seconds
 
 # Redis

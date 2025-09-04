@@ -1,27 +1,27 @@
 package server.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.Synchronized;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.authentication.*;
 import server.dto.response.authentication.AuthenticationResponse;
-import server.dto.response.authentication.RecoverPasswordResponse;
+import server.dto.response.authentication.VerifyOtpResponse;
 import server.entity.Account;
-import server.entity.Judge;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.AccountMapper;
-import server.mapper.JudgeMapper;
 import server.repository.AccountRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import server.repository.JudgeRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -50,6 +50,10 @@ public class AuthenticationService {
     long VALID_DURATION;
 
     @NonFinal
+    @Value("${jwt.reset-password-duration}")
+    long RESET_PASSWORD_DURATION;
+
+    @NonFinal
     @Value("${jwt.refreshable-duration}")
     long REFRESHABLE_DURATION;
 
@@ -57,12 +61,15 @@ public class AuthenticationService {
     @NonFinal
     String DEFAULT_PASSWORD;
 
-    RedisTemplate<String, String> redisTemplate;
+    RedisTemplate<String, String> tokenRedis;
+    RedisTemplate<String, String> otpRedis;
     AccountRepository accountRepository;
 
     AccountMapper accountMapper;
 
     PasswordEncoder passwordEncoder;
+
+    JavaMailSender mailSender;
 
     public AuthenticationResponse login(LoginRequest request) {
         /* 1. Find account in database*/
@@ -82,14 +89,14 @@ public class AuthenticationService {
 
         try {
             // 3. Generate new token
-            String token = generateToken(account);
+            String token = generateToken(account, false);
 
             // 4. Xóa token cũ trong Redis (nếu có)
             String redisKey = "account:" + account.getAccountId() + ":token";
-            redisTemplate.delete(redisKey);
+            tokenRedis.delete(redisKey);
 
             // 5. Lưu token mới vào Redis với TTL
-            redisTemplate.opsForValue().set(redisKey, token, VALID_DURATION, TimeUnit.SECONDS);
+            tokenRedis.opsForValue().set(redisKey, token, VALID_DURATION, TimeUnit.SECONDS);
 
             // 6. Return token
             return AuthenticationResponse.builder()
@@ -118,7 +125,7 @@ public class AuthenticationService {
             /* Remote token to redis*/
             String accountId = signedJWT.getJWTClaimsSet().getSubject();
             String redisKey = "account:" + accountId + ":token";
-            redisTemplate.delete(redisKey);
+            tokenRedis.delete(redisKey);
         } catch (JOSEException | ParseException e) {
             throw new AppException(ErrorCode.LOGOUT_FAILED);
         }
@@ -134,11 +141,11 @@ public class AuthenticationService {
                     .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
             // Generate new token
-            String token = generateToken(account);
+            String token = generateToken(account, false);
 
             // Update Redis
             String redisKey = "account:" + account.getAccountId() + ":token";
-            redisTemplate.opsForValue().set(redisKey, token, VALID_DURATION, TimeUnit.SECONDS);
+            tokenRedis.opsForValue().set(redisKey, token, VALID_DURATION, TimeUnit.SECONDS);
 
             return AuthenticationResponse.builder()
                     .authenticated(true)
@@ -157,7 +164,7 @@ public class AuthenticationService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
-        if(request.getNewPassword().equals(request.getConfirmNewPassword()))
+        if (request.getNewPassword().equals(request.getConfirmNewPassword()))
             throw new AppException(ErrorCode.NEW_PASSWORD_NOT_MATCH);
 
         // Kiểm tra mật khẩu cũ
@@ -175,7 +182,7 @@ public class AuthenticationService {
     @Async
     @Synchronized
     @Transactional
-    public void createAccount(AccountRequest request){
+    public void createAccount(AccountRequest request) {
         createAccount(accountMapper.toAccount(request));
     }
 
@@ -183,11 +190,11 @@ public class AuthenticationService {
     @Async
     @Synchronized
     @Transactional
-    public void updateAccount(String id, AccountRequest request){
-        if(accountRepository.existsByUsername(request.getUsername()))
+    public void updateAccount(String id, AccountRequest request) {
+        if (accountRepository.existsByUsername(request.getUsername()))
             throw new AppException(ErrorCode.USERNAME_EXISTED);
 
-        if(accountRepository.existsByEmail(request.getEmail()))
+        if (accountRepository.existsByEmail(request.getEmail()))
             throw new AppException(ErrorCode.EMAIL_EXISTED);
 
         Account account = accountRepository.findById(id)
@@ -204,7 +211,7 @@ public class AuthenticationService {
     @Async
     @Synchronized
     @Transactional
-    public void deleteAccount(String id){
+    public void deleteAccount(String id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
@@ -229,12 +236,12 @@ public class AuthenticationService {
 //                .build();
 //    }
 
-    public void createAccount(Account account){
-        if(accountRepository.existsByUsername(account.getUsername())){
+    public void createAccount(Account account) {
+        if (accountRepository.existsByUsername(account.getUsername())) {
             throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
 
-        if(accountRepository.existsByEmail(account.getEmail())){
+        if (accountRepository.existsByEmail(account.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
@@ -242,7 +249,7 @@ public class AuthenticationService {
         accountRepository.save(account);
     }
 
-    private String generateToken(Account account) throws JOSEException {
+    private String generateToken(Account account, boolean isForgotPassword) throws JOSEException {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
@@ -250,7 +257,10 @@ public class AuthenticationService {
                 .subject(account.getAccountId())
                 .issuer("QuanLyAn_ToaAnKhuVuc9_DongThap")
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
+                .expirationTime(isForgotPassword ?
+                        new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                        : new Date(Instant.now().plus(RESET_PASSWORD_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                        )
                 .claim("username", account.getUsername())
                 .claim("displayName", account.getJudge() != null
                         ? account.getJudge().getLastName() + " " + account.getJudge().getFirstName()
@@ -285,7 +295,7 @@ public class AuthenticationService {
         // Check token có trùng trong Redis không
         String accountId = signedJWT.getJWTClaimsSet().getSubject();
         String redisKey = "account:" + accountId + ":token";
-        String currentToken = redisTemplate.opsForValue().get(redisKey);
+        String currentToken = tokenRedis.opsForValue().get(redisKey);
 
         if (currentToken == null || !currentToken.equals(token)) {
             throw new AppException(ErrorCode.TOKEN_LOGGED_OUT);
@@ -293,4 +303,80 @@ public class AuthenticationService {
 
         return signedJWT;
     }
+
+    public void forgotPassword(ForgotPasswordRequest request) {
+        Account account = accountRepository.findAccountByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        try {
+            sendOtpEmail(account.getEmail());
+        } catch (MessagingException e) {
+            throw new AppException(ErrorCode.SEND_EMAIL_FAILED);
+        }
+    }
+
+    public VerifyOtpResponse verifyOtp(VerifyOtpRequest request) {
+        Account account = accountRepository.findAccountByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        String savedOtp = otpRedis.opsForValue().get("otp:" + account.getEmail());
+        if (savedOtp == null)
+            throw new AppException(ErrorCode.OTP_EXPIRED);
+
+        if (savedOtp.equals(request.getOtp()))
+            throw new AppException(ErrorCode.OTP_INVALID);
+
+        try {
+            String token = generateToken(account, true);
+            return VerifyOtpResponse.builder()
+                    .verified(true)
+                    .token(token)
+                    .build();
+        } catch (JOSEException e) {
+            throw new AppException(ErrorCode.VEFIRY_OTP_FAILED);
+        }
+    }
+
+    public void resetPassword(ResetPasswordRequest request) {
+        String accountId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        if (request.getNewPassword().equals(request.getConfirmNewPassword()))
+            throw new AppException(ErrorCode.NEW_PASSWORD_NOT_MATCH);
+
+        account.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        accountRepository.save(account);
+    }
+
+    public void sendOtpEmail(String toEmail) throws MessagingException {
+        String otp = generateOtp();
+
+        otpRedis.opsForValue().set("otp:" + toEmail, otp, 2, TimeUnit.MINUTES);
+
+        String subject = "Mã OTP đặt lại mật khẩu";
+        String content = "<p>Xin chào,</p>"
+                + "<p>Mã OTP của bạn là: <b>" + otp + "</b></p>"
+                + "<p>OTP sẽ hết hạn sau <b>2 phút</b>. Vui lòng không chia sẻ mã này với bất kỳ ai.</p>";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setTo(toEmail);
+        helper.setSubject(subject);
+        helper.setText(content, true);
+        mailSender.send(message);
+    }
+
+    public String generateOtp() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000);
+        return String.valueOf(otp);
+    }
+
+
+    public void removeOtp(String email) {
+        otpRedis.delete("otp:" + email);
+    }
+
+
 }

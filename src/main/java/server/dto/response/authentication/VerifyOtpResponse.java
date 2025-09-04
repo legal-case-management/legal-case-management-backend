@@ -1,4 +1,4 @@
-package server.dto.request.authentication;
+package server.dto.response.authentication;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RecoverPasswordRequest {
-    String email;
+public class VerifyOtpResponse {
+    boolean verified;
+    String token;
 }

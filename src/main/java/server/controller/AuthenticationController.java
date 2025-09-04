@@ -3,6 +3,7 @@ package server.controller;
 import server.dto.request.authentication.*;
 import server.dto.response.ApiResponse;
 import server.dto.response.authentication.AuthenticationResponse;
+import server.dto.response.authentication.VerifyOtpResponse;
 import server.service.AuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,36 @@ public class AuthenticationController {
                 .success(true)
                 .status(200)
                 .message("Đổi mât khẩu thành công")
+                .build();
+    }
+
+    @PostMapping("/forgot-password")
+    public ApiResponse<Void> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        authenticationService.forgotPassword(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .build();
+    }
+
+    @PostMapping("/verify-otp")
+    public ApiResponse<VerifyOtpResponse> verifyOtp(@RequestBody VerifyOtpRequest request) {
+        return ApiResponse.<VerifyOtpResponse>builder()
+                .data(authenticationService.verifyOtp(request))
+                .success(true)
+                .status(200)
+                .message("Xác thực OTP thành công")
+                .build();
+    }
+
+    @PostMapping("/reset-password")
+    public ApiResponse<VerifyOtpResponse> resetPassword(@RequestBody ResetPasswordRequest request) {
+        authenticationService.resetPassword(request);
+        return ApiResponse.<VerifyOtpResponse>builder()
+                .success(true)
+                .status(200)
+                .message("Đặt lại mật khẩu thành công")
                 .build();
     }
 }
