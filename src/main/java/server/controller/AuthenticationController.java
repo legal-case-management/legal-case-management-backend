@@ -26,7 +26,7 @@ public class AuthenticationController {
                 .data(authenticationResponse)
                 .success(true)
                 .status(200)
-                .message("Login successful")
+                .message("Đăng nhập thành công")
                 .build();
     }
 
