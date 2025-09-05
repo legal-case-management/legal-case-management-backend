@@ -16,8 +16,8 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 public class DecisionRequest {
-    String acceptanceNumber;
-    LocalDate acceptanceDate;
+    String number;
+    LocalDate releaseDate;
     String note;
     String typeOfDecisionId;
     String legalCaseId;

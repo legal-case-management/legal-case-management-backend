@@ -19,10 +19,10 @@ public class Decision {
     @Id
     @Column(name = "decision_id", nullable = false)
     String decisionId;
-    @Column(name = "acceptance_number")
-    String acceptanceNumber;
-    @Column(name = "acceptance_date", nullable = false)
-    LocalDate acceptanceDate;
+    @Column(name = "number")
+    String number;
+    @Column(name = "release_date", nullable = false)
+    LocalDate releaseDate;
     @Column(name = "added_date", nullable = false)
     LocalDate addedDate;
     @ManyToOne

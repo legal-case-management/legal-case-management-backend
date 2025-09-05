@@ -16,8 +16,8 @@ import java.time.LocalDate;
 @ToString
 public class DecisionResponse {
     String decisionId;
-    String acceptanceNumber;
-    LocalDate acceptanceDate;
+    String number;
+    LocalDate releaseDate;
     LocalDate addedDate;
     String note;
     TypeOfDecisionResponse typeOfDecision;
