@@ -70,8 +70,8 @@ public class HandleTypeOfDecisionController {
                 .build();
     }
 
-    @GetMapping("/{typeOfDecisionId}")
-    public ApiResponse<List<HandleTypeOfDecisionResponse>> getByTypeOfDecisionId(@PathVariable String typeOfDecisionId){
+    @GetMapping("/by-type-of-decision/{typeOfDecisionId}")
+    public ApiResponse<List<HandleTypeOfDecisionResponse>> getByTypeOfDecision(@PathVariable String typeOfDecisionId){
         return ApiResponse.<List<HandleTypeOfDecisionResponse>>builder()
                 .success(true)
                 .status(200)

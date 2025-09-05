@@ -111,7 +111,7 @@ public class LegalCaseController {
     }
 
     @PostMapping("/list-waiting-for-assignment")
-    public ApiResponse<List<LegalCaseResponse>> getAssignAssignmentByLegalRelationship(@RequestBody @Valid LegalCaseSearchRequest request){
+    public ApiResponse<List<LegalCaseResponse>> getAssignAssignmentByLegalRelationshipGroup(@RequestBody @Valid LegalCaseSearchRequest request){
         return ApiResponse.<List<LegalCaseResponse>>builder()
                 .success(true)
                 .status(200)

@@ -7,15 +7,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import server.dto.request.decision.DecisionRequest;
-import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
-import server.dto.request.typeOfLegalCase.TypeOfLegalCaseSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.decision.DecisionResponse;
-import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
-import server.entity.Decision;
-import server.entity.LegalCase;
 import server.service.DecisionService;
-import server.service.TypeOfLegalCaseService;
 
 import java.util.List;
 
@@ -57,7 +51,7 @@ public class DecisionController {
                 .build();
     }
 
-    @GetMapping("/{legalCaseId}")
+    @GetMapping("/by-legal-case/{legalCaseId}")
     public ApiResponse<List<DecisionResponse>> getByLegalCase(@PathVariable String legalCaseId) {
         return ApiResponse.<List<DecisionResponse>>builder()
                 .success(true)

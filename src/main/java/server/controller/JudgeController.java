@@ -62,7 +62,7 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("/myInfo")
+    @GetMapping("/my-info")
     public ApiResponse<JudgeResponse> getMyInfo(){
         return ApiResponse.<JudgeResponse>builder()
                 .success(true)

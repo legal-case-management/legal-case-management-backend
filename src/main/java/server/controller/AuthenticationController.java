@@ -92,9 +92,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/reset-password")
-    public ApiResponse<VerifyOtpResponse> resetPassword(@RequestBody ResetPasswordRequest request) {
+    public ApiResponse<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
         authenticationService.resetPassword(request);
-        return ApiResponse.<VerifyOtpResponse>builder()
+        return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
                 .message("Đặt lại mật khẩu thành công")
@@ -102,9 +102,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/account")
-    public ApiResponse<VerifyOtpResponse> createAccount(@RequestBody AccountRequest request) {
+    public ApiResponse<Void> createAccount(@RequestBody AccountRequest request) {
         authenticationService.createAccount(request);
-        return ApiResponse.<VerifyOtpResponse>builder()
+        return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
                 .message("Tạo tài khoản thành công")
@@ -112,9 +112,9 @@ public class AuthenticationController {
     }
 
     @PutMapping("/account/{id}")
-    public ApiResponse<VerifyOtpResponse> updateAccount(@PathVariable String id,@RequestBody AccountRequest request) {
+    public ApiResponse<Void> updateAccount(@PathVariable String id,@RequestBody AccountRequest request) {
         authenticationService.updateAccount(id, request);
-        return ApiResponse.<VerifyOtpResponse>builder()
+        return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
                 .message("Chỉnh sửa tài khoản thành công")
@@ -122,9 +122,9 @@ public class AuthenticationController {
     }
 
     @DeleteMapping("/account/{id}")
-    public ApiResponse<VerifyOtpResponse> deleteAccount(@PathVariable String id) {
+    public ApiResponse<Void> deleteAccount(@PathVariable String id) {
         authenticationService.deleteAccount(id);
-        return ApiResponse.<VerifyOtpResponse>builder()
+        return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
                 .message("Xóa tài khoản thành công")
