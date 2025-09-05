@@ -1,11 +1,14 @@
 package server.mapper;
 
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import server.dto.request.authentication.AccountRequest;
 import server.dto.request.judge.JudgeRequest;
+import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
 import server.entity.Account;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
+import server.entity.TypeOfLegalCase;
 
 @Mapper(
         componentModel = "spring",
@@ -13,6 +16,6 @@ import org.mapstruct.ReportingPolicy;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface AccountMapper {
-    Account toAccount(JudgeRequest request);
     Account toAccount(AccountRequest request);
+    void toAccount(AccountRequest request, @MappingTarget Account account);
 }

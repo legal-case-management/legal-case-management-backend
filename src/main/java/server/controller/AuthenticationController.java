@@ -100,4 +100,34 @@ public class AuthenticationController {
                 .message("Đặt lại mật khẩu thành công")
                 .build();
     }
+
+    @PostMapping("/account")
+    public ApiResponse<VerifyOtpResponse> createAccount(@RequestBody AccountRequest request) {
+        authenticationService.createAccount(request);
+        return ApiResponse.<VerifyOtpResponse>builder()
+                .success(true)
+                .status(200)
+                .message("Tạo tài khoản thành công")
+                .build();
+    }
+
+    @PutMapping("/account/{id}")
+    public ApiResponse<VerifyOtpResponse> updateAccount(@PathVariable String id,@RequestBody AccountRequest request) {
+        authenticationService.updateAccount(id, request);
+        return ApiResponse.<VerifyOtpResponse>builder()
+                .success(true)
+                .status(200)
+                .message("Chỉnh sửa tài khoản thành công")
+                .build();
+    }
+
+    @DeleteMapping("/account/{id}")
+    public ApiResponse<VerifyOtpResponse> deleteAccount(@PathVariable String id) {
+        authenticationService.deleteAccount(id);
+        return ApiResponse.<VerifyOtpResponse>builder()
+                .success(true)
+                .status(200)
+                .message("Xóa tài khoản thành công")
+                .build();
+    }
 }

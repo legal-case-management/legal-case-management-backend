@@ -13,6 +13,7 @@ import server.dto.request.authentication.*;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.dto.response.authentication.VerifyOtpResponse;
 import server.entity.Account;
+import server.entity.Judge;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.AccountMapper;
@@ -200,10 +201,7 @@ public class AuthenticationService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
-        account.setUsername(request.getUsername());
-        account.setEmail(request.getEmail());
-        account.setRole(request.getRole());
-
+        accountMapper.toAccount(request, account);
         accountRepository.save(account);
     }
 
@@ -217,24 +215,6 @@ public class AuthenticationService {
 
         accountRepository.delete(account);
     }
-
-//    @PreAuthorize("hasAnyRole('ADMIN')")
-//    @Async
-//    @Synchronized
-//    @Transactional
-//    public RecoverPasswordResponse recoverPassword(RecoverPasswordRequest request) {
-//        Account account = accountRepository.findAccountByEmail(request.getEmail())
-//                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
-//
-//        String newPassword = UUID.randomUUID().toString().substring(0, 8);
-//        account.setPassword(passwordEncoder.encode(newPassword));
-//        accountRepository.save(account);
-//
-//        return RecoverPasswordResponse
-//                .builder()
-//                .newPassword(newPassword)
-//                .build();
-//    }
 
     public void createAccount(Account account) {
         if (accountRepository.existsByUsername(account.getUsername())) {
