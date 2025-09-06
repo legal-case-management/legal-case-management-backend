@@ -35,7 +35,13 @@ public class LegalRelationshipGroupService {
         LegalRelationshipGroup legalRelationshipGroup = LegalRelationshipGroup.builder().build();
         legalRelationshipGroupMapper.toLegalRelationshipGroup(request, legalRelationshipGroup);
         Integer maxId = legalRelationshipGroupRepository.getMaxId().orElse(0);
-        legalRelationshipGroup.setLegalRelationshipGroupId("N" + String.format("%02d", maxId + 1));
+
+        String legalRelationshipGroupId = String.format("%s%02d", "N", maxId + 1);
+        if (legalRelationshipGroupRepository.existsById(legalRelationshipGroupId)) {
+            throw new AppException(ErrorCode.LEGAL_RELATIONSHIP_EXISTED);
+        }
+
+        legalRelationshipGroup.setLegalRelationshipGroupId(legalRelationshipGroupId);
         legalRelationshipGroupRepository.save(legalRelationshipGroup);
     }
 

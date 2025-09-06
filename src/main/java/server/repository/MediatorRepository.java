@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MediatorRepository extends JpaRepository<Mediator, String> {
+    Optional<Mediator> findByAccount_AccountId(String accountId);
     @Query("""
             SELECT new server.dto.response.mediator.MediatorResponse(
                 m.officerId,

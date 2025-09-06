@@ -13,7 +13,6 @@ import server.dto.request.authentication.*;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.dto.response.authentication.VerifyOtpResponse;
 import server.entity.Account;
-import server.entity.Judge;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.AccountMapper;
@@ -315,7 +314,7 @@ public class AuthenticationService {
                     .token(token)
                     .build();
         } catch (JOSEException e) {
-            throw new AppException(ErrorCode.VEFIRY_OTP_FAILED);
+            throw new AppException(ErrorCode.VERIFY_OTP_FAILED);
         }
     }
 

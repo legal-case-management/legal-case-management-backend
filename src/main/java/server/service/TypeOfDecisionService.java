@@ -62,7 +62,12 @@ public class TypeOfDecisionService {
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
         Integer maxId = typeOfDecisionRepository.getMaxId(typeOfLegalCase.getCodeName()).orElse(0);
-        typeOfLegalCase.setTypeOfLegalCaseId(String.format("%s%02d", typeOfLegalCase.getCodeName(), maxId + 1));
+        String typeOfLegalCaseId = String.format("%s%02d", typeOfLegalCase.getCodeName(), maxId + 1);
+        if (typeOfDecisionRepository.existsById(typeOfLegalCaseId)) {
+            throw new AppException(ErrorCode.TYPE_OF_DECISION_EXISTED);
+        }
+
+        typeOfLegalCase.setTypeOfLegalCaseId(typeOfLegalCaseId);
 
         typeOfLegalCaseRepository.save(typeOfLegalCase);
     }

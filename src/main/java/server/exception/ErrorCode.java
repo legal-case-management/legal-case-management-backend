@@ -28,7 +28,7 @@ public enum ErrorCode {
     SEND_EMAIL_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Gửi email thất bại"),
     OTP_EXPIRED(400, HttpStatus.BAD_REQUEST, "Mã OTP đã hết hạn"),
     OTP_INVALID(400, HttpStatus.BAD_REQUEST, "Mã OTP không hợp lệ"),
-    VEFIRY_OTP_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Xác thực mã OTP thất bại"),
+    VERIFY_OTP_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Xác thực mã OTP thất bại"),
 
     /* Verify token */
     TOKEN_EXPIRED(400, HttpStatus.BAD_REQUEST, "Token quá hạn"),
@@ -52,14 +52,21 @@ public enum ErrorCode {
     JUDGE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Thẩm phán không tồn tại"),
     JUDGE_EXISTED(404, HttpStatus.BAD_REQUEST, "Thẩm phán đã tồn tại"),
 
+    /* Mediator */
+    MEDIATOR_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Hòa giải viên không tồn tại"),
+    MEDIATOR_EXISTED(404, HttpStatus.BAD_REQUEST, "Hòa giải viên đã tồn tại"),
+
     /* Legal relationship */
     LEGAL_RELATIONSHIP_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Quan hệ pháp luật không tồn tại"),
     LEGAL_RELATIONSHIP_NAME_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên quan hệ pháp luật đã tồn tại"),
+    LEGAL_RELATIONSHIP_EXISTED(404, HttpStatus.BAD_REQUEST, "Quan hệ pháp luật đã tồn tại"),
+
 
     /* Type of legal case */
     TYPE_OF_LEGAL_CASE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Loại vụ án không tồn tại"),
     TYPE_OF_LEGAL_CASE_NAME_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên loại vụ án đã tồn tại"),
     TYPE_OF_LEGAL_CASE_CODE_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên viết tắt loại vụ án đã tồn tại"),
+    TYPE_OF_LEGAL_CASE_EXISTED(404, HttpStatus.BAD_REQUEST, "Loại vụ án đã tồn tại"),
 
     /* Legal relationship group*/
     LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Nhóm quan hệ pháp luật không tồn tại"),
@@ -74,6 +81,7 @@ public enum ErrorCode {
     /* Type of decision */
     TYPE_OF_DECISION_NAME_EXISTED(404, HttpStatus.BAD_REQUEST, "Tên loại quyết định đã tồn tại"),
     TYPE_OF_DECISION_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Loại quyết định không tồn tại"),
+    TYPE_OF_DECISION_EXISTED(404, HttpStatus.NOT_FOUND, "Loại quyết định đã tồn tại"),
 
     /* Handle type of decision */
     HANDLE_TYPE_OF_DECISION_EXISTED(404, HttpStatus.BAD_REQUEST, "Loại quyết định, thông báo đã tồn tại"),

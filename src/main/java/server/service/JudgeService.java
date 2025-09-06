@@ -72,7 +72,6 @@ public class JudgeService {
         );
     }
 
-
     public JudgeResponse getMyInfo() {
         SecurityContext context = SecurityContextHolder.getContext();
         String accountId = context.getAuthentication().getName();
@@ -133,10 +132,9 @@ public class JudgeService {
     @Synchronized
     @Transactional
     public void delete(String id) {
-        Judge judge = judgeRepository
+        Judge judgeSaved = judgeRepository
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
-
-        judgeRepository.deleteById(judge.getOfficerId());
+        judgeRepository.delete(judgeSaved);
     }
 }

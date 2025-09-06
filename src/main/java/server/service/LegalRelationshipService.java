@@ -57,7 +57,12 @@ public class LegalRelationshipService {
         Integer maxId = legalRelationshipRepository.getMaxId(typeOfLegalCase.getCodeName())
                 .orElse(0);
 
-        legalRelationship.setLegalRelationshipId(String.format("%s%03d", typeOfLegalCase.getCodeName(), maxId + 1));
+        String legalRelationshipId = String.format("%s%03d", typeOfLegalCase.getCodeName(), maxId + 1);
+        if (legalRelationshipRepository.existsById(legalRelationshipId)) {
+            throw new AppException(ErrorCode.LEGAL_RELATIONSHIP_EXISTED);
+        }
+
+        legalRelationship.setLegalRelationshipId(legalRelationshipId);
         legalRelationshipRepository.save(legalRelationship);
     }
 

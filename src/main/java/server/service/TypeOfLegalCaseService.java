@@ -51,8 +51,12 @@ public class TypeOfLegalCaseService {
         }
 
         Integer maxId = typeOfLegalCaseRepository.getMaxId().orElse(0);
-        typeOfLegalCase.setTypeOfLegalCaseId("L" + String.format("%02d", maxId + 1));
+        String typeOfLegalCaseId =  String.format("%s%02d", "L", maxId + 1);
+        if (typeOfLegalCaseRepository.existsById(typeOfLegalCaseId)) {
+            throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_EXISTED);
+        }
 
+        typeOfLegalCase.setTypeOfLegalCaseId(typeOfLegalCaseId);
         typeOfLegalCaseRepository.save(typeOfLegalCase);
     }
 

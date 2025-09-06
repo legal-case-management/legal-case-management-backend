@@ -38,7 +38,6 @@ public class LegalCaseService {
     JudgeRepository judgeRepository;
 
     LegalCaseMapper legalCaseMapper;
-    JudgeMapper judgeMapper;
 
     BatchService batchService;
 
@@ -171,9 +170,9 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void delete(String id) {
-        legalCaseRepository.findById(id)
+         LegalCase legalCaseSaved = legalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
-        legalCaseRepository.deleteById(id);
+        legalCaseRepository.delete(legalCaseSaved);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
