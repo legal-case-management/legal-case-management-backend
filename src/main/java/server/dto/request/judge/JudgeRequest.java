@@ -2,7 +2,7 @@ package server.dto.request.judge;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.StatusOfJudge;
+import server.entity.enums.StatusOfOfficer;
 
 @Getter
 @Setter
@@ -15,6 +15,6 @@ public class JudgeRequest {
     String firstName;
     String lastName;
     long maxNumberOfLegalCase;
-    StatusOfJudge statusOfJudge;
+    StatusOfOfficer statusOfJudge;
     String email;
 }

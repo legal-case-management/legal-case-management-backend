@@ -3,12 +3,10 @@ package server.repository;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import reactor.util.annotation.NonNull;
-import reactor.util.annotation.NonNullApi;
 import server.dto.response.judge.JudgeResponse;
 import server.entity.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
-import server.entity.enums.StatusOfJudge;
+import server.entity.enums.StatusOfOfficer;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,7 +17,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
 
     @Query("""
             SELECT new server.dto.response.judge.JudgeResponse(
-                j.judgeId,
+                j.officerId,
                 j.lastName,
                 j.firstName,
                 j.fullName,
@@ -32,22 +30,22 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                              AND lc.acceptanceDate >= :oneYearAgo
                         THEN 1 ELSE 0
                     END),
-                j.statusOfJudge,
+                j.statusOfOfficer,
                 j.account.email
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
-            WHERE (:judgeId IS NULL OR j.judgeId LIKE %:judgeId%)
+            WHERE (:judgeId IS NULL OR j.officerId LIKE %:judgeId%)
               AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
-              AND (:statusOfJudge IS NULL OR j.statusOfJudge = :statusOfJudge)
-            GROUP BY j.judgeId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfJudge, j.account.email
-            ORDER BY j.judgeId
+              AND (:statusOfJudge IS NULL OR j.statusOfOfficer = :statusOfJudge)
+            GROUP BY j.officerId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
+            ORDER BY j.officerId
             """)
-    List<JudgeResponse> search(String judgeId, String fullName, StatusOfJudge statusOfJudge, @Param("oneYearAgo") LocalDate oneYearAgo);
+    List<JudgeResponse> search(String judgeId, String fullName, StatusOfOfficer statusOfJudge, @Param("oneYearAgo") LocalDate oneYearAgo);
 
     @Query("""
             SELECT new server.dto.response.judge.JudgeResponse(
-                 j.judgeId,
+                 j.officerId,
                  j.lastName,
                  j.firstName,
                  j.fullName,
@@ -60,26 +58,26 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                               AND lc.acceptanceDate >= :oneYearAgo
                          THEN 1 ELSE 0
                      END),
-                 j.statusOfJudge,
+                 j.statusOfOfficer,
                  j.account.email
              )
              FROM Judge j
              LEFT JOIN j.legalCases lc
-             GROUP BY j.judgeId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfJudge, j.account.email
-             ORDER BY j.judgeId
+             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
+             ORDER BY j.officerId
             """)
     List<JudgeResponse> getTop50(Pageable pageable, @Param("oneYearAgo") LocalDate oneYearAgo);
 
     @Query("""
-              SELECT MAX(CAST(SUBSTRING(j.judgeId, 3, 2) AS int))
+              SELECT MAX(CAST(SUBSTRING(j.officerId, 3, 2) AS int))
               FROM Judge j
-              WHERE SUBSTRING(j.judgeId, 1, 2) = 'TP'
+              WHERE SUBSTRING(j.officerId, 1, 2) = 'TP'
             """)
     Optional<Integer> getMaxId();
 
     @Query("""
             SELECT new server.dto.response.judge.JudgeResponse(
-                j.judgeId,
+                j.officerId,
                 j.lastName,
                 j.firstName,
                 j.fullName,
@@ -92,19 +90,19 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                              AND lc.acceptanceDate >= :oneYearAgo
                         THEN 1 ELSE 0
                     END),
-                j.statusOfJudge,
+                j.statusOfOfficer,
                 j.account.email
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
-            GROUP BY j.judgeId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfJudge, j.account.email
-            ORDER BY j.judgeId
+            GROUP BY j.officerId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
+            ORDER BY j.officerId
             """)
     List<JudgeResponse> getAll(@Param("oneYearAgo") LocalDate oneYearAgo);
 
     @Query("""
                 SELECT new server.dto.response.judge.JudgeResponse(
-                    j.judgeId,
+                    j.officerId,
                     j.lastName,
                     j.firstName,
                     j.fullName,
@@ -117,14 +115,14 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                                  AND lc.acceptanceDate >= :oneYearAgo
                             THEN 1 ELSE 0
                         END),
-                    j.statusOfJudge,
+                    j.statusOfOfficer,
                     j.account.email
                 )
                 FROM Judge j
                 LEFT JOIN j.legalCases lc
                 JOIN j.account a
-                WHERE j.statusOfJudge = 'WORKING'
-                GROUP BY j.judgeId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfJudge, j.account.email
+                WHERE j.statusOfOfficer = 'WORKING'
+                GROUP BY j.officerId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
                 HAVING j.maxNumberOfLegalCase < 0
                        OR SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END) < j.maxNumberOfLegalCase
                 ORDER BY

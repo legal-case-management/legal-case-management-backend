@@ -2,7 +2,7 @@ package server.dto.response.judge;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.StatusOfJudge;
+import server.entity.enums.StatusOfOfficer;
 
 @Getter
 @Setter
@@ -20,6 +20,6 @@ public class JudgeResponse {
     long numberOfTemporarySuspension;
     long numberOfOverdue;
     long numberOfCanceledAndEdited;
-    StatusOfJudge statusOfJudge;
+    StatusOfOfficer statusOfJudge;
     String email;
 }

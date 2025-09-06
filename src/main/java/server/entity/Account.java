@@ -27,6 +27,6 @@ public class Account {
     @Enumerated(EnumType.STRING)
     Role role;
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "judge_id")
-    Judge judge;
+    @JoinColumn(name = "officer_id")
+    Officer officer;
 }

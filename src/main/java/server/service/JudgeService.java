@@ -7,18 +7,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import server.dto.request.authentication.AccountRequest;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.response.judge.JudgeResponse;
 import server.entity.*;
 import server.entity.enums.Role;
-import server.entity.enums.StatusOfJudge;
+import server.entity.enums.StatusOfOfficer;
 import server.exception.AppException;
 import server.exception.ErrorCode;
-import server.mapper.AccountMapper;
 import server.mapper.JudgeMapper;
-import server.repository.AccountRepository;
 import server.repository.JudgeRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -101,16 +98,16 @@ public class JudgeService {
             throw new AppException(ErrorCode.JUDGE_EXISTED);
         }
 
-        judge.setJudgeId(judgeId);
+        judge.setOfficerId(judgeId);
 
-        judge.setStatusOfJudge(StatusOfJudge.WORKING);
+        judge.setStatusOfOfficer(StatusOfOfficer.WORKING);
         Judge judgeSaved = judgeRepository.save(judge);
 
         Account account = Account.builder()
-                .username(judgeSaved.getJudgeId())
+                .username(judgeSaved.getOfficerId())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(DEFAULT_PASSWORD))
-                .judge(judgeSaved)
+                .officer(judgeSaved)
                 .role(Role.JUDGE)
                 .build();
 
@@ -139,6 +136,6 @@ public class JudgeService {
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
-        judgeRepository.deleteById(judge.getJudgeId());
+        judgeRepository.deleteById(judge.getOfficerId());
     }
 }

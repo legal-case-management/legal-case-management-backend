@@ -58,6 +58,10 @@ public class LegalCase {
     @JoinColumn(name = "judge_id")
     Judge judge;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "mediator_id")
+    Mediator mediator;
+
     @OneToMany(mappedBy = "legalCase")
     List<Decision> decisions;
 

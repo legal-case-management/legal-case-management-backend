@@ -6,7 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public enum StatusOfJudge {
+public enum StatusOfOfficer {
     WORKING("Đang làm việc"),
     NOT_WORKING("Không còn làm việc"),
     ON_BUSINESS_TRIP("Đang công tác"),
@@ -14,7 +14,7 @@ public enum StatusOfJudge {
     DISCIPLINED("Đang bị kĩ luật");
     String name;
 
-    StatusOfJudge(String name) {
+    StatusOfOfficer(String name) {
         this.name = name;
     }
 }

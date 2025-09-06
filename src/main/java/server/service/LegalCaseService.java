@@ -135,7 +135,7 @@ public class LegalCaseService {
         if (request.getJudgeId() != null)
             legalCase.setJudge(
                     Judge.builder()
-                            .judgeId(request.getJudgeId())
+                            .officerId(request.getJudgeId())
                             .build()
             );
 
@@ -215,7 +215,7 @@ public class LegalCaseService {
                 legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
                 legalCase.setJudge(
                         Judge.builder()
-                                .judgeId(judge.getJudgeId())
+                                .officerId(judge.getJudgeId())
                                 .build()
                 );
 
