@@ -9,7 +9,9 @@ import lombok.experimental.FieldDefaults;
 public enum Role {
     ADMIN("Quản trị viên"),
     MANAGER("Quản lý"),
-    JUDGE("Thẩm phán");
+    JUDGE("Thẩm phán"),
+    MEDIATOR("Hòa giải viên"),
+    ;
     String name;
 
     Role(String name) {
