@@ -287,4 +287,12 @@ public class LegalCaseService {
                 .stream().map(legalCaseMapper::toLegalCaseResponse)
                 .toList();
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public List<LegalCaseResponse> getAssignAssignmentByExistedMediator() {
+        return legalCaseRepository
+                .getAssignAssignmentByExistedMediator()
+                .stream().map(legalCaseMapper::toLegalCaseResponse)
+                .toList();
+    }
 }

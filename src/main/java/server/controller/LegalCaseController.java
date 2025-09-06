@@ -110,7 +110,7 @@ public class LegalCaseController {
                 .build();
     }
 
-    @PostMapping("/list-waiting-for-assignment")
+    @PostMapping("/list-waiting-for-assignment-by-group")
     public ApiResponse<List<LegalCaseResponse>> getAssignAssignmentByLegalRelationshipGroup(@RequestBody @Valid LegalCaseSearchRequest request){
         return ApiResponse.<List<LegalCaseResponse>>builder()
                 .success(true)
@@ -120,4 +120,14 @@ public class LegalCaseController {
                 .build();
     }
 
+
+    @PostMapping("/list-waiting-for-assignment-by-existed-mediator")
+    public ApiResponse<List<LegalCaseResponse>> getAssignAssignmentByExistedMediator(){
+        return ApiResponse.<List<LegalCaseResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(legalCaseService.getAssignAssignmentByExistedMediator())
+                .build();
+    }
 }
