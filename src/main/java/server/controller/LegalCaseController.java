@@ -30,13 +30,13 @@ public class LegalCaseController {
                 .build();
     }
 
-    @GetMapping("/top-50")
-    public ApiResponse<List<LegalCaseResponse>> top50(){
+    @GetMapping("/limit-{limit}")
+    public ApiResponse<List<LegalCaseResponse>> getLimit(@PathVariable int limit){
         return ApiResponse.<List<LegalCaseResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalCaseService.getTop50())
+                .data(legalCaseService.getLimit(limit))
                 .build();
     }
 

@@ -32,13 +32,13 @@ public class BatchController {
                 .build();
     }
 
-    @GetMapping("/top-50")
-    public ApiResponse<List<BatchResponse>> getTop50() {
+    @GetMapping("/limit-{limit}")
+    public ApiResponse<List<BatchResponse>> getLimit(@PathVariable int limit) {
         return ApiResponse.<List<BatchResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(batchService.getTop50())
+                .data(batchService.getLimit(limit))
                 .build();
     }
 

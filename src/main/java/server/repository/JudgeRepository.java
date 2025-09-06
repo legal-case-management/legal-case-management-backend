@@ -66,7 +66,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
              GROUP BY j.officerId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
              ORDER BY j.officerId
             """)
-    List<JudgeResponse> getTop50(Pageable pageable, @Param("milestoneDate") LocalDate milestoneDate);
+    List<JudgeResponse> getLimit(Pageable pageable, @Param("milestoneDate") LocalDate milestoneDate);
 
     @Query("""
               SELECT MAX(CAST(SUBSTRING(j.officerId, 3, 2) AS int))

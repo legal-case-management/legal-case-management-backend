@@ -101,9 +101,9 @@ public class TypeOfLegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<TypeOfLegalCaseResponse> getTop50() {
+    public List<TypeOfLegalCaseResponse> getLimit(int limit) {
         return typeOfLegalCaseRepository
-                .getTop50(PageRequest.of(0, 50))
+                .getLimit(PageRequest.of(0, limit))
                 .stream().map(typeOfLegalCaseMapper::toTypeOfLegalCaseResponse)
                 .toList();
     }

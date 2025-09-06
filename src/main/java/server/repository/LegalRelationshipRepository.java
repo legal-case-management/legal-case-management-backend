@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import server.entity.LegalRelationship;
-import server.entity.TypeOfLegalCase;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +22,7 @@ public interface LegalRelationshipRepository extends JpaRepository<LegalRelation
     );
 
     @Query("SELECT lr FROM LegalRelationship lr ORDER BY lr.legalRelationshipId")
-    List<LegalRelationship> getTop50(Pageable pageable);
+    List<LegalRelationship> getLimit(Pageable pageable);
 
     @Query("""
             SELECT lr FROM LegalRelationship lr

@@ -79,9 +79,9 @@ public class LegalRelationshipGroupService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalRelationshipGroupResponse> getTop50() {
+    public List<LegalRelationshipGroupResponse> getLimit(int limit) {
         return legalRelationshipGroupRepository
-                .getTop50(PageRequest.of(0, 50))
+                .getLimit(PageRequest.of(0, limit))
                 .stream().map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
                 .toList();
     }

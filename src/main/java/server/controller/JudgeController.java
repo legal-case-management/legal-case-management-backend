@@ -32,13 +32,13 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("/top-50")
-    public ApiResponse<List<JudgeResponse>> getTop50(){
+    @GetMapping("/limit-{limit}")
+    public ApiResponse<List<JudgeResponse>> getTop50(@PathVariable int limit){
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(judgeService.getTop50())
+                .data(judgeService.getLimit(limit))
                 .build();
     }
 

@@ -4,7 +4,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import server.entity.TypeOfDecision;
-import server.entity.TypeOfLegalCase;
 import server.entity.enums.CourtIssued;
 
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.Optional;
 public interface TypeOfDecisionRepository extends JpaRepository<TypeOfDecision, String> {
     boolean existsByTypeOfDecisionName(String typeOfDecisionName);
     @Query("SELECT tod FROM TypeOfDecision tod ORDER BY tod.typeOfDecisionId")
-    List<TypeOfDecision> getTop50(Pageable pageable);
+    List<TypeOfDecision> getLimit(Pageable pageable);
 
     @Query("""
             SELECT tod FROM TypeOfDecision tod

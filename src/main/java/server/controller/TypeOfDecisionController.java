@@ -72,13 +72,13 @@ public class TypeOfDecisionController {
                 .build();
     }
 
-    @GetMapping("/top-50")
-    public ApiResponse<List<TypeOfDecisionResponse>> getTop50() {
+    @GetMapping("/limit-{limit}")
+    public ApiResponse<List<TypeOfDecisionResponse>> getLimit(@PathVariable int limit) {
         return ApiResponse.<List<TypeOfDecisionResponse>>builder()
                 .success(true)
                 .status(200)
-                .message("Tìm kiếm thành công")
-                .data(typeOfDecisionService.getTop50())
+                .message("Thành công")
+                .data(typeOfDecisionService.getLimit(limit))
                 .build();
     }
 }

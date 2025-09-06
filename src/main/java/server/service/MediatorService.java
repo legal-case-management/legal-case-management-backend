@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,12 +33,11 @@ public class MediatorService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<MediatorResponse> getAll(){
-        return mediatorRepository
-                .findAll()
-                .stream()
-                .map(mediatorMapper::toMediatorResponse)
-                .toList();
+        return mediatorRepository.getAll();
     }
 
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public List<MediatorResponse> getLimit(int limit){
+        return mediatorRepository.getLimit(PageRequest.of(0, limit));
+    }
 }

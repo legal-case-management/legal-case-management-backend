@@ -57,9 +57,9 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<JudgeResponse> getTop50() {
+    public List<JudgeResponse> getLimit(int limit) {
         return judgeRepository
-                .getTop50(PageRequest.of(0, 50), DateUtil.getMilestoneDate());
+                .getLimit(PageRequest.of(0, limit), DateUtil.getMilestoneDate());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

@@ -4,8 +4,6 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import reactor.util.annotation.NonNull;
-import reactor.util.annotation.NonNullApi;
 import server.entity.LegalCase;
 import server.entity.enums.StatusOfLegalCase;
 
@@ -57,7 +55,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             LEFT JOIN lc.legalRelationship lr
             ORDER BY lc.acceptanceDate, YEAR(lc.acceptanceDate) DESC, lc.acceptanceDate DESC
             """)
-    List<LegalCase> getTop50(Pageable pageable);
+    List<LegalCase> getLimit(Pageable pageable);
 
     @Query("""
                 SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 7, 4) AS int))

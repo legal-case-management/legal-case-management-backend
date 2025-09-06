@@ -40,9 +40,9 @@ public class TypeOfDecisionService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<TypeOfDecisionResponse> getTop50() {
+    public List<TypeOfDecisionResponse> getLimit(int limit) {
         return typeOfDecisionRepository
-                .getTop50(PageRequest.of(0, 50))
+                .getLimit(PageRequest.of(0, limit))
                 .stream().map(typeOfDecisionMapper::toTypeOfDecisionResponse)
                 .toList();
     }

@@ -32,13 +32,13 @@ public class LegalRelationshipController {
                 .build();
     }
 
-    @GetMapping("/top-50")
-    public ApiResponse<List<LegalRelationshipResponse>> getTop50() {
+    @GetMapping("/limit-{limit}")
+    public ApiResponse<List<LegalRelationshipResponse>> getLimit(@PathVariable int limit) {
         return ApiResponse.<List<LegalRelationshipResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalRelationshipService.getTop50())
+                .data(legalRelationshipService.getLimit(limit))
                 .build();
     }
 

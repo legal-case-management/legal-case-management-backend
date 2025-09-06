@@ -70,9 +70,9 @@ public class BatchService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<BatchResponse> getTop50() {
+    public List<BatchResponse> getLimit(int limit) {
         return batchRepository
-                .getTop50(PageRequest.of(0, 50))
+                .getLimit(PageRequest.of(0, limit))
                 .stream().map(batchMapper::toBatchResponse)
                 .toList();
     }

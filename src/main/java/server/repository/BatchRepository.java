@@ -6,10 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import server.entity.Batch;
-import server.entity.LegalCase;
-import server.entity.enums.StatusOfLegalCase;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +27,7 @@ public interface BatchRepository extends JpaRepository<Batch, String> {
             SELECT b FROM Batch b
             ORDER BY b.batchId DESC
             """)
-    List<Batch> getTop50(Pageable pageable);
+    List<Batch> getLimit(Pageable pageable);
 
     @Query("""
             SELECT b FROM Batch b

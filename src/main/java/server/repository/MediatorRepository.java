@@ -53,7 +53,7 @@ public interface MediatorRepository extends JpaRepository<Mediator, String> {
              GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.statusOfOfficer, m.account.email
              ORDER BY m.officerId
             """)
-    List<MediatorResponse> getTop50(Pageable pageable);
+    List<MediatorResponse> getLimit(Pageable pageable);
 
     @Query("""
             SELECT new server.dto.response.mediator.MediatorResponse(

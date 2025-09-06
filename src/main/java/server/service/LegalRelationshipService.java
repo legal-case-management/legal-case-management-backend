@@ -101,9 +101,9 @@ public class LegalRelationshipService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalRelationshipResponse> getTop50() {
+    public List<LegalRelationshipResponse> getLimit(int limit) {
         return legalRelationshipRepository
-                .getTop50(PageRequest.of(0, 50))
+                .getLimit(PageRequest.of(0, limit))
                 .stream()
                 .map(legalRelationshipMapper::toLegalRelationshipResponse)
                 .toList();

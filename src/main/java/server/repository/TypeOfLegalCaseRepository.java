@@ -33,5 +33,5 @@ public interface TypeOfLegalCaseRepository extends JpaRepository<TypeOfLegalCase
     Optional<Integer> getMaxId();
 
     @Query("SELECT tol FROM TypeOfLegalCase tol ORDER BY tol.typeOfLegalCaseId")
-    List<TypeOfLegalCase> getTop50(Pageable pageable);
+    List<TypeOfLegalCase> getLimit(Pageable pageable);
 }
