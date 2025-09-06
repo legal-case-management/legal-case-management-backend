@@ -24,6 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import server.utils.DateUtil;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -47,27 +48,27 @@ public class JudgeService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> getAll() {
-        return judgeRepository.getAll(LocalDate.now().minusYears(1));
+        return judgeRepository.getAll(DateUtil.getMilestoneDate());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> listAssignment() {
-        return judgeRepository.getAssignAssignment(LocalDate.now().minusYears(1));
+        return judgeRepository.getAssignAssignment(DateUtil.getMilestoneDate());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> getTop50() {
         return judgeRepository
-                .getTop50(PageRequest.of(0, 50), LocalDate.now().minusYears(1));
+                .getTop50(PageRequest.of(0, 50), DateUtil.getMilestoneDate());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> search(JudgeSearchRequest request) {
         return judgeRepository.search(
-                request.getJudgeId(),
+                request.getOfficerId(),
                 request.getFullName(),
-                request.getStatusOfJudge(),
-                LocalDate.now().minusYears(1)
+                request.getStatusOfOfficer(),
+                DateUtil.getMilestoneDate()
         );
     }
 

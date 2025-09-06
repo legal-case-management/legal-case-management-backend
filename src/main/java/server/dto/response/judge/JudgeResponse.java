@@ -11,7 +11,7 @@ import server.entity.enums.StatusOfOfficer;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JudgeResponse {
-    String judgeId;
+    String officerId;
     String lastName;;
     String firstName;
     String fullName;

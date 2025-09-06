@@ -27,7 +27,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
                 SUM(CASE
                         WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
-                             AND lc.acceptanceDate >= :oneYearAgo
+                             AND lc.acceptanceDate >= :milestoneDate
                         THEN 1 ELSE 0
                     END),
                 j.statusOfOfficer,
@@ -35,13 +35,13 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
-            WHERE (:judgeId IS NULL OR j.officerId LIKE %:judgeId%)
+            WHERE (:officerId IS NULL OR j.officerId LIKE %:officerId%)
               AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
-              AND (:statusOfJudge IS NULL OR j.statusOfOfficer = :statusOfJudge)
+              AND (:statusOfOfficer IS NULL OR j.statusOfOfficer = :statusOfOfficer)
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
             ORDER BY j.officerId
             """)
-    List<JudgeResponse> search(String judgeId, String fullName, StatusOfOfficer statusOfJudge, @Param("oneYearAgo") LocalDate oneYearAgo);
+    List<JudgeResponse> search(String officerId, String fullName, StatusOfOfficer statusOfOfficer, @Param("milestoneDate") LocalDate milestoneDate);
 
     @Query("""
             SELECT new server.dto.response.judge.JudgeResponse(
@@ -55,7 +55,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                  SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
                  SUM(CASE
                          WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
-                              AND lc.acceptanceDate >= :oneYearAgo
+                              AND lc.acceptanceDate >= :milestoneDate
                          THEN 1 ELSE 0
                      END),
                  j.statusOfOfficer,
@@ -66,7 +66,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
              GROUP BY j.officerId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
              ORDER BY j.officerId
             """)
-    List<JudgeResponse> getTop50(Pageable pageable, @Param("oneYearAgo") LocalDate oneYearAgo);
+    List<JudgeResponse> getTop50(Pageable pageable, @Param("milestoneDate") LocalDate milestoneDate);
 
     @Query("""
               SELECT MAX(CAST(SUBSTRING(j.officerId, 3, 2) AS int))
@@ -87,7 +87,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
                 SUM(CASE
                         WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
-                             AND lc.acceptanceDate >= :oneYearAgo
+                             AND lc.acceptanceDate >= :milestoneDate
                         THEN 1 ELSE 0
                     END),
                 j.statusOfOfficer,
@@ -98,7 +98,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
             ORDER BY j.officerId
             """)
-    List<JudgeResponse> getAll(@Param("oneYearAgo") LocalDate oneYearAgo);
+    List<JudgeResponse> getAll(@Param("milestoneDate") LocalDate milestoneDate);
 
     @Query("""
                 SELECT new server.dto.response.judge.JudgeResponse(
@@ -112,7 +112,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                     SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
                     SUM(CASE
                             WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
-                                 AND lc.acceptanceDate >= :oneYearAgo
+                                 AND lc.acceptanceDate >= :milestoneDate
                             THEN 1 ELSE 0
                         END),
                     j.statusOfOfficer,
@@ -136,6 +136,6 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                         END) ASC,
                     j.fullName ASC
             """)
-    List<JudgeResponse> getAssignAssignment(@Param("oneYearAgo") LocalDate oneYearAgo);
+    List<JudgeResponse> getAssignAssignment(@Param("milestoneDate") LocalDate milestoneDate);
 
 }

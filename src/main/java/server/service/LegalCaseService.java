@@ -215,7 +215,7 @@ public class LegalCaseService {
                 legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
                 legalCase.setJudge(
                         Judge.builder()
-                                .officerId(judge.getJudgeId())
+                                .officerId(judge.getOfficerId())
                                 .build()
                 );
 

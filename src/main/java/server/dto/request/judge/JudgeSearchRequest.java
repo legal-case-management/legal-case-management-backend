@@ -12,7 +12,7 @@ import server.entity.enums.StatusOfOfficer;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 public class JudgeSearchRequest {
-    String judgeId;
+    String officerId;
     String fullName;
-    StatusOfOfficer statusOfJudge;
+    StatusOfOfficer statusOfOfficer;
 }

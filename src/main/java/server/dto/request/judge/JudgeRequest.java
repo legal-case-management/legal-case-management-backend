@@ -15,6 +15,6 @@ public class JudgeRequest {
     String firstName;
     String lastName;
     long maxNumberOfLegalCase;
-    StatusOfOfficer statusOfJudge;
+    StatusOfOfficer statusOfOfficer;
     String email;
 }
