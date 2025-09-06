@@ -242,10 +242,10 @@ public class AuthenticationService {
                         : new Date(Instant.now().plus(RESET_PASSWORD_DURATION, ChronoUnit.SECONDS).toEpochMilli())
                         )
                 .claim("username", account.getUsername())
-                .claim("displayName", account.getJudge() != null
-                        ? account.getJudge().getLastName() + " " + account.getJudge().getFirstName()
+                .claim("displayName", account.getOfficer() != null
+                        ? account.getOfficer().getFullName()
                         : null)
-                .claim("judgeId", account.getJudge() != null ? account.getJudge().getJudgeId() : null)
+                .claim("officerId", account.getOfficer() != null ? account.getOfficer().getOfficerId() : null)
                 .claim("scope", account.getRole().name())
                 .build();
 

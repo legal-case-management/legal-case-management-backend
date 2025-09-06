@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 import java.util.List;
 
 @Entity
-@Table(name = "judges")
+@Table(name = "mediators")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
