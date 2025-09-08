@@ -27,6 +27,7 @@ public enum ErrorCode {
     NEW_PASSWORD_NOT_MATCH(400, HttpStatus.BAD_REQUEST, "Mật khẩu mới và mật khẩu mới nhập lại không trùng khớp"),
     SEND_EMAIL_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Gửi email thất bại"),
     OTP_EXPIRED(400, HttpStatus.BAD_REQUEST, "Mã OTP đã hết hạn"),
+    OTP_SENT(400, HttpStatus.BAD_REQUEST, "Mã OTP đã được gửi, vui lòng kiểm tra email"),
     OTP_INVALID(400, HttpStatus.BAD_REQUEST, "Mã OTP không hợp lệ"),
     VERIFY_OTP_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Xác thực mã OTP thất bại"),
 

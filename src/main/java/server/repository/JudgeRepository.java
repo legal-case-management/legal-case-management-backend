@@ -131,7 +131,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                     SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END) ASC,
                     SUM(CASE
                             WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
-                                 AND lc.acceptanceDate >= :oneYearAgo
+                                 AND lc.acceptanceDate >= :milestoneDate
                             THEN 1 ELSE 0
                         END) ASC,
                     j.fullName ASC

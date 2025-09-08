@@ -286,7 +286,9 @@ public class AuthenticationService {
     public void forgotPassword(ForgotPasswordRequest request) {
         Account account = accountRepository.findAccountByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
-
+        boolean existedOtp = otpRedis.hasKey("otp:" + account.getEmail());
+        if(existedOtp)
+            throw new AppException(ErrorCode.OTP_SENT);
         try {
             sendOtpEmail(account.getEmail());
         } catch (MessagingException e) {
@@ -328,6 +330,8 @@ public class AuthenticationService {
 
         account.setPassword(passwordEncoder.encode(request.getNewPassword()));
         accountRepository.save(account);
+
+        tokenRedis.delete("account:" + account.getAccountId() + ":token");
     }
 
     public void sendOtpEmail(String toEmail) throws MessagingException {
