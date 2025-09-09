@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor
 public enum StatusOfAccount {
-    ACTIVE("Active"),
-    BLOCKED("Locked"),
+    ACTIVE("Đang hoạt động"),
+    BLOCKED("Bị khóa"),
     ;
 
     String name;
