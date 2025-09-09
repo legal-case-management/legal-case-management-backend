@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import server.entity.enums.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.entity.enums.StatusOfAccount;
 
 @Entity
 @Table(name = "accounts")
@@ -26,6 +27,10 @@ public class Account {
     String email;
     @Enumerated(EnumType.STRING)
     Role role;
+
+    @Enumerated(EnumType.STRING)
+    StatusOfAccount statusOfAccount;
+
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "officer_id")
     Officer officer;

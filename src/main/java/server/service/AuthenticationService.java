@@ -19,6 +19,7 @@ import server.dto.response.authentication.VerifyOtpResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.dto.response.mediator.MediatorResponse;
 import server.entity.Account;
+import server.entity.enums.StatusOfAccount;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.AccountMapper;
@@ -231,6 +232,7 @@ public class AuthenticationService {
         }
 
         account.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
+        account.setStatusOfAccount(StatusOfAccount.ACTIVE);
         accountRepository.save(account);
     }
 

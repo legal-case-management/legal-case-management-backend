@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import server.dto.response.officer.OfficerResponse;
 import server.entity.Officer;
 import server.entity.enums.Role;
+import server.entity.enums.StatusOfAccount;
 
 @Getter
 @Setter
@@ -19,4 +20,5 @@ public class AccountResponse {
     String email;
     Role role;
     OfficerResponse officer;
+    StatusOfAccount statusOfAccount;
 }
