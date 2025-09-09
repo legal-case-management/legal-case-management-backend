@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.mediator.MediatorRequest;
+import server.dto.request.mediator.MediatorSearchRequest;
 import server.dto.response.mediator.MediatorResponse;
 import server.entity.Account;
 import server.entity.Mediator;
@@ -116,5 +117,14 @@ public class MediatorService {
                 .orElseThrow(() -> new AppException(ErrorCode.MEDIATOR_NOT_EXISTED));
 
         mediatorRepository.delete(mediatorSaved);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public List<MediatorResponse> search(MediatorSearchRequest request) {
+        return mediatorRepository.search(
+                request.getOfficerId(),
+                request.getFullName(),
+                request.getStatusOfOfficer()
+        );
     }
 }

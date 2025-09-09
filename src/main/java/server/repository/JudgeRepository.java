@@ -21,6 +21,8 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.lastName,
                 j.firstName,
                 j.fullName,
+                j.statusOfOfficer,
+                j.account.email,
                 j.maxNumberOfLegalCase,
                 SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
                 SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
@@ -29,9 +31,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                         WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
                              AND lc.acceptanceDate >= :milestoneDate
                         THEN 1 ELSE 0
-                    END),
-                j.statusOfOfficer,
-                j.account.email
+                    END)
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
@@ -49,6 +49,8 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                  j.lastName,
                  j.firstName,
                  j.fullName,
+                 j.statusOfOfficer,
+                 j.account.email,
                  j.maxNumberOfLegalCase,
                  SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
                  SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
@@ -57,9 +59,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                          WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
                               AND lc.acceptanceDate >= :milestoneDate
                          THEN 1 ELSE 0
-                     END),
-                 j.statusOfOfficer,
-                 j.account.email
+                    END)
              )
              FROM Judge j
              LEFT JOIN j.legalCases lc
@@ -76,22 +76,22 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     Optional<Integer> getMaxId();
 
     @Query("""
-            SELECT new server.dto.response.judge.JudgeResponse(
-                j.officerId,
-                j.lastName,
-                j.firstName,
-                j.fullName,
-                j.maxNumberOfLegalCase,
-                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
-                SUM(CASE
-                        WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
-                             AND lc.acceptanceDate >= :milestoneDate
-                        THEN 1 ELSE 0
-                    END),
-                j.statusOfOfficer,
-                j.account.email
+           SELECT new server.dto.response.judge.JudgeResponse(
+                 j.officerId,
+                 j.lastName,
+                 j.firstName,
+                 j.fullName,
+                 j.statusOfOfficer,
+                 j.account.email,
+                 j.maxNumberOfLegalCase,
+                 SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                 SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                 SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
+                 SUM(CASE
+                         WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
+                              AND lc.acceptanceDate >= :milestoneDate
+                         THEN 1 ELSE 0
+                    END)
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
@@ -102,22 +102,22 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
 
     @Query("""
                 SELECT new server.dto.response.judge.JudgeResponse(
-                    j.officerId,
-                    j.lastName,
-                    j.firstName,
-                    j.fullName,
-                    j.maxNumberOfLegalCase,
-                    SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
-                    SUM(CASE
-                            WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
-                                 AND lc.acceptanceDate >= :milestoneDate
-                            THEN 1 ELSE 0
-                        END),
-                    j.statusOfOfficer,
-                    j.account.email
-                )
+                 j.officerId,
+                 j.lastName,
+                 j.firstName,
+                 j.fullName,
+                 j.statusOfOfficer,
+                 j.account.email,
+                 j.maxNumberOfLegalCase,
+                 SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                 SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                 SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
+                 SUM(CASE
+                         WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
+                              AND lc.acceptanceDate >= :milestoneDate
+                         THEN 1 ELSE 0
+                    END)
+             )
                 FROM Judge j
                 LEFT JOIN j.legalCases lc
                 JOIN j.account a

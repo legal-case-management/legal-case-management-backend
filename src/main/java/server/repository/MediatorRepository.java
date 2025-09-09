@@ -21,9 +21,9 @@ public interface MediatorRepository extends JpaRepository<Mediator, String> {
                 m.lastName,
                 m.firstName,
                 m.fullName,
-                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
                 m.statusOfOfficer,
-                m.account.email
+                m.account.email,
+                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END)
             )
             FROM Mediator m
             LEFT JOIN m.legalCases lc
@@ -41,14 +41,14 @@ public interface MediatorRepository extends JpaRepository<Mediator, String> {
 
     @Query("""
             SELECT new server.dto.response.mediator.MediatorResponse(
-                 m.officerId,
-                 m.lastName,
-                 m.firstName,
-                 m.fullName,
-                 SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                 m.statusOfOfficer,
-                 m.account.email
-             )
+                m.officerId,
+                m.lastName,
+                m.firstName,
+                m.fullName,
+                m.statusOfOfficer,
+                m.account.email,
+                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END)
+            )
              FROM Mediator m
              LEFT JOIN m.legalCases lc
              GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.statusOfOfficer, m.account.email
@@ -58,14 +58,14 @@ public interface MediatorRepository extends JpaRepository<Mediator, String> {
 
     @Query("""
             SELECT new server.dto.response.mediator.MediatorResponse(
-                 m.officerId,
-                 m.lastName,
-                 m.firstName,
-                 m.fullName,
-                 SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                 m.statusOfOfficer,
-                 m.account.email
-             )
+                m.officerId,
+                m.lastName,
+                m.firstName,
+                m.fullName,
+                m.statusOfOfficer,
+                m.account.email,
+                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END)
+            )
              FROM Mediator m
              LEFT JOIN m.legalCases lc
              GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.statusOfOfficer, m.account.email

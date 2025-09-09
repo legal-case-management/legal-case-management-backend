@@ -9,9 +9,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import server.dto.request.authentication.*;
+import server.dto.response.ApiResponse;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.dto.response.authentication.VerifyOtpResponse;
+import server.dto.response.mediator.MediatorResponse;
 import server.entity.Account;
 import server.exception.AppException;
 import server.exception.ErrorCode;
@@ -357,4 +360,5 @@ public class AuthenticationService {
         int otp = 100000 + random.nextInt(900000);
         return String.valueOf(otp);
     }
+
 }

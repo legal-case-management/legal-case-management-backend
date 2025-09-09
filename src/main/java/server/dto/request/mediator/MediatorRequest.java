@@ -3,18 +3,16 @@ package server.dto.request.mediator;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
+import server.dto.request.officer.OfficerRequest;
 import server.entity.enums.StatusOfOfficer;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-public class MediatorRequest {
-    String firstName;
-    String lastName;
-    StatusOfOfficer statusOfOfficer;
-    String email;
+public class MediatorRequest extends OfficerRequest {
+
 }
