@@ -2,8 +2,10 @@ package server.controller;
 
 import server.dto.request.authentication.*;
 import server.dto.response.ApiResponse;
+import server.dto.response.authentication.AccountResponse;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.dto.response.authentication.VerifyOtpResponse;
+import server.dto.response.judge.JudgeResponse;
 import server.service.AuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -128,6 +130,16 @@ public class AuthenticationController {
                 .success(true)
                 .status(200)
                 .message("Xóa tài khoản thành công")
+                .build();
+    }
+
+    @GetMapping("/my-info")
+    public ApiResponse<AccountResponse> getMyInfo(){
+        return ApiResponse.<AccountResponse>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(authenticationService.getMyInfo())
                 .build();
     }
 }

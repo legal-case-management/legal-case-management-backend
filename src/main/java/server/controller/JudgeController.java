@@ -62,15 +62,6 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("/my-info")
-    public ApiResponse<JudgeResponse> getMyInfo(){
-        return ApiResponse.<JudgeResponse>builder()
-                .success(true)
-                .status(200)
-                .message("Successful")
-                .data(judgeService.getMyInfo())
-                .build();
-    }
     @PostMapping("/")
     public ApiResponse<Void> create(@RequestBody @Valid JudgeRequest request){
         judgeService.create(request);

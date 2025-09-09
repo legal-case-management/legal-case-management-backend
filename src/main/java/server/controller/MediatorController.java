@@ -6,12 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import server.dto.request.judge.JudgeRequest;
-import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.request.mediator.MediatorRequest;
 import server.dto.request.mediator.MediatorSearchRequest;
 import server.dto.response.ApiResponse;
-import server.dto.response.judge.JudgeResponse;
 import server.dto.response.mediator.MediatorResponse;
 import server.service.MediatorService;
 

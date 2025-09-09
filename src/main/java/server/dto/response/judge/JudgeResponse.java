@@ -10,7 +10,6 @@ import server.entity.enums.StatusOfOfficer;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JudgeResponse extends OfficerResponse {
     long maxNumberOfLegalCase;

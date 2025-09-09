@@ -29,6 +29,6 @@ public abstract class Officer {
     @Column(name = "status_of_officer", nullable = false)
     StatusOfOfficer statusOfOfficer;
 
-    @OneToOne(mappedBy = "officer", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "officer")
     Account account;
 }

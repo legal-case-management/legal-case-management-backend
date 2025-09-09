@@ -7,13 +7,16 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import server.dto.request.authentication.*;
 import server.dto.response.ApiResponse;
+import server.dto.response.authentication.AccountResponse;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.dto.response.authentication.VerifyOtpResponse;
+import server.dto.response.judge.JudgeResponse;
 import server.dto.response.mediator.MediatorResponse;
 import server.entity.Account;
 import server.exception.AppException;
@@ -361,4 +364,13 @@ public class AuthenticationService {
         return String.valueOf(otp);
     }
 
+    public AccountResponse getMyInfo() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        String accountId = context.getAuthentication().getName();
+        return accountMapper.toAccountResponse(
+                accountRepository
+                        .findAccountByAccountId(accountId)
+                        .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED))
+        );
+    }
 }

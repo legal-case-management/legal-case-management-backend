@@ -72,17 +72,6 @@ public class JudgeService {
         );
     }
 
-    public JudgeResponse getMyInfo() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        String accountId = context.getAuthentication().getName();
-
-        return judgeMapper.toJudgeResponse(
-                judgeRepository
-                        .findByAccount_AccountId(accountId)
-                        .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED))
-        );
-    }
-
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Synchronized

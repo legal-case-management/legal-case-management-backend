@@ -26,7 +26,7 @@ public class Account {
     String email;
     @Enumerated(EnumType.STRING)
     Role role;
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "officer_id")
     Officer officer;
 }

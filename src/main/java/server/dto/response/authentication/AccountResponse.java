@@ -3,6 +3,7 @@ package server.dto.response.authentication;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.dto.response.officer.OfficerResponse;
 import server.entity.Officer;
 import server.entity.enums.Role;
 
@@ -17,5 +18,5 @@ public class AccountResponse {
     String username;
     String email;
     Role role;
-    Officer officer;
+    OfficerResponse officer;
 }
