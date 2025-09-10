@@ -3,6 +3,7 @@ package server.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.Synchronized;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -374,5 +375,19 @@ public class AuthenticationService {
                         .findAccountByAccountId(accountId)
                         .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED))
         );
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public List<AccountResponse> getAllAccount() {
+        return accountRepository.findAll()
+                .stream().map(accountMapper::toAccountResponse)
+                .toList();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public List<AccountResponse> getLimitAccount(int limit) {
+        return accountRepository.getLimit(PageRequest.of(0, limit))
+                .stream().map(accountMapper::toAccountResponse)
+                .toList();
     }
 }

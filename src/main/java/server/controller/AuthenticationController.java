@@ -13,6 +13,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -130,6 +132,26 @@ public class AuthenticationController {
                 .success(true)
                 .status(200)
                 .message("Xóa tài khoản thành công")
+                .build();
+    }
+
+    @GetMapping("/account/all")
+    public ApiResponse<List<AccountResponse>> getAllAccount() {
+        return ApiResponse.<List<AccountResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(authenticationService.getAllAccount())
+                .build();
+    }
+
+    @GetMapping("/account/limit-{limit}")
+    public ApiResponse<List<AccountResponse>> getLimitAccount(@PathVariable int limit) {
+        return ApiResponse.<List<AccountResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(authenticationService.getLimitAccount(limit))
                 .build();
     }
 
