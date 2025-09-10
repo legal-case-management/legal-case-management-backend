@@ -41,7 +41,6 @@ public class LegalCaseService {
 
     BatchService batchService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
     public List<LegalCaseResponse> getAll() {
         return legalCaseRepository
                 .findAll()
@@ -49,7 +48,6 @@ public class LegalCaseService {
                 .toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
     public List<LegalCaseResponse> getLimit(int limit) {
         return legalCaseRepository
                 .getLimit(PageRequest.of(0, limit))
@@ -57,7 +55,6 @@ public class LegalCaseService {
                 .toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', ' MANAGER')")
     public List<LegalCaseResponse> search(LegalCaseSearchRequest request) {
         return legalCaseRepository.search(
                         request.getAcceptanceNumber(),
@@ -87,6 +84,12 @@ public class LegalCaseService {
     @Transactional
     public void create(LegalCaseRequest request) {
         createSingle(request, null);
+    }
+
+    public LegalCaseResponse getById(String id) {
+        return legalCaseRepository.findById(id)
+                .map(legalCaseMapper::toLegalCaseResponse)
+                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

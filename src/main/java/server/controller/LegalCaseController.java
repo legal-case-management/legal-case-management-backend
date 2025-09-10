@@ -90,6 +90,16 @@ public class LegalCaseController {
                 .build();
     }
 
+    @GetMapping("/{id}")
+    public ApiResponse<LegalCaseResponse> getById(@PathVariable String id){
+        return ApiResponse.<LegalCaseResponse>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(legalCaseService.getById(id))
+                .build();
+    }
+
     @PostMapping("/random-assignment")
     public ApiResponse<List<LegalCaseResponse>> randomAssignment(@RequestBody @Valid RandomAssignmentRequest request) {
         return ApiResponse.<List<LegalCaseResponse>>builder()
