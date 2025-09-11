@@ -21,6 +21,7 @@ import server.mapper.JudgeMapper;
 import server.mapper.LegalCaseMapper;
 import server.repository.JudgeRepository;
 import server.repository.LegalCaseRepository;
+import server.repository.LegalRelationshipGroupRepository;
 import server.repository.LegalRelationshipRepository;
 
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 public class LegalCaseService {
     LegalCaseRepository legalCaseRepository;
     LegalRelationshipRepository legalRelationshipRepository;
+    LegalRelationshipGroupRepository legalRelationshipGroupRepository;
 
     JudgeRepository judgeRepository;
 
@@ -253,7 +255,7 @@ public class LegalCaseService {
     @Transactional
     public List<LegalCaseResponse> getAssignAssigned(List<String> legalCaseIds) {
         return legalCaseRepository
-                .findAllById(legalCaseIds)
+                .getAssignAssigned(legalCaseIds)
                 .stream()
                 .map(legalCaseMapper::toLegalCaseResponse)
                 .toList();
@@ -283,18 +285,14 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalCaseResponse> getAssignAssignmentByLegalRelationshipGroup(LegalCaseSearchRequest request) {
-        String legalRelationshipGroupId = request.getLegalRelationshipGroupId();
-        return legalCaseRepository
-                .getAssignAssignmentByLegalRelationshipGroup(legalRelationshipGroupId)
-                .stream().map(legalCaseMapper::toLegalCaseResponse)
-                .toList();
-    }
+    public List<LegalCaseResponse> getAssignmentList(AssignmentListRequest request) {
+        LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository
+                .findById(request.getLegalRelationshipGroupId())
+                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalCaseResponse> getAssignAssignmentByExistedMediator() {
+
         return legalCaseRepository
-                .getAssignAssignmentByExistedMediator()
+                .getAssignmentList(request.isMediator(), legalRelationshipGroup.getLegalRelationshipGroupId())
                 .stream().map(legalCaseMapper::toLegalCaseResponse)
                 .toList();
     }

@@ -120,24 +120,14 @@ public class LegalCaseController {
                 .build();
     }
 
-    @PostMapping("/list-waiting-for-assignment-by-group")
-    public ApiResponse<List<LegalCaseResponse>> getAssignAssignmentByLegalRelationshipGroup(@RequestBody @Valid LegalCaseSearchRequest request){
+    @PostMapping("/assignment-list")
+    public ApiResponse<List<LegalCaseResponse>> getAssignmentList(@RequestBody @Valid AssignmentListRequest request){
         return ApiResponse.<List<LegalCaseResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalCaseService.getAssignAssignmentByLegalRelationshipGroup(request))
+                .data(legalCaseService.getAssignmentList(request))
                 .build();
     }
 
-
-    @PostMapping("/list-waiting-for-assignment-by-existed-mediator")
-    public ApiResponse<List<LegalCaseResponse>> getAssignAssignmentByExistedMediator(){
-        return ApiResponse.<List<LegalCaseResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Thành công")
-                .data(legalCaseService.getAssignAssignmentByExistedMediator())
-                .build();
-    }
 }

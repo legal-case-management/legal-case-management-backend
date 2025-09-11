@@ -16,6 +16,6 @@ public class OfficerResponse {
     String lastName;
     String firstName;
     String fullName;
-    StatusOfOfficer statusOfJudge;
+    StatusOfOfficer statusOfOfficer;
     String email;
 }
