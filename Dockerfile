@@ -1,29 +1,21 @@
-# =========================
-# Stage 1: Build ứng dụng
-# =========================
-FROM gradle:8.5-jdk21 AS build
-
-# Đặt thư mục làm việc
+# Stage 1: Build ứng dụng bằng Gradle
+FROM gradle:8.10.2-jdk21 AS build
 WORKDIR /app
 
 # Copy toàn bộ project vào container
 COPY . .
 
-# Build project (tạo file jar trong build/libs)
-RUN gradle clean build -x test
+# Build ứng dụng (skip test cho nhanh)
+RUN gradle clean bootJar -x test
 
-# =========================
-# Stage 2: Chạy ứng dụng
-# =========================
-FROM openjdk:21-jdk-slim
-
-# Đặt thư mục làm việc
+# Stage 2: Runtime
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
-# Copy file jar từ stage build vào image
+# Copy file jar từ stage build
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# Mở cổng 8080
+# Render sẽ map PORT qua biến môi trường, nên ta expose biến này
 EXPOSE 8080
 
 # Chạy ứng dụng
