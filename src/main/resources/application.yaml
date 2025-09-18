@@ -31,9 +31,12 @@ spring:
         debug: false
   data:
     redis:
-      url: ${REDIS_URL}
       ssl:
         enabled: true
+
+#Redis Configuration
+redis:
+  url: ${REDIS_URL}
 
 # JWT
 jwt:

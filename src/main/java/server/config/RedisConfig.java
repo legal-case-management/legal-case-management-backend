@@ -11,7 +11,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 @Configuration
 public class RedisConfig {
 
-    @Value("${spring.data.redis.url}")
+    @Value("${redis.url}")
     private String redisUrl;
 
     @Bean
