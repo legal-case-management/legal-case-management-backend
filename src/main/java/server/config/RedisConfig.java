@@ -1,36 +1,35 @@
 package server.config;
 
-
+import io.lettuce.core.RedisURI;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.connection.RedisPassword;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+
+import java.net.URI;
 
 @Configuration
 public class RedisConfig {
-    @Value("${redis.host}")
-    private String redisHost;
 
-    @Value("${redis.port}")
-    private int redisPort;
-
+    @Value("${spring.data.redis.url}")
+    private String redisUrl;
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisHost, redisPort));
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+        RedisURI redisURI = RedisURI.create(redisUrl);
+        config.setHostName(redisURI.getHost());
+        config.setPort(redisURI.getPort());
+        config.setUsername(redisURI.getUsername());
+        config.setPassword(redisURI.getPassword());
+
+        // Bật SSL
+        return new LettuceConnectionFactory(config, LettuceClientConfiguration.builder()
+                .useSsl()
+                .build());
     }
-
-//    @Bean
-//    @Primary
-//    public RedisTemplate<String, Boolean> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-//        RedisTemplate<String, Boolean> template = new RedisTemplate<>();
-//        template.setConnectionFactory(redisConnectionFactory);
-//        return template;
-//    }
 }
-
-

@@ -29,6 +29,11 @@ spring:
             enable: true
             required: true
         debug: false
+  data:
+    redis:
+      url: ${REDIS_URL}
+      ssl:
+        enabled: true
 
 # JWT
 jwt:
@@ -36,11 +41,6 @@ jwt:
   valid-duration: ${JWT_VALID_DURATION}
   reset-password-duration: ${JWT_RESET_DURATION}
   refreshable-duration: ${JWT_REFRESH_DURATION}
-
-# Redis
-redis:
-  host: ${REDIS_HOST}
-  port: ${REDIS_PORT}
 
 # Authentication
 auth:
