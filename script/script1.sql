@@ -1849,7 +1849,6 @@ INSERT INTO legal_relationships (legal_relationship_id, legal_relationship_name,
 INSERT INTO legal_relationships (legal_relationship_id, legal_relationship_name, type_of_legal_case_id,
                                  legal_relationship_group_id)
     VALUE ('BP003', 'Đưa vào cơ sở cai nghiện bắt buộc', 'L08', 'N04');
-
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS01', 'DS. Quyết định xem xét, thẩm định tại chỗ', FALSE, 'L02', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS02', 'DS. Quyết định trưng cầu giám định', FALSE, 'L02', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS03', 'VDS. Quyết định giải quyết khiếu nại, kiến nghị việc trả lại đơn yêu cầu giải quyết việc dân sự (dành cho Thẩm phán)', FALSE, 'L02', 'CURRENT_COURT');
@@ -1896,6 +1895,18 @@ INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_en
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS44', 'Quyết định gia hạn thời hạn chuẩn bị xét xử', FALSE, 'L02', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS45', 'Quyết định nhập vụ án', FALSE, 'L02', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS46', 'Quyết định tách vụ án', FALSE, 'L02', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS47', 'VDS. Quyết định đình chỉ việc xét đơn yêu cầu giải quyết việc dân sự', TRUE, 'L02', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS48', 'VDS. Quyết định đình chỉ giải quyết sơ thẩm việc dân sự', TRUE, 'L02', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS49', 'VDS. Quyết định sơ thẩm giải quyết việc dân sự', TRUE, 'L02', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS50', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Thẩm phán)', TRUE, 'L02', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS51', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Hội đồng xét xử)', TRUE, 'L02', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS52', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Thẩm phán)', TRUE, 'L02', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS53', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Hội đồng xét xử)', TRUE, 'L02', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS54', 'Quyết định chuyển vụ án vì không thuộc thẩm quyền', TRUE, 'L02', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS55', 'Thông báo thụ lý bổ sung', FALSE, 'L02', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS56', 'Bản án', TRUE, 'L02', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS57', 'Quyết định hủy án', TRUE, 'L02', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('DS58', 'Quyết định sửa án', TRUE, 'L02', 'SUPERIOR_COURT');
 
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN01', 'DS. Quyết định xem xét, thẩm định tại chỗ', FALSE, 'L03', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN02', 'DS. Quyết định trưng cầu giám định', FALSE, 'L03', 'CURRENT_COURT');
@@ -1943,6 +1954,18 @@ INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_en
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN44', 'Quyết định gia hạn thời hạn chuẩn bị xét xử', FALSE, 'L03', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN45', 'Quyết định nhập vụ án', FALSE, 'L03', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN46', 'Quyết định tách vụ án', FALSE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN47', 'VDS. Quyết định đình chỉ việc xét đơn yêu cầu giải quyết việc dân sự', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN48', 'VDS. Quyết định đình chỉ giải quyết sơ thẩm việc dân sự', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN49', 'VDS. Quyết định sơ thẩm giải quyết việc dân sự', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN50', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Thẩm phán)', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN51', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Hội đồng xét xử)', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN52', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Thẩm phán)', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN53', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Hội đồng xét xử)', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN54', 'Quyết định chuyển vụ án vì không thuộc thẩm quyền', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN55', 'Thông báo thụ lý bổ sung', FALSE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN56', 'Bản án', TRUE, 'L03', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN57', 'Quyết định hủy án', TRUE, 'L03', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HN58', 'Quyết định sửa án', TRUE, 'L03', 'SUPERIOR_COURT');
 
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT01', 'Quyết định xem xét, thẩm định tại chỗ', FALSE, 'L04', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT02', 'Quyết định trưng cầu giám định', FALSE, 'L04', 'CURRENT_COURT');
@@ -1990,6 +2013,18 @@ INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_en
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT44', 'Quyết định gia hạn thời hạn chuẩn bị xét xử', FALSE, 'L04', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT45', 'Quyết định nhập vụ án', FALSE, 'L04', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT46', 'Quyết định tách vụ án', FALSE, 'L04', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT47', 'VDS. Quyết định đình chỉ việc xét đơn yêu cầu giải quyết việc dân sự', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT48', 'VDS. Quyết định đình chỉ giải quyết sơ thẩm việc dân sự', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT49', 'VDS. Quyết định sơ thẩm giải quyết việc dân sự', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT50', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Thẩm phán)', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT51', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Hội đồng xét xử)', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT52', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Thẩm phán)', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT53', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Hội đồng xét xử)', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT54', 'Quyết định chuyển vụ án vì không thuộc thẩm quyền', TRUE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT55', 'Thông báo thụ lý bổ sung', FALSE, 'L03', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT56', 'Bản án', TRUE, 'L03', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT57', 'Quyết định hủy án', TRUE, 'L03', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('KT58', 'Quyết định sửa án', TRUE, 'L03', 'SUPERIOR_COURT');
 
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD01', 'Quyết định xem xét, thẩm định tại chỗ', FALSE, 'L05', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD02', 'Quyết định trưng cầu giám định', FALSE, 'L05', 'CURRENT_COURT');
@@ -2037,6 +2072,18 @@ INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_en
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD44', 'Quyết định gia hạn thời hạn chuẩn bị xét xử', FALSE, 'L05', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD45', 'Quyết định nhập vụ án', FALSE, 'L05', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD46', 'Quyết định tách vụ án', FALSE, 'L05', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD47', 'VDS. Quyết định đình chỉ việc xét đơn yêu cầu giải quyết việc dân sự', TRUE, 'L05', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD48', 'VDS. Quyết định đình chỉ giải quyết sơ thẩm việc dân sự', TRUE, 'L05', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD49', 'VDS. Quyết định sơ thẩm giải quyết việc dân sự', TRUE, 'L05', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD50', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Thẩm phán)', TRUE, 'L05', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD51', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Hội đồng xét xử)', TRUE, 'L05', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD52', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Thẩm phán)', TRUE, 'L05', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD53', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Hội đồng xét xử)', TRUE, 'L05', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD54', 'Quyết định chuyển vụ án vì không thuộc thẩm quyền', TRUE, 'L05', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD55', 'Thông báo thụ lý bổ sung', FALSE, 'L05', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD56', 'Bản án', TRUE, 'L05', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD57', 'Quyết định hủy án', TRUE, 'L05', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('LD58', 'Quyết định sửa án', TRUE, 'L05', 'SUPERIOR_COURT');
 
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC01', 'Quyết định xem xét, thẩm định tại chỗ', FALSE, 'L06', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC02', 'Quyết định trưng cầu giám định', FALSE, 'L06', 'CURRENT_COURT');
@@ -2084,6 +2131,18 @@ INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_en
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC44', 'Quyết định gia hạn thời hạn chuẩn bị xét xử', FALSE, 'L06', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC45', 'Quyết định nhập vụ án', FALSE, 'L06', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC46', 'Quyết định tách vụ án', FALSE, 'L06', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC47', 'VDS. Quyết định đình chỉ việc xét đơn yêu cầu giải quyết việc dân sự', TRUE, 'L06', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC48', 'VDS. Quyết định đình chỉ giải quyết sơ thẩm việc dân sự', TRUE, 'L06', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC49', 'VDS. Quyết định sơ thẩm giải quyết việc dân sự', TRUE, 'L06', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC50', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Thẩm phán)', TRUE, 'L06', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC51', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Hội đồng xét xử)', TRUE, 'L06', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC52', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Thẩm phán)', TRUE, 'L06', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC53', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Hội đồng xét xử)', TRUE, 'L06', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC54', 'Quyết định chuyển vụ án vì không thuộc thẩm quyền', TRUE, 'L06', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC55', 'Thông báo thụ lý bổ sung', FALSE, 'L06', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC56', 'Bản án', TRUE, 'L06', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC57', 'Quyết định hủy án', TRUE, 'L06', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HC58', 'Quyết định sửa án', TRUE, 'L06', 'SUPERIOR_COURT');
 
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS01', 'Quyết định xem xét, thẩm định tại chỗ', FALSE, 'L07', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS02', 'Quyết định trưng cầu giám định', FALSE, 'L07', 'CURRENT_COURT');
@@ -2131,6 +2190,18 @@ INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_en
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS44', 'Quyết định gia hạn thời hạn chuẩn bị xét xử', FALSE, 'L07', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS45', 'Quyết định nhập vụ án', FALSE, 'L07', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS46', 'Quyết định tách vụ án', FALSE, 'L07', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS47', 'VDS. Quyết định đình chỉ việc xét đơn yêu cầu giải quyết việc dân sự', TRUE, 'L07', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS48', 'VDS. Quyết định đình chỉ giải quyết sơ thẩm việc dân sự', TRUE, 'L07', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS49', 'VDS. Quyết định sơ thẩm giải quyết việc dân sự', TRUE, 'L07', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS50', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Thẩm phán)', TRUE, 'L07', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS51', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Hội đồng xét xử)', TRUE, 'L07', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS52', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Thẩm phán)', TRUE, 'L07', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS53', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Hội đồng xét xử)', TRUE, 'L07', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS54', 'Quyết định chuyển vụ án vì không thuộc thẩm quyền', TRUE, 'L07', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS55', 'Thông báo thụ lý bổ sung', FALSE, 'L07', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS56', 'Bản án', TRUE, 'L07', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS57', 'Quyết định hủy án', TRUE, 'L07', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('PS58', 'Quyết định sửa án', TRUE, 'L07', 'SUPERIOR_COURT');
 
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP01', 'Quyết định xem xét, thẩm định tại chỗ', FALSE, 'L08', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP02', 'Quyết định trưng cầu giám định', FALSE, 'L08', 'CURRENT_COURT');
@@ -2178,6 +2249,18 @@ INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_en
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP44', 'Quyết định gia hạn thời hạn chuẩn bị xét xử', FALSE, 'L08', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP45', 'Quyết định nhập vụ án', FALSE, 'L08', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP46', 'Quyết định tách vụ án', FALSE, 'L08', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP47', 'VDS. Quyết định đình chỉ việc xét đơn yêu cầu giải quyết việc dân sự', TRUE, 'L08', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP48', 'VDS. Quyết định đình chỉ giải quyết sơ thẩm việc dân sự', TRUE, 'L08', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP49', 'VDS. Quyết định sơ thẩm giải quyết việc dân sự', TRUE, 'L08', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP50', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Thẩm phán)', TRUE, 'L08', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP51', 'DS. Quyết định công nhận sự thoả thuận của các đương sự (dành cho Hội đồng xét xử)', TRUE, 'L08', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP52', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Thẩm phán)', TRUE, 'L08', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP53', 'DS. Quyết định đình chỉ giải quyết vụ án dân sự (dành cho Hội đồng xét xử)', TRUE, 'L08', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP54', 'Quyết định chuyển vụ án vì không thuộc thẩm quyền', TRUE, 'L08', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP55', 'Thông báo thụ lý bổ sung', FALSE, 'L08', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP56', 'Bản án', TRUE, 'L08', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP57', 'Quyết định hủy án', TRUE, 'L08', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('BP58', 'Quyết định sửa án', TRUE, 'L08', 'SUPERIOR_COURT');
 
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HS01', 'Quyết định áp dụng biện pháp bắt buộc chữa bệnh (dùng cho Chánh án, Phó Chánh án Tòa án trong giai đoạn xét xử)', FALSE, 'L01', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HS02', 'Quyết định áp dụng thủ tục rút gọn', FALSE, 'L01', 'CURRENT_COURT');
@@ -2196,3 +2279,51 @@ INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_en
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HS15', 'Quyết định rút hồ sơ vụ án hình sự', FALSE, 'L01', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HS16', 'Quyết định thay đổi (bổ sung, rút) kháng nghị giám đốc thẩm', FALSE, 'L01', 'CURRENT_COURT');
 INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HS17', 'Quyết định khởi tố vụ án hình sự', FALSE, 'L01', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HS18', 'Bản án', TRUE, 'L01', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HS19', 'Quyết định trả hồ sơ điều tra bổ sung', TRUE, 'L01', 'CURRENT_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HS20', 'Quyết định hủy án', TRUE, 'L01', 'SUPERIOR_COURT');
+INSERT INTO type_of_decisions(type_of_decision_id, type_of_decision_name, the_end_decision, type_of_legal_case_id, court_issued) VALUES ('HS21', 'Quyết định sửa án', TRUE, 'L01', 'SUPERIOR_COURT');
+
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS29', 'IN_PROCESS', 'TEMPORARY_SUSPENSION', 0);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS30', 'IN_PROCESS', 'TEMPORARY_SUSPENSION', 0);
+
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS31', 'TEMPORARY_SUSPENSION', 'IN_PROCESS', 0);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS32', 'TEMPORARY_SUSPENSION', 'IN_PROCESS', 0);
+
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS44', 'IN_PROCESS', 'IN_PROCESS', 2);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS44', 'OVERDUE', 'IN_PROCESS', 2);
+
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS55', 'IN_PROCESS', 'IN_PROCESS', 4);
+
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS47', 'IN_PROCESS', 'SOLVED', 0);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS48', 'IN_PROCESS', 'SOLVED', 0);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS49', 'IN_PROCESS', 'SOLVED', 0);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS50', 'IN_PROCESS', 'SOLVED', 0);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS51', 'IN_PROCESS', 'SOLVED', 0);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS52', 'IN_PROCESS', 'SOLVED', 0);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS53', 'IN_PROCESS', 'SOLVED', 0);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS54', 'IN_PROCESS', 'SOLVED', 0);
+
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS56', 'IN_PROCESS', 'SOLVED', 0);
+
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS57', 'SOLVED', 'CANCELED', 0);
+INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
+VALUES ('DS58', 'SOLVED', 'EDITED', 0);
+

@@ -3,24 +3,24 @@ spring:
     name: QuanLyAn_Server
 
   datasource:
-    url: jdbc:mariadb://localhost:3306/QuanLyAn_ToaAnKhuVuc9_DongThap
-    username: root
-    password: 123
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${HIBERNATE_DDL}
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MariaDBDialect
+        dialect: ${HIBERNATE_DIALECT}
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: qllstoaankhuvuc9dongthap@gmail.com
-    password: viok fkdj kfno stpi
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USER}
+    password: ${MAIL_PASS}
     properties:
       mail:
         smtp:
@@ -32,26 +32,26 @@ spring:
 
 # JWT
 jwt:
-  signerKey: "hiaM4ISia63Ym/H7KUJ0YfgH5Ki3nU7Ss3+dsY9nRVUuFFBb/j2YD4Uz05K9DT1M"
-  valid-duration: 7200            # seconds
-  reset-password-duration: 600    # seconds
-  refreshable-duration: 9000      # seconds
+  signerKey: ${JWT_SIGNER_KEY}
+  valid-duration: ${JWT_VALID_DURATION}
+  reset-password-duration: ${JWT_RESET_DURATION}
+  refreshable-duration: ${JWT_REFRESH_DURATION}
 
 # Redis
 redis:
-  host: localhost
-  port: 6379
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
 
 # Authentication
 auth:
-  default-password: 123
+  default-password: ${AUTH_DEFAULT_PASSWORD}
 
 # HTTPS Configuration
 server:
   address: 0.0.0.0
-  port: 8081
+  port: ${SERVER_PORT}
   ssl:
-    key-store: classpath:keystore.p12
-    key-store-password: 123456
-    key-store-type: PKCS12
-    key-alias: myalias
+    key-store: ${SSL_KEYSTORE}
+    key-store-password: ${SSL_KEYSTORE_PASS}
+    key-store-type: ${SSL_KEYSTORE_TYPE}
+    key-alias: ${SSL_KEY_ALIAS}

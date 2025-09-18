@@ -1,16 +1,16 @@
 name: QuanLyAn_Server
 services:
-  mariadb:
-    image: mariadb:11.3
+  postgres:
+    image: postgres:17
+    container_name: postgres
     ports:
-      - "3306:3306"
+      - "5432:5432"
     environment:
-      MARIADB_ROOT_PASSWORD: 123
-      MARIADB_DATABASE: QuanLyAn_ToaAnKhuVuc9_DongThap
-      MARIADB_USER: root
-      MARIADB_PASSWORD: 123
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: pYWcb7emWh2KvcnAMPWAJiDrcbReWVaA
+      POSTGRES_DB: legal_case_management
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:7.2
@@ -22,5 +22,5 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
 
 volumes:
-  mariadb_data:
+  postgres_data:
   redis_data:
