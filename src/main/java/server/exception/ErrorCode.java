@@ -89,7 +89,9 @@ public enum ErrorCode {
     HANDLE_TYPE_OF_DECISION_NOT_EXISTED(404, HttpStatus.BAD_REQUEST, "Loại quyết định, thông báo không tồn tại"),
 
     /* Decision */
+    DECISION_EXISTED(404, HttpStatus.BAD_REQUEST, "Quyết định, thông báo đã tồn tại"),
     DECISION_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Quyết định, thông báo không tồn tại"),
+    CAN_NOT_HANDLE_TYPE_OF_DECISION(400, HttpStatus.BAD_REQUEST, "Không thể thực hiện loại quyết định, thông báo này với trạng thái hiện tại của vụ án"),
     ;
 
     int status;

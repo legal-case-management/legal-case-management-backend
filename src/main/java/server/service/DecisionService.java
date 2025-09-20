@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.decision.DecisionRequest;
 import server.dto.response.decision.DecisionResponse;
 import server.entity.Decision;
+import server.entity.HandleTypeOfDecision;
 import server.entity.LegalCase;
 import server.entity.TypeOfDecision;
 import server.exception.AppException;
@@ -45,9 +46,42 @@ public class DecisionService {
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
         LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
-                        .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
 
+        if (!typeOfDecision.getHandleTypeOfDecisions().isEmpty()) {
+            boolean updated = false;
+
+            for (HandleTypeOfDecision handle : typeOfDecision.getHandleTypeOfDecisions()) {
+                if (handle.getPreStatus().equals(legalCase.getStatusOfLegalCase())) {
+                    legalCase.setStatusOfLegalCase(handle.getPostStatus());
+
+                    if (handle.getExtensionPeriod() > 0) {
+                        legalCase.setExpiredDate(LocalDate.now().plusMonths(
+                                handle.getExtensionPeriod()
+                        ));
+                    }
+
+                    updated = true;
+                    break;
+                }
+            }
+
+            if (!updated) {
+                throw new AppException(ErrorCode.CAN_NOT_HANDLE_TYPE_OF_DECISION);
+            }
+        }
+
+
+        String maxId = decisionRepository.getMaxId(
+                String.format("%s-", legalCase.getLegalCaseId())
+        ).orElse(0).toString();
+        String decisionId = String.format("%s-%02d", legalCase.getLegalCaseId(), Integer.parseInt(maxId) + 1);
+        if (decisionRepository.existsById(decisionId))
+            throw new AppException(ErrorCode.DECISION_EXISTED);
+
+
+        decision.setDecisionId(decisionId);
         decision.setTypeOfDecision(typeOfDecision);
         decision.setLegalCase(legalCase);
         decision.setAddedDate(LocalDate.now());
