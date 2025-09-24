@@ -1,6 +1,10 @@
 spring:
   application:
     name: QuanLyAn_Server
+  profiles:
+    active: local
+  config:
+    import: optional:file:.env.${spring.profiles.active}[.properties]
 
   datasource:
     url: ${DB_URL}
@@ -15,6 +19,7 @@ spring:
     properties:
       hibernate:
         dialect: ${HIBERNATE_DIALECT}
+        format_sql: true
 
   mail:
     host: ${MAIL_HOST}
@@ -29,14 +34,10 @@ spring:
             enable: true
             required: true
         debug: false
-  data:
-    redis:
-      ssl:
-        enabled: true
-
-#Redis Configuration
 redis:
-  url: ${REDIS_URL}
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
+
 
 # JWT
 jwt:
@@ -49,12 +50,15 @@ jwt:
 auth:
   default-password: ${AUTH_DEFAULT_PASSWORD}
 
-# HTTPS Configuration
+# Server (chỉ chạy HTTP, không SSL)
 server:
   address: 0.0.0.0
   port: ${SERVER_PORT}
-  ssl:
-    key-store: ${SSL_KEYSTORE}
-    key-store-password: ${SSL_KEYSTORE_PASS}
-    key-store-type: ${SSL_KEYSTORE_TYPE}
-    key-alias: ${SSL_KEY_ALIAS}
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: TRACE

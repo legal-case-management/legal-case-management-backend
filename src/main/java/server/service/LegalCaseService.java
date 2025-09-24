@@ -4,7 +4,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -57,27 +59,26 @@ public class LegalCaseService {
                 .toList();
     }
 
-    public List<LegalCaseResponse> search(LegalCaseSearchRequest request) {
+    public List<LegalCaseResponse> search(LegalCaseSearchRequest request, Pageable pageable) {
         return legalCaseRepository.search(
-                        request.getAcceptanceNumber(),
-                        request.getStartAcceptanceDate(),
-                        request.getEndAcceptanceDate(),
-                        request.getPlaintiff(),
-                        request.getPlaintiffAddress(),
-                        request.getDefendant(),
-                        request.getDefendantAddress(),
-                        request.getLegalRelationshipId(),
-                        request.getTypeOfLegalCaseId(),
-                        request.getLegalRelationshipGroupId(),
-                        request.getStatusOfLegalCase(),
-                        request.getJudgeName(),
-                        request.getBatchId(),
-                        request.getStorageDate(),
-                        PageRequest.of(0, 50)
-                )
-                .stream()
-                .map(legalCaseMapper::toLegalCaseResponse)
-                .toList();
+                request.getAcceptanceNumber(),
+                request.getStartAcceptanceDate(),
+                request.getEndAcceptanceDate(),
+                request.getPlaintiff(),
+                request.getPlaintiffAddress(),
+                request.getDefendant(),
+                request.getDefendantAddress(),
+                request.getLegalRelationshipId(),
+                request.getTypeOfLegalCaseId(),
+                request.getLegalRelationshipGroupId(),
+                request.getStatusOfLegalCase(),
+                request.getJudgeName(),
+                request.getBatchId(),
+                request.getStorageDate(),
+                pageable
+        ).stream().map(legalCaseMapper::toLegalCaseResponse).toList();
+
+
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

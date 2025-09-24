@@ -2642,7 +2642,6 @@ VALUES ('HS08', 'IN_PROCESS', 'TEMPORARY_SUSPENSION', 0);
 INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
 VALUES ('HS09', 'IN_PROCESS', 'TEMPORARY_SUSPENSION', 0);
 
-
 INSERT INTO handle_type_of_decisions(type_of_decision_id, pre_status, post_status, extension_period)
 VALUES ('HS10', 'TEMPORARY_SUSPENSION', 'IN_PROCESS', 0);
 

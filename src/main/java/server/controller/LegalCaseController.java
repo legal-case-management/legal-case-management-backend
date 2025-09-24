@@ -5,6 +5,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import server.dto.request.legalCase.*;
 import server.dto.response.ApiResponse;
@@ -41,12 +45,18 @@ public class LegalCaseController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<List<LegalCaseResponse>> search(@RequestBody @Valid LegalCaseSearchRequest request){
+    public ApiResponse<List<LegalCaseResponse>> search(
+            @RequestBody @Valid LegalCaseSearchRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "legalCaseId") String sortBy
+    ){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         return ApiResponse.<List<LegalCaseResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalCaseService.search(request))
+                .data(legalCaseService.search(request, pageable))
                 .build();
     }
 

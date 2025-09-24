@@ -1,6 +1,7 @@
 package server.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,9 +30,9 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND (:statusOfLegalCase IS NULL OR lc.statusOfLegalCase = :statusOfLegalCase)
             AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))
             AND (:batchId IS NULL OR (lc.batch IS NOT NULL AND lc.batch.batchId = :batchId))
-            AND (:storageDate IS NULL OR (YEAR(lc.storageDate) = YEAR(:storageDate) AND MONTH(lc.storageDate) = MONTH(:storageDate) AND DAY(lc.storageDate) = DAY(:storageDate)))
+            AND (:storageDate IS NULL OR CAST(lc.storageDate AS date) = :storageDate)
             """)
-    List<LegalCase> search(
+    Page<LegalCase> search(
             String acceptanceNumber,
             LocalDate startAcceptanceDate,
             LocalDate endAcceptanceDate,
@@ -84,15 +85,15 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
 
 
     @Query("""
-        SELECT lc FROM LegalCase lc
-        LEFT JOIN lc.legalRelationship lr
-        WHERE lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
-        AND lc.judge IS NULL
-        AND (
-            (:isMediator = true AND lc.mediator IS NULL)
-            OR
-            (:isMediator = false AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId))
-        )
-        """)
+            SELECT lc FROM LegalCase lc
+            LEFT JOIN lc.legalRelationship lr
+            WHERE lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
+            AND lc.judge IS NULL
+            AND (
+                (:isMediator = true AND lc.mediator IS NULL)
+                OR
+                (:isMediator = false AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId))
+            )
+            """)
     List<LegalCase> getAssignmentList(boolean isMediator, String legalRelationshipGroupId);
 }
