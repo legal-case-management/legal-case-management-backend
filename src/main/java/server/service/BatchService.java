@@ -4,13 +4,16 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.batch.BatchRequest;
 import server.dto.request.batch.BatchSearchRequest;
+import server.dto.response.PageResponse;
 import server.dto.response.batch.BatchResponse;
 import server.entity.Batch;
 import server.exception.AppException;
@@ -86,16 +89,28 @@ public class BatchService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<BatchResponse> search(BatchSearchRequest request) {
-        return batchRepository
-                .search(
-                        request.getBatchId(),
-                        request.getBatchName(),
-                        request.getNote(),
-                        request.getStorageDateStart(),
-                        request.getStorageDateEnd()
-                )
-                .stream().map(batchMapper::toBatchResponse)
-                .toList();
+    public PageResponse<BatchResponse> search(BatchSearchRequest request, Pageable pageable) {
+        Page<BatchResponse> page = batchRepository.search(
+                request.getBatchId(),
+                request.getBatchName(),
+                request.getNote(),
+                request.getStorageDateStart(),
+                request.getStorageDateEnd(),
+                pageable
+        ).map(batchMapper::toBatchResponse);
+
+        return PageResponse.<BatchResponse>builder()
+                .number(page.getNumber())
+                .size(page.getSize())
+                .numberOfElement(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .hasNext(page.hasNext())
+                .hasPrevious(page.hasPrevious())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
+                .content(page.getContent())
+                .build();
     }
+
 }

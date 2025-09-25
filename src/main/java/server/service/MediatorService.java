@@ -6,7 +6,9 @@ import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.mediator.MediatorRequest;
 import server.dto.request.mediator.MediatorSearchRequest;
+import server.dto.response.PageResponse;
 import server.dto.response.mediator.MediatorResponse;
 import server.entity.Account;
 import server.entity.Mediator;
@@ -120,11 +123,26 @@ public class MediatorService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<MediatorResponse> search(MediatorSearchRequest request) {
-        return mediatorRepository.search(
+    public PageResponse<MediatorResponse> search(MediatorSearchRequest request, Pageable pageable) {
+        Page<MediatorResponse> page = mediatorRepository.search(
                 request.getOfficerId(),
                 request.getFullName(),
-                request.getStatusOfOfficer()
+                request.getStatusOfOfficer(),
+                pageable
         );
+
+        return PageResponse.<MediatorResponse>builder()
+                .number(page.getNumber())
+                .size(page.getSize())
+                .numberOfElement(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .hasNext(page.hasNext())
+                .hasPrevious(page.hasPrevious())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
+                .content(page.getContent())
+                .build();
     }
+
 }

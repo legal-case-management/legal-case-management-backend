@@ -1,6 +1,7 @@
 package server.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -33,10 +34,11 @@ public interface MediatorRepository extends JpaRepository<Mediator, String> {
             GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.statusOfOfficer, m.account.email
             ORDER BY m.officerId
             """)
-    List<MediatorResponse> search(
+    Page<MediatorResponse> search(
             String officerId, 
             String fullName, 
-            StatusOfOfficer statusOfOfficer
+            StatusOfOfficer statusOfOfficer,
+            Pageable pageable
     );
 
     @Query("""

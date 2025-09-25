@@ -4,13 +4,16 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.legalRelationship.LegalRelationshipRequest;
 import server.dto.request.legalRelationship.LegalRelationshipSearchRequest;
+import server.dto.response.PageResponse;
 import server.dto.response.legalRelationship.LegalRelationshipResponse;
 import server.entity.LegalRelationship;
 import server.entity.LegalRelationshipGroup;
@@ -109,16 +112,28 @@ public class LegalRelationshipService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalRelationshipResponse> search(LegalRelationshipSearchRequest request) {
-        return legalRelationshipRepository.search(
-                        request.getLegalRelationshipId(),
-                        request.getLegalRelationshipName(),
-                        request.getTypeOfLegalCaseId(),
-                        request.getLegalRelationshipGroupId()
-                )
-                .stream()
-                .map(legalRelationshipMapper::toLegalRelationshipResponse)
-                .toList();
+    public PageResponse<LegalRelationshipResponse> search(LegalRelationshipSearchRequest request, Pageable pageable) {
+        Page<LegalRelationshipResponse> page = legalRelationshipRepository.search(
+                request.getLegalRelationshipId(),
+                request.getLegalRelationshipName(),
+                request.getTypeOfLegalCaseId(),
+                request.getLegalRelationshipGroupId(),
+                pageable
+        ).map(legalRelationshipMapper::toLegalRelationshipResponse);
+
+
+        return PageResponse.<LegalRelationshipResponse>builder()
+                .number(page.getNumber())
+                .size(page.getSize())
+                .numberOfElement(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .hasNext(page.hasNext())
+                .hasPrevious(page.hasPrevious())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
+                .content(page.getContent())
+                .build();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

@@ -5,10 +5,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import server.dto.request.batch.BatchRequest;
 import server.dto.request.batch.BatchSearchRequest;
 import server.dto.response.ApiResponse;
+import server.dto.response.PageResponse;
 import server.dto.response.batch.BatchResponse;
 import server.service.BatchService;
 
@@ -43,12 +47,18 @@ public class BatchController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<List<BatchResponse>> search(@RequestBody @Valid BatchSearchRequest request) {
-        return ApiResponse.<List<BatchResponse>>builder()
+    public ApiResponse<PageResponse<BatchResponse>> search(
+            @RequestBody @Valid BatchSearchRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "batchId") String sortBy
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        return ApiResponse.<PageResponse<BatchResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(batchService.search(request))
+                .data(batchService.search(request, pageable))
                 .build();
     }
 

@@ -19,7 +19,6 @@ spring:
     properties:
       hibernate:
         dialect: ${HIBERNATE_DIALECT}
-        format_sql: true
 
   mail:
     host: ${MAIL_HOST}

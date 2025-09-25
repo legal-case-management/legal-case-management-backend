@@ -1,9 +1,13 @@
 package server.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.response.ApiResponse;
+import server.dto.response.PageResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.service.JudgeService;
 import lombok.AccessLevel;
@@ -23,7 +27,7 @@ public class JudgeController {
     JudgeService judgeService;
 
     @GetMapping("/all")
-    public ApiResponse<List<JudgeResponse>> getAll(){
+    public ApiResponse<List<JudgeResponse>> getAll() {
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
@@ -33,7 +37,7 @@ public class JudgeController {
     }
 
     @GetMapping("/limit-{limit}")
-    public ApiResponse<List<JudgeResponse>> getTop50(@PathVariable int limit){
+    public ApiResponse<List<JudgeResponse>> getTop50(@PathVariable int limit) {
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
@@ -43,17 +47,23 @@ public class JudgeController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<List<JudgeResponse>> search(@RequestBody @Valid JudgeSearchRequest request){
-        return ApiResponse.<List<JudgeResponse>>builder()
+    public ApiResponse<PageResponse<JudgeResponse>> search(
+            @RequestBody @Valid JudgeSearchRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "judgeId") String sortBy
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        return ApiResponse.<PageResponse<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(judgeService.search(request))
+                .data(judgeService.search(request, pageable))
                 .build();
     }
 
     @GetMapping("/list-assignment")
-    public ApiResponse<List<JudgeResponse>> listAssignment(){
+    public ApiResponse<List<JudgeResponse>> listAssignment() {
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
@@ -63,7 +73,7 @@ public class JudgeController {
     }
 
     @PostMapping("/")
-    public ApiResponse<Void> create(@RequestBody @Valid JudgeRequest request){
+    public ApiResponse<Void> create(@RequestBody @Valid JudgeRequest request) {
         judgeService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -73,7 +83,7 @@ public class JudgeController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid JudgeRequest request){
+    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid JudgeRequest request) {
         judgeService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -83,7 +93,7 @@ public class JudgeController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable String id){
+    public ApiResponse<Void> delete(@PathVariable String id) {
         judgeService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)

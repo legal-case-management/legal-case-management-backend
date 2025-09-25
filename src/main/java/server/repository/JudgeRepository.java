@@ -1,6 +1,7 @@
 package server.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import server.dto.response.judge.JudgeResponse;
@@ -41,7 +42,13 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
             ORDER BY j.officerId
             """)
-    List<JudgeResponse> search(String officerId, String fullName, StatusOfOfficer statusOfOfficer, @Param("milestoneDate") LocalDate milestoneDate);
+    Page<JudgeResponse> search(
+            String officerId,
+            String fullName,
+            StatusOfOfficer statusOfOfficer,
+            @Param("milestoneDate") LocalDate milestoneDate,
+            Pageable pageable
+    );
 
     @Query("""
             SELECT new server.dto.response.judge.JudgeResponse(

@@ -1,6 +1,7 @@
 package server.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,11 +35,12 @@ public interface LegalRelationshipRepository extends JpaRepository<LegalRelation
             AND (:legalRelationshipGroupId IS NULL OR lrg.legalRelationshipGroupId LIKE %:legalRelationshipGroupId%)
             ORDER BY tolc.typeOfLegalCaseId, lr.legalRelationshipId
             """)
-    List<LegalRelationship> search(
+    Page<LegalRelationship> search(
             String legalRelationshipId,
             String legalRelationshipName,
             String typeOfLegalCaseId,
-            String legalRelationshipGroupId
+            String legalRelationshipGroupId,
+            Pageable pageable
     );
 
     @Query("""

@@ -4,13 +4,16 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.typeOfDecision.TypeOfDecisionRequest;
 import server.dto.request.typeOfDecision.TypeOfDecisionSearchRequest;
+import server.dto.response.PageResponse;
 import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
 import server.entity.TypeOfDecision;
 import server.entity.TypeOfLegalCase;
@@ -100,15 +103,28 @@ public class TypeOfDecisionService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<TypeOfDecisionResponse> search(TypeOfDecisionSearchRequest request) {
-        return typeOfDecisionRepository.search(
-                        request.getTypeOfDecisionId(),
-                        request.getTypeOfDecisionName(),
-                        request.getTypeOfLegalCaseId(),
-                        request.getCourtIssued(),
-                        request.isTheEndDecision()
-                ).stream()
-                .map(typeOfDecisionMapper::toTypeOfDecisionResponse)
-                .toList();
+    public PageResponse<TypeOfDecisionResponse> search(TypeOfDecisionSearchRequest request, Pageable pageable) {
+        Page<TypeOfDecisionResponse> page = typeOfDecisionRepository.search(
+                request.getTypeOfDecisionId(),
+                request.getTypeOfDecisionName(),
+                request.getTypeOfLegalCaseId(),
+                request.getCourtIssued(),
+                request.isTheEndDecision(),
+                pageable
+        ).map(typeOfDecisionMapper::toTypeOfDecisionResponse);
+
+        return PageResponse.<TypeOfDecisionResponse>builder()
+                .number(page.getNumber())
+                .size(page.getSize())
+                .numberOfElement(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .hasNext(page.hasNext())
+                .hasPrevious(page.hasPrevious())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
+                .content(page.getContent())
+                .build();
     }
+
 }

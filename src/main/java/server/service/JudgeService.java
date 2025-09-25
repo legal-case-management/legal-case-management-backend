@@ -3,13 +3,17 @@ package server.service;
 import lombok.Synchronized;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
+import server.dto.response.PageResponse;
 import server.dto.response.judge.JudgeResponse;
+import server.dto.response.legalCase.LegalCaseResponse;
 import server.entity.*;
 import server.entity.enums.Role;
 import server.entity.enums.StatusOfOfficer;
@@ -63,14 +67,29 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<JudgeResponse> search(JudgeSearchRequest request) {
-        return judgeRepository.search(
+    public PageResponse<JudgeResponse> search(JudgeSearchRequest request, Pageable pageable) {
+        Page<JudgeResponse> page = judgeRepository.search(
                 request.getOfficerId(),
                 request.getFullName(),
                 request.getStatusOfOfficer(),
-                DateUtil.getMilestoneDate()
+                DateUtil.getMilestoneDate(),
+                pageable
         );
+
+        return PageResponse.<JudgeResponse>builder()
+                .number(page.getNumber())
+                .size(page.getSize())
+                .numberOfElement(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .hasNext(page.hasNext())
+                .hasPrevious(page.hasPrevious())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
+                .content(page.getContent())
+                .build();
     }
+
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async

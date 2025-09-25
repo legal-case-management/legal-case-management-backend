@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.legalCase.*;
+import server.dto.response.PageResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.dto.response.legalCase.LegalCaseResponse;
 import server.entity.*;
@@ -19,7 +20,6 @@ import server.entity.enums.Assignment;
 import server.entity.enums.StatusOfLegalCase;
 import server.exception.AppException;
 import server.exception.ErrorCode;
-import server.mapper.JudgeMapper;
 import server.mapper.LegalCaseMapper;
 import server.repository.JudgeRepository;
 import server.repository.LegalCaseRepository;
@@ -59,8 +59,8 @@ public class LegalCaseService {
                 .toList();
     }
 
-    public List<LegalCaseResponse> search(LegalCaseSearchRequest request, Pageable pageable) {
-        return legalCaseRepository.search(
+    public PageResponse<LegalCaseResponse> search(LegalCaseSearchRequest request, Pageable pageable) {
+        Page<LegalCaseResponse> page = legalCaseRepository.search(
                 request.getAcceptanceNumber(),
                 request.getStartAcceptanceDate(),
                 request.getEndAcceptanceDate(),
@@ -76,9 +76,20 @@ public class LegalCaseService {
                 request.getBatchId(),
                 request.getStorageDate(),
                 pageable
-        ).stream().map(legalCaseMapper::toLegalCaseResponse).toList();
+        ).map(legalCaseMapper::toLegalCaseResponse);
 
-
+        return PageResponse.<LegalCaseResponse>builder()
+                .number(page.getNumber())
+                .size(page.getSize())
+                .numberOfElement(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .hasNext(page.hasNext())
+                .hasPrevious(page.hasPrevious())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
+                .content(page.getContent())
+                .build();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

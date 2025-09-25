@@ -5,10 +5,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
 import server.dto.request.typeOfLegalCase.TypeOfLegalCaseSearchRequest;
 import server.dto.response.ApiResponse;
+import server.dto.response.PageResponse;
 import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
 import server.service.TypeOfLegalCaseService;
 
@@ -63,14 +67,22 @@ public class TypeOfLegalCaseController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<List<TypeOfLegalCaseResponse>> search(@RequestBody @Valid TypeOfLegalCaseSearchRequest request) {
-        return ApiResponse.<List<TypeOfLegalCaseResponse>>builder()
+    public ApiResponse<PageResponse<TypeOfLegalCaseResponse>> search(
+            @RequestBody @Valid TypeOfLegalCaseSearchRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "typeOfLegalCaseId") String sortBy
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+
+        return ApiResponse.<PageResponse<TypeOfLegalCaseResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(typeOfLegalCaseService.search(request))
+                .data(typeOfLegalCaseService.search(request, pageable))
                 .build();
     }
+
 
     @GetMapping("/limit-{limit}")
     public ApiResponse<List<TypeOfLegalCaseResponse>> getLimit(@PathVariable int limit) {

@@ -1,5 +1,6 @@
 package server.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,8 +25,9 @@ public interface LegalRelationshipGroupRepository extends JpaRepository<LegalRel
             WHERE (:legalRelationshipGroupId IS NULL OR lrg.legalRelationshipGroupId LIKE %:legalRelationshipGroupId%)
             AND (:legalRelationshipGroupName IS NULL OR lrg.legalRelationshipGroupName LIKE %:legalRelationshipGroupName%)
             """)
-    List<LegalRelationshipGroup> search(
+    Page<LegalRelationshipGroup> search(
             String legalRelationshipGroupId,
-            String legalRelationshipGroupName
+            String legalRelationshipGroupName,
+            Pageable pageable
     );
 }

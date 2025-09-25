@@ -5,10 +5,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import server.dto.request.mediator.MediatorRequest;
 import server.dto.request.mediator.MediatorSearchRequest;
 import server.dto.response.ApiResponse;
+import server.dto.response.PageResponse;
 import server.dto.response.mediator.MediatorResponse;
 import server.service.MediatorService;
 
@@ -42,14 +46,22 @@ public class MediatorController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<List<MediatorResponse>> search(@RequestBody @Valid MediatorSearchRequest request){
-        return ApiResponse.<List<MediatorResponse>>builder()
+    public ApiResponse<PageResponse<MediatorResponse>> search(
+            @RequestBody @Valid MediatorSearchRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "officerId") String sortBy
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+
+        return ApiResponse.<PageResponse<MediatorResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(mediatorService.search(request))
+                .data(mediatorService.search(request, pageable))
                 .build();
     }
+
 
     @PostMapping("/")
     public ApiResponse<Void> create(@RequestBody @Valid MediatorRequest request){

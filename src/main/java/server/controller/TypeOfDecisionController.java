@@ -5,10 +5,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import server.dto.request.typeOfDecision.TypeOfDecisionRequest;
 import server.dto.request.typeOfDecision.TypeOfDecisionSearchRequest;
 import server.dto.response.ApiResponse;
+import server.dto.response.PageResponse;
 import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
 import server.service.TypeOfDecisionService;
 
@@ -63,14 +67,22 @@ public class TypeOfDecisionController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<List<TypeOfDecisionResponse>> search(@RequestBody @Valid TypeOfDecisionSearchRequest request) {
-        return ApiResponse.<List<TypeOfDecisionResponse>>builder()
+    public ApiResponse<PageResponse<TypeOfDecisionResponse>> search(
+            @RequestBody @Valid TypeOfDecisionSearchRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "typeOfDecisionId") String sortBy
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+
+        return ApiResponse.<PageResponse<TypeOfDecisionResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(typeOfDecisionService.search(request))
+                .data(typeOfDecisionService.search(request, pageable))
                 .build();
     }
+
 
     @GetMapping("/limit-{limit}")
     public ApiResponse<List<TypeOfDecisionResponse>> getLimit(@PathVariable int limit) {

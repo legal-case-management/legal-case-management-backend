@@ -5,10 +5,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import server.dto.request.legalRelationshipGroup.LegalRelationshipGroupRequest;
 import server.dto.request.legalRelationshipGroup.LegalRelationshipGroupSearchRequest;
 import server.dto.response.ApiResponse;
+import server.dto.response.PageResponse;
 import server.dto.response.legalRelationshipGroup.LegalRelationshipGroupResponse;
 import server.service.LegalRelationshipGroupService;
 
@@ -42,14 +46,22 @@ public class LegalRelationshipGroupController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<List<LegalRelationshipGroupResponse>> search(@RequestBody @Valid LegalRelationshipGroupSearchRequest request){
-        return ApiResponse.<List<LegalRelationshipGroupResponse>>builder()
+    public ApiResponse<PageResponse<LegalRelationshipGroupResponse>> search(
+            @RequestBody @Valid LegalRelationshipGroupSearchRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "legalRelationshipGroupId") String sortBy
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+
+        return ApiResponse.<PageResponse<LegalRelationshipGroupResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalRelationshipGroupService.search(request))
+                .data(legalRelationshipGroupService.search(request, pageable))
                 .build();
     }
+
 
     @PostMapping("/")
     public ApiResponse<Void> create(@RequestBody @Valid LegalRelationshipGroupRequest request){

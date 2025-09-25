@@ -1,6 +1,7 @@
 package server.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,11 +38,12 @@ public interface BatchRepository extends JpaRepository<Batch, String> {
             AND (:storageDateStart IS NULL OR b.storageDate >= :storageDateStart)
             AND (:storageDateEnd IS NULL OR b.storageDate <= :storageDateEnd)
             """)
-    List<Batch> search(
+    Page<Batch> search(
             String batchId,
             String batchName,
             String note,
             LocalDateTime storageDateStart,
-            LocalDateTime storageDateEnd
+            LocalDateTime storageDateEnd,
+            Pageable pageable
     );
 }

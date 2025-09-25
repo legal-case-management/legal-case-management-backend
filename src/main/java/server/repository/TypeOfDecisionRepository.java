@@ -1,5 +1,6 @@
 package server.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,12 +23,13 @@ public interface TypeOfDecisionRepository extends JpaRepository<TypeOfDecision, 
             AND (:courtIssued IS NULL OR tod.courtIssued = :courtIssued)
             AND (:theEndDecision IS NULL OR tod.theEndDecision = :theEndDecision)
             """)
-    List<TypeOfDecision> search(
+    Page<TypeOfDecision> search(
             String typeOfDecisionId,
             String typeOfDecisionName,
             String typeOfLegalCaseId,
             CourtIssued courtIssued,
-            boolean theEndDecision
+            boolean theEndDecision,
+            Pageable pageable
     );
 
     @Query("""

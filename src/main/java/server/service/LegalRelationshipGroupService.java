@@ -4,13 +4,16 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.legalRelationshipGroup.LegalRelationshipGroupRequest;
 import server.dto.request.legalRelationshipGroup.LegalRelationshipGroupSearchRequest;
+import server.dto.response.PageResponse;
 import server.dto.response.legalRelationshipGroup.LegalRelationshipGroupResponse;
 import server.entity.LegalRelationshipGroup;
 import server.exception.AppException;
@@ -75,14 +78,27 @@ public class LegalRelationshipGroupService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalRelationshipGroupResponse> search(LegalRelationshipGroupSearchRequest request) {
-        return legalRelationshipGroupRepository.search(
-                        request.getLegalRelationshipGroupId(),
-                        request.getLegalRelationshipGroupName()
-                )
-                .stream().map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
-                .toList();
+    public PageResponse<LegalRelationshipGroupResponse> search(LegalRelationshipGroupSearchRequest request, Pageable pageable) {
+        Page<LegalRelationshipGroupResponse> page = legalRelationshipGroupRepository.search(
+                request.getLegalRelationshipGroupId(),
+                request.getLegalRelationshipGroupName(),
+                pageable
+        ).map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse);
+
+        return PageResponse.<LegalRelationshipGroupResponse>builder()
+                .number(page.getNumber())
+                .size(page.getSize())
+                .numberOfElement(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .hasNext(page.hasNext())
+                .hasPrevious(page.hasPrevious())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast())
+                .content(page.getContent())
+                .build();
     }
+
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<LegalRelationshipGroupResponse> getLimit(int limit) {

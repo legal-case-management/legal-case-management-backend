@@ -1,5 +1,6 @@
 package server.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,10 +20,11 @@ public interface TypeOfLegalCaseRepository extends JpaRepository<TypeOfLegalCase
             AND (:typeOfLegalCaseName IS NULL OR t.typeOfLegalCaseName LIKE %:typeOfLegalCaseName%)
             AND (:codeName IS NULL OR t.codeName LIKE %:codeName%)
             """)
-    List<TypeOfLegalCase> search(
+    Page<TypeOfLegalCase> search(
             String typeOfLegalCaseId,
             String typeOfLegalCaseName,
-            String codeName
+            String codeName,
+            Pageable pageable
     );
 
     @Query("""
