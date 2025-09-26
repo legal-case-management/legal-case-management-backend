@@ -21,7 +21,7 @@ import java.util.List;
 public class DecisionController {
     DecisionService decisionService;
 
-    @PostMapping("/")
+    @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid DecisionRequest request) {
         decisionService.create(request);
         return ApiResponse.<Void>builder()

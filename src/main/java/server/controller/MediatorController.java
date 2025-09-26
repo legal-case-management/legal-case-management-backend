@@ -63,7 +63,7 @@ public class MediatorController {
     }
 
 
-    @PostMapping("/")
+    @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid MediatorRequest request){
         mediatorService.create(request);
         return ApiResponse.<Void>builder()

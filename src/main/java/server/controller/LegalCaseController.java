@@ -60,7 +60,7 @@ public class LegalCaseController {
                 .build();
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid LegalCaseRequest request){
         legalCaseService.create(request);
         return ApiResponse.<Void>builder()

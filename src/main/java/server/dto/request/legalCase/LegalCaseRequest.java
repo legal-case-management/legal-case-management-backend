@@ -21,4 +21,5 @@ public class LegalCaseRequest {
     String defendantAddress;
     String legalRelationshipId;
     String judgeId;
+    String batchId;
 }

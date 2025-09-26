@@ -36,7 +36,7 @@ public class TypeOfDecisionController {
                 .build();
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid TypeOfDecisionRequest request) {
         typeOfDecisionService.create(request);
         return ApiResponse.<Void>builder()

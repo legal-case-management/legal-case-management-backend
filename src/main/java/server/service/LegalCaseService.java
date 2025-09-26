@@ -21,10 +21,7 @@ import server.entity.enums.StatusOfLegalCase;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalCaseMapper;
-import server.repository.JudgeRepository;
-import server.repository.LegalCaseRepository;
-import server.repository.LegalRelationshipGroupRepository;
-import server.repository.LegalRelationshipRepository;
+import server.repository.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,6 +37,7 @@ public class LegalCaseService {
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
 
     JudgeRepository judgeRepository;
+    BatchRepository batchRepository;
 
     LegalCaseMapper legalCaseMapper;
 
@@ -97,7 +95,13 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void create(LegalCaseRequest request) {
-        createSingle(request, null);
+        Batch batch = null;
+        if (request.getBatchId() != null){
+            batch = batchRepository.findById(request.getBatchId())
+                    .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
+        }
+
+        createSingle(request, batch);
     }
 
     public LegalCaseResponse getById(String id) {
@@ -116,7 +120,6 @@ public class LegalCaseService {
         for (LegalCaseRequest legalCaseRequest : request.getLegalCases()) {
             createSingle(legalCaseRequest, batch);
         }
-
     }
 
     private void createSingle(LegalCaseRequest request, Batch batch) {
@@ -148,12 +151,11 @@ public class LegalCaseService {
         if (legalCase.getStatusOfLegalCase() == null)
             legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);
 
-        if (request.getJudgeId() != null)
-            legalCase.setJudge(
-                    Judge.builder()
-                            .officerId(request.getJudgeId())
-                            .build()
-            );
+        if (request.getJudgeId() != null){
+            Judge existingJudge = judgeRepository.findById(request.getJudgeId())
+                    .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
+            legalCase.setJudge(existingJudge);
+        }
 
         if (batch != null)
             legalCase.setBatch(batch);

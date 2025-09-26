@@ -64,7 +64,7 @@ public class LegalRelationshipController {
     }
 
 
-    @PostMapping("/")
+    @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid LegalRelationshipRequest request) {
         legalRelationshipService.create(request);
         return ApiResponse.<Void>builder()

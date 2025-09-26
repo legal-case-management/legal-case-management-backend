@@ -62,6 +62,16 @@ public class BatchController {
                 .build();
     }
 
+    @PostMapping
+    public ApiResponse<Void> create(@RequestBody @Valid BatchRequest request) {
+        batchService.create(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Thêm đợt nhập án thành công")
+                .build();
+    }
+
     @PutMapping("/{id}")
     public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid BatchRequest request) {
         batchService.update(id, request);

@@ -51,7 +51,7 @@ public class JudgeController {
             @RequestBody @Valid JudgeSearchRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "judgeId") String sortBy
+            @RequestParam(defaultValue = "officerId") String sortBy
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         return ApiResponse.<PageResponse<JudgeResponse>>builder()

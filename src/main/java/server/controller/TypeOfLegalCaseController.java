@@ -36,7 +36,7 @@ public class TypeOfLegalCaseController {
                 .build();
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid TypeOfLegalCaseRequest request) {
         typeOfLegalCaseService.create(request);
         return ApiResponse.<Void>builder()
