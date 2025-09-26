@@ -1,14 +1,15 @@
 package server.repository;
 
-import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import server.entity.LegalCase;
 import server.entity.enums.StatusOfLegalCase;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,8 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND (:statusOfLegalCase IS NULL OR lc.statusOfLegalCase = :statusOfLegalCase)
             AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))
             AND (:batchId IS NULL OR (lc.batch IS NOT NULL AND lc.batch.batchId = :batchId))
-            AND (:storageDate IS NULL OR CAST(lc.storageDate AS date) = :storageDate)
+            AND (:startStorageDate IS NULL OR lc.storageDate >= :startStorageDate)
+            AND (:endStorageDate IS NULL OR lc.storageDate <= :endStorageDate)
             """)
     Page<LegalCase> search(
             String acceptanceNumber,
@@ -46,7 +48,8 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             StatusOfLegalCase statusOfLegalCase,
             String judgeName,
             String batchId,
-            LocalDate storageDate,
+            LocalDate startStorageDate,
+            LocalDate endStorageDate,
             Pageable pageable
     );
 

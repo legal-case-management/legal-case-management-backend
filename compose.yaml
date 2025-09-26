@@ -7,10 +7,10 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_USER: root
-      POSTGRES_PASSWORD: pYWcb7emWh2KvcnAMPWAJiDrcbReWVaA
+      POSTGRES_PASSWORD: 123456
       POSTGRES_DB: legal_case_management
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql2/data
 
   redis:
     image: redis:7.2

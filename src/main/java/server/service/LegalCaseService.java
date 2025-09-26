@@ -72,7 +72,8 @@ public class LegalCaseService {
                 request.getStatusOfLegalCase(),
                 request.getJudgeName(),
                 request.getBatchId(),
-                request.getStorageDate(),
+                request.getStartStorageDate(),
+                request.getEndStorageDate(),
                 pageable
         ).map(legalCaseMapper::toLegalCaseResponse);
 
@@ -145,7 +146,7 @@ public class LegalCaseService {
         }
 
         legalCase.setLegalCaseId(legalCaseId);
-        legalCase.setStorageDate(LocalDateTime.now());
+        legalCase.setStorageDate(LocalDate.now());
         legalCase.setLegalRelationship(legalRelationship);
 
         if (legalCase.getStatusOfLegalCase() == null)
@@ -229,7 +230,7 @@ public class LegalCaseService {
 
                 legalCase.setAssignment(Assignment.RANDOM);
                 legalCase.setExpiredDate(legalCase.getAcceptanceDate().plusMonths(4));
-                legalCase.setAssignmentDate(LocalDateTime.now());
+                legalCase.setAssignmentDate(LocalDate.now());
                 legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
                 legalCase.setJudge(
                         Judge.builder()
@@ -291,7 +292,7 @@ public class LegalCaseService {
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
         legalCase.setAssignment(Assignment.ASSIGN);
-        legalCase.setAssignmentDate(LocalDateTime.now());
+        legalCase.setAssignmentDate(LocalDate.now());
         legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
         legalCase.setJudge(judge);
 
