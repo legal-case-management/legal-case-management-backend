@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -78,33 +79,28 @@ public class LegalRelationshipGroupService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public PageResponse<LegalRelationshipGroupResponse> search(LegalRelationshipGroupSearchRequest request, Pageable pageable) {
-        Page<LegalRelationshipGroupResponse> page = legalRelationshipGroupRepository.search(
+    public PageResponse<LegalRelationshipGroupResponse> search(
+            LegalRelationshipGroupSearchRequest request,
+            int page, int size, String sortBy
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        Page<LegalRelationshipGroupResponse> resultPage = legalRelationshipGroupRepository.search(
                 request.getLegalRelationshipGroupId(),
                 request.getLegalRelationshipGroupName(),
                 pageable
         ).map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse);
 
         return PageResponse.<LegalRelationshipGroupResponse>builder()
-                .number(page.getNumber())
-                .size(page.getSize())
-                .numberOfElement(page.getNumberOfElements())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .hasNext(page.hasNext())
-                .hasPrevious(page.hasPrevious())
-                .isFirst(page.isFirst())
-                .isLast(page.isLast())
-                .content(page.getContent())
+                .number(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .numberOfElement(resultPage.getNumberOfElements())
+                .totalElements(resultPage.getTotalElements())
+                .totalPages(resultPage.getTotalPages())
+                .hasNext(resultPage.hasNext())
+                .hasPrevious(resultPage.hasPrevious())
+                .isFirst(resultPage.isFirst())
+                .isLast(resultPage.isLast())
+                .content(resultPage.getContent())
                 .build();
-    }
-
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalRelationshipGroupResponse> getLimit(int limit) {
-        return legalRelationshipGroupRepository
-                .getLimit(PageRequest.of(0, limit))
-                .stream().map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
-                .toList();
     }
 }

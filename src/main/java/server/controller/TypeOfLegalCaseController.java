@@ -73,24 +73,12 @@ public class TypeOfLegalCaseController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "typeOfLegalCaseId") String sortBy
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-
         return ApiResponse.<PageResponse<TypeOfLegalCaseResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(typeOfLegalCaseService.search(request, pageable))
+                .data(typeOfLegalCaseService.search(request, page, size, sortBy))
                 .build();
     }
 
-
-    @GetMapping("/limit-{limit}")
-    public ApiResponse<List<TypeOfLegalCaseResponse>> getLimit(@PathVariable int limit) {
-        return ApiResponse.<List<TypeOfLegalCaseResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Tìm kiếm thành công")
-                .data(typeOfLegalCaseService.getLimit(limit))
-                .build();
-    }
 }

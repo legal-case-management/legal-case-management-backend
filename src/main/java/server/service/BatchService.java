@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class BatchService {
         }
 
         batch.setBatchId(batchId);
-       return batchRepository.save(batch);
+        return batchRepository.save(batch);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -73,14 +74,6 @@ public class BatchService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<BatchResponse> getLimit(int limit) {
-        return batchRepository
-                .getLimit(PageRequest.of(0, limit))
-                .stream().map(batchMapper::toBatchResponse)
-                .toList();
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<BatchResponse> getAll() {
         return batchRepository
                 .findAll()
@@ -89,8 +82,9 @@ public class BatchService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public PageResponse<BatchResponse> search(BatchSearchRequest request, Pageable pageable) {
-        Page<BatchResponse> page = batchRepository.search(
+    public PageResponse<BatchResponse> search(BatchSearchRequest request, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        Page<BatchResponse> resultPage = batchRepository.search(
                 request.getBatchId(),
                 request.getBatchName(),
                 request.getNote(),
@@ -100,16 +94,16 @@ public class BatchService {
         ).map(batchMapper::toBatchResponse);
 
         return PageResponse.<BatchResponse>builder()
-                .number(page.getNumber())
-                .size(page.getSize())
-                .numberOfElement(page.getNumberOfElements())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .hasNext(page.hasNext())
-                .hasPrevious(page.hasPrevious())
-                .isFirst(page.isFirst())
-                .isLast(page.isLast())
-                .content(page.getContent())
+                .number(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .numberOfElement(resultPage.getNumberOfElements())
+                .totalElements(resultPage.getTotalElements())
+                .totalPages(resultPage.getTotalPages())
+                .hasNext(resultPage.hasNext())
+                .hasPrevious(resultPage.hasPrevious())
+                .isFirst(resultPage.isFirst())
+                .isLast(resultPage.isLast())
+                .content(resultPage.getContent())
                 .build();
     }
 

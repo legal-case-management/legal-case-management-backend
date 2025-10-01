@@ -34,15 +34,6 @@ public class LegalCaseController {
                 .build();
     }
 
-    @GetMapping("/limit-{limit}")
-    public ApiResponse<List<LegalCaseResponse>> getLimit(@PathVariable int limit){
-        return ApiResponse.<List<LegalCaseResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Thành công")
-                .data(legalCaseService.getLimit(limit))
-                .build();
-    }
 
     @PostMapping("/search")
     public ApiResponse<PageResponse<LegalCaseResponse>> search(
@@ -51,12 +42,11 @@ public class LegalCaseController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "legalCaseId") String sortBy
     ){
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         return ApiResponse.<PageResponse<LegalCaseResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalCaseService.search(request, pageable))
+                .data(legalCaseService.search(request, page, size, sortBy))
                 .build();
     }
 

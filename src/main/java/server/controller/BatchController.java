@@ -36,16 +36,6 @@ public class BatchController {
                 .build();
     }
 
-    @GetMapping("/limit-{limit}")
-    public ApiResponse<List<BatchResponse>> getLimit(@PathVariable int limit) {
-        return ApiResponse.<List<BatchResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Thành công")
-                .data(batchService.getLimit(limit))
-                .build();
-    }
-
     @PostMapping("/search")
     public ApiResponse<PageResponse<BatchResponse>> search(
             @RequestBody @Valid BatchSearchRequest request,
@@ -53,12 +43,11 @@ public class BatchController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "batchId") String sortBy
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         return ApiResponse.<PageResponse<BatchResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(batchService.search(request, pageable))
+                .data(batchService.search(request, page, size, sortBy))
                 .build();
     }
 

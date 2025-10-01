@@ -51,31 +51,6 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     );
 
     @Query("""
-            SELECT new server.dto.response.judge.JudgeResponse(
-                 j.officerId,
-                 j.lastName,
-                 j.firstName,
-                 j.fullName,
-                 j.statusOfOfficer,
-                 j.account.email,
-                 j.maxNumberOfLegalCase,
-                 SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                 SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
-                 SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
-                 SUM(CASE
-                         WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED')
-                              AND lc.acceptanceDate >= :milestoneDate
-                         THEN 1 ELSE 0
-                    END)
-             )
-             FROM Judge j
-             LEFT JOIN j.legalCases lc
-             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName, j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
-             ORDER BY j.officerId
-            """)
-    List<JudgeResponse> getLimit(Pageable pageable, @Param("milestoneDate") LocalDate milestoneDate);
-
-    @Query("""
               SELECT MAX(CAST(SUBSTRING(j.officerId, 3, 2) AS int))
               FROM Judge j
               WHERE SUBSTRING(j.officerId, 1, 2) = 'TP'

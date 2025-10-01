@@ -35,16 +35,6 @@ public class MediatorController {
                 .build();
     }
 
-    @GetMapping("/limit-{limit}")
-    public ApiResponse<List<MediatorResponse>> getTop50(@PathVariable int limit){
-        return ApiResponse.<List<MediatorResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Successful")
-                .data(mediatorService.getLimit(limit))
-                .build();
-    }
-
     @PostMapping("/search")
     public ApiResponse<PageResponse<MediatorResponse>> search(
             @RequestBody @Valid MediatorSearchRequest request,
@@ -52,13 +42,12 @@ public class MediatorController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "officerId") String sortBy
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
         return ApiResponse.<PageResponse<MediatorResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(mediatorService.search(request, pageable))
+                .data(mediatorService.search(request, page, size, sortBy))
                 .build();
     }
 

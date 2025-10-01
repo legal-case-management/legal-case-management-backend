@@ -35,16 +35,6 @@ public class LegalRelationshipGroupController {
                 .build();
     }
 
-    @GetMapping("/limit-{limit}")
-    public ApiResponse<List<LegalRelationshipGroupResponse>> getLimit(@PathVariable int limit){
-        return ApiResponse.<List<LegalRelationshipGroupResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Thành công")
-                .data(legalRelationshipGroupService.getLimit(limit))
-                .build();
-    }
-
     @PostMapping("/search")
     public ApiResponse<PageResponse<LegalRelationshipGroupResponse>> search(
             @RequestBody @Valid LegalRelationshipGroupSearchRequest request,
@@ -52,13 +42,11 @@ public class LegalRelationshipGroupController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "legalRelationshipGroupId") String sortBy
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-
         return ApiResponse.<PageResponse<LegalRelationshipGroupResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalRelationshipGroupService.search(request, pageable))
+                .data(legalRelationshipGroupService.search(request, page, size, sortBy))
                 .build();
     }
 

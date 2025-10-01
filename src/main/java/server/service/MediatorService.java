@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
@@ -52,21 +53,6 @@ public class MediatorService {
         return mediatorRepository.getAll();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<MediatorResponse> getLimit(int limit) {
-        return mediatorRepository.getLimit(PageRequest.of(0, limit));
-    }
-
-    public MediatorResponse getMyInfo() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        String accountId = context.getAuthentication().getName();
-
-        return mediatorMapper.toMediatorResponse(
-                mediatorRepository
-                        .findByAccount_AccountId(accountId)
-                        .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED))
-        );
-    }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
@@ -123,8 +109,10 @@ public class MediatorService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public PageResponse<MediatorResponse> search(MediatorSearchRequest request, Pageable pageable) {
-        Page<MediatorResponse> page = mediatorRepository.search(
+    public PageResponse<MediatorResponse> search(MediatorSearchRequest request, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+
+        Page<MediatorResponse> resultPage = mediatorRepository.search(
                 request.getOfficerId(),
                 request.getFullName(),
                 request.getStatusOfOfficer(),
@@ -132,16 +120,16 @@ public class MediatorService {
         );
 
         return PageResponse.<MediatorResponse>builder()
-                .number(page.getNumber())
-                .size(page.getSize())
-                .numberOfElement(page.getNumberOfElements())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .hasNext(page.hasNext())
-                .hasPrevious(page.hasPrevious())
-                .isFirst(page.isFirst())
-                .isLast(page.isLast())
-                .content(page.getContent())
+                .number(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .numberOfElement(resultPage.getNumberOfElements())
+                .totalElements(resultPage.getTotalElements())
+                .totalPages(resultPage.getTotalPages())
+                .hasNext(resultPage.hasNext())
+                .hasPrevious(resultPage.hasPrevious())
+                .isFirst(resultPage.isFirst())
+                .isLast(resultPage.isLast())
+                .content(resultPage.getContent())
                 .build();
     }
 

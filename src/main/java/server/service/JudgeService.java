@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,14 +62,9 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<JudgeResponse> getLimit(int limit) {
-        return judgeRepository
-                .getLimit(PageRequest.of(0, limit), DateUtil.getMilestoneDate());
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public PageResponse<JudgeResponse> search(JudgeSearchRequest request, Pageable pageable) {
-        Page<JudgeResponse> page = judgeRepository.search(
+    public PageResponse<JudgeResponse> search(JudgeSearchRequest request, int page, int size, String sortBy ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        Page<JudgeResponse> resultPage = judgeRepository.search(
                 request.getOfficerId(),
                 request.getFullName(),
                 request.getStatusOfOfficer(),
@@ -77,16 +73,16 @@ public class JudgeService {
         );
 
         return PageResponse.<JudgeResponse>builder()
-                .number(page.getNumber())
-                .size(page.getSize())
-                .numberOfElement(page.getNumberOfElements())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .hasNext(page.hasNext())
-                .hasPrevious(page.hasPrevious())
-                .isFirst(page.isFirst())
-                .isLast(page.isLast())
-                .content(page.getContent())
+                .number(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .numberOfElement(resultPage.getNumberOfElements())
+                .totalElements(resultPage.getTotalElements())
+                .totalPages(resultPage.getTotalPages())
+                .hasNext(resultPage.hasNext())
+                .hasPrevious(resultPage.hasPrevious())
+                .isFirst(resultPage.isFirst())
+                .isLast(resultPage.isLast())
+                .content(resultPage.getContent())
                 .build();
     }
 

@@ -79,18 +79,8 @@ public class TypeOfDecisionController {
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(typeOfDecisionService.search(request, pageable))
+                .data(typeOfDecisionService.search(request, page, size, sortBy))
                 .build();
     }
 
-
-    @GetMapping("/limit-{limit}")
-    public ApiResponse<List<TypeOfDecisionResponse>> getLimit(@PathVariable int limit) {
-        return ApiResponse.<List<TypeOfDecisionResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Thành công")
-                .data(typeOfDecisionService.getLimit(limit))
-                .build();
-    }
 }

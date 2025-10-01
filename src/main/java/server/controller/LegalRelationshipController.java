@@ -36,16 +36,6 @@ public class LegalRelationshipController {
                 .build();
     }
 
-    @GetMapping("/limit-{limit}")
-    public ApiResponse<List<LegalRelationshipResponse>> getLimit(@PathVariable int limit) {
-        return ApiResponse.<List<LegalRelationshipResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Thành công")
-                .data(legalRelationshipService.getLimit(limit))
-                .build();
-    }
-
     @PostMapping("/search")
     public ApiResponse<PageResponse<LegalRelationshipResponse>> search(
             @RequestBody @Valid LegalRelationshipSearchRequest request,
@@ -53,13 +43,12 @@ public class LegalRelationshipController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "legalRelationshipId") String sortBy
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
         return ApiResponse.<PageResponse<LegalRelationshipResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalRelationshipService.search(request, pageable))
+                .data(legalRelationshipService.search(request, page, size, sortBy))
                 .build();
     }
 

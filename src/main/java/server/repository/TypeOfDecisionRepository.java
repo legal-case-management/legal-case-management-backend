@@ -12,8 +12,6 @@ import java.util.Optional;
 
 public interface TypeOfDecisionRepository extends JpaRepository<TypeOfDecision, String> {
     boolean existsByTypeOfDecisionName(String typeOfDecisionName);
-    @Query("SELECT tod FROM TypeOfDecision tod ORDER BY tod.typeOfDecisionId")
-    List<TypeOfDecision> getLimit(Pageable pageable);
 
     @Query("""
             SELECT tod FROM TypeOfDecision tod

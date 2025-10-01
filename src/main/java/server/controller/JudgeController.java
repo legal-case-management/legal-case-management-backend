@@ -36,16 +36,6 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("/limit-{limit}")
-    public ApiResponse<List<JudgeResponse>> getTop50(@PathVariable int limit) {
-        return ApiResponse.<List<JudgeResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Successful")
-                .data(judgeService.getLimit(limit))
-                .build();
-    }
-
     @PostMapping("/search")
     public ApiResponse<PageResponse<JudgeResponse>> search(
             @RequestBody @Valid JudgeSearchRequest request,
@@ -53,12 +43,11 @@ public class JudgeController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "officerId") String sortBy
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         return ApiResponse.<PageResponse<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(judgeService.search(request, pageable))
+                .data(judgeService.search(request, page, size, sortBy))
                 .build();
     }
 

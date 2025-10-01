@@ -26,12 +26,6 @@ public interface BatchRepository extends JpaRepository<Batch, String> {
 
     @Query("""
             SELECT b FROM Batch b
-            ORDER BY b.batchId DESC
-            """)
-    List<Batch> getLimit(Pageable pageable);
-
-    @Query("""
-            SELECT b FROM Batch b
             WHERE (:batchId IS NULL OR b.batchId LIKE %:batchId%)
             AND (:batchName IS NULL OR b.batchName LIKE %:batchName%)
             AND (:note IS NULL OR b.note LIKE %:note%)

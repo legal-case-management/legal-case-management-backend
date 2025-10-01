@@ -56,23 +56,6 @@ public interface MediatorRepository extends JpaRepository<Mediator, String> {
              GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.statusOfOfficer, m.account.email
              ORDER BY m.officerId
             """)
-    List<MediatorResponse> getLimit(Pageable pageable);
-
-    @Query("""
-            SELECT new server.dto.response.mediator.MediatorResponse(
-                m.officerId,
-                m.lastName,
-                m.firstName,
-                m.fullName,
-                m.statusOfOfficer,
-                m.account.email,
-                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END)
-            )
-             FROM Mediator m
-             LEFT JOIN m.legalCases lc
-             GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.statusOfOfficer, m.account.email
-             ORDER BY m.officerId
-            """)
     List<MediatorResponse> getAll();
 
     @Query("""

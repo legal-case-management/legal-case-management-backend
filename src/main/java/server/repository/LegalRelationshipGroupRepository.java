@@ -17,9 +17,6 @@ public interface LegalRelationshipGroupRepository extends JpaRepository<LegalRel
             """)
     Optional<Integer> getMaxId();
 
-    @Query("SELECT lrg FROM LegalRelationshipGroup lrg ORDER BY lrg.legalRelationshipGroupId")
-    List<LegalRelationshipGroup> getLimit(Pageable pageable);
-
     @Query("""
             SELECT lrg FROM LegalRelationshipGroup lrg
             WHERE (:legalRelationshipGroupId IS NULL OR lrg.legalRelationshipGroupId LIKE %:legalRelationshipGroupId%)

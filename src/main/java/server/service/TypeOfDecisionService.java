@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -38,14 +39,6 @@ public class TypeOfDecisionService {
     public List<TypeOfDecisionResponse> getAll() {
         return typeOfDecisionRepository
                 .findAll()
-                .stream().map(typeOfDecisionMapper::toTypeOfDecisionResponse)
-                .toList();
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<TypeOfDecisionResponse> getLimit(int limit) {
-        return typeOfDecisionRepository
-                .getLimit(PageRequest.of(0, limit))
                 .stream().map(typeOfDecisionMapper::toTypeOfDecisionResponse)
                 .toList();
     }
@@ -103,8 +96,10 @@ public class TypeOfDecisionService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public PageResponse<TypeOfDecisionResponse> search(TypeOfDecisionSearchRequest request, Pageable pageable) {
-        Page<TypeOfDecisionResponse> page = typeOfDecisionRepository.search(
+    public PageResponse<TypeOfDecisionResponse> search(TypeOfDecisionSearchRequest request, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+
+        Page<TypeOfDecisionResponse> resultPage = typeOfDecisionRepository.search(
                 request.getTypeOfDecisionId(),
                 request.getTypeOfDecisionName(),
                 request.getTypeOfLegalCaseId(),
@@ -114,16 +109,16 @@ public class TypeOfDecisionService {
         ).map(typeOfDecisionMapper::toTypeOfDecisionResponse);
 
         return PageResponse.<TypeOfDecisionResponse>builder()
-                .number(page.getNumber())
-                .size(page.getSize())
-                .numberOfElement(page.getNumberOfElements())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .hasNext(page.hasNext())
-                .hasPrevious(page.hasPrevious())
-                .isFirst(page.isFirst())
-                .isLast(page.isLast())
-                .content(page.getContent())
+                .number(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .numberOfElement(resultPage.getNumberOfElements())
+                .totalElements(resultPage.getTotalElements())
+                .totalPages(resultPage.getTotalPages())
+                .hasNext(resultPage.hasNext())
+                .hasPrevious(resultPage.hasPrevious())
+                .isFirst(resultPage.isFirst())
+                .isLast(resultPage.isLast())
+                .content(resultPage.getContent())
                 .build();
     }
 

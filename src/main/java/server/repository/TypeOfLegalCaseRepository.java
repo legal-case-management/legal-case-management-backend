@@ -33,7 +33,4 @@ public interface TypeOfLegalCaseRepository extends JpaRepository<TypeOfLegalCase
               WHERE SUBSTRING(t.typeOfLegalCaseId, 1, 1) = 'L'
             """)
     Optional<Integer> getMaxId();
-
-    @Query("SELECT tol FROM TypeOfLegalCase tol ORDER BY tol.typeOfLegalCaseId")
-    List<TypeOfLegalCase> getLimit(Pageable pageable);
 }

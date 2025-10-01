@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -97,8 +98,10 @@ public class TypeOfLegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public PageResponse<TypeOfLegalCaseResponse> search(TypeOfLegalCaseSearchRequest request, Pageable pageable) {
-        Page<TypeOfLegalCaseResponse> page = typeOfLegalCaseRepository.search(
+    public PageResponse<TypeOfLegalCaseResponse> search(TypeOfLegalCaseSearchRequest request, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+
+        Page<TypeOfLegalCaseResponse> resultPage = typeOfLegalCaseRepository.search(
                 request.getTypeOfLegalCaseId(),
                 request.getCodeName(),
                 request.getTypeOfLegalCaseName(),
@@ -106,25 +109,16 @@ public class TypeOfLegalCaseService {
         ).map(typeOfLegalCaseMapper::toTypeOfLegalCaseResponse);
 
         return PageResponse.<TypeOfLegalCaseResponse>builder()
-                .number(page.getNumber())
-                .size(page.getSize())
-                .numberOfElement(page.getNumberOfElements())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .hasNext(page.hasNext())
-                .hasPrevious(page.hasPrevious())
-                .isFirst(page.isFirst())
-                .isLast(page.isLast())
-                .content(page.getContent())
+                .number(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .numberOfElement(resultPage.getNumberOfElements())
+                .totalElements(resultPage.getTotalElements())
+                .totalPages(resultPage.getTotalPages())
+                .hasNext(resultPage.hasNext())
+                .hasPrevious(resultPage.hasPrevious())
+                .isFirst(resultPage.isFirst())
+                .isLast(resultPage.isLast())
+                .content(resultPage.getContent())
                 .build();
-    }
-
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<TypeOfLegalCaseResponse> getLimit(int limit) {
-        return typeOfLegalCaseRepository
-                .getLimit(PageRequest.of(0, limit))
-                .stream().map(typeOfLegalCaseMapper::toTypeOfLegalCaseResponse)
-                .toList();
     }
 }

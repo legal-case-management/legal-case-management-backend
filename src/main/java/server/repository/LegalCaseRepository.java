@@ -9,7 +9,6 @@ import server.entity.LegalCase;
 import server.entity.enums.StatusOfLegalCase;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,14 +51,6 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             LocalDate endStorageDate,
             Pageable pageable
     );
-
-    @Query("""
-            SELECT lc FROM LegalCase lc
-            LEFT JOIN lc.judge j
-            LEFT JOIN lc.legalRelationship lr
-            ORDER BY lc.acceptanceDate, YEAR(lc.acceptanceDate) DESC, lc.acceptanceDate DESC
-            """)
-    List<LegalCase> getLimit(Pageable pageable);
 
     @Query("""
                 SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 7, 4) AS int))

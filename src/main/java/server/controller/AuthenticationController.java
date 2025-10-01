@@ -1,6 +1,8 @@
 package server.controller;
 
+import jakarta.validation.Valid;
 import server.dto.request.authentication.*;
+import server.dto.request.legalCase.LegalCaseSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.authentication.AccountResponse;
 import server.dto.response.authentication.AuthenticationResponse;
@@ -145,13 +147,18 @@ public class AuthenticationController {
                 .build();
     }
 
-    @GetMapping("/account/limit-{limit}")
-    public ApiResponse<List<AccountResponse>> getLimitAccount(@PathVariable int limit) {
+    @GetMapping("/account/search")
+    public ApiResponse<List<AccountResponse>> search(
+            @RequestBody @Valid AccountSearchRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "accountId") String sortBy
+    ) {
         return ApiResponse.<List<AccountResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(authenticationService.getLimitAccount(limit))
+                .data(authenticationService.search(request, page, size, sortBy))
                 .build();
     }
 

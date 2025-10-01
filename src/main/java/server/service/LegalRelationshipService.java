@@ -112,8 +112,10 @@ public class LegalRelationshipService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public PageResponse<LegalRelationshipResponse> search(LegalRelationshipSearchRequest request, Pageable pageable) {
-        Page<LegalRelationshipResponse> page = legalRelationshipRepository.search(
+    public PageResponse<LegalRelationshipResponse> search(LegalRelationshipSearchRequest request, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by(sortBy).ascending());
+
+        Page<LegalRelationshipResponse> resultPage = legalRelationshipRepository.search(
                 request.getLegalRelationshipId(),
                 request.getLegalRelationshipName(),
                 request.getTypeOfLegalCaseId(),
@@ -123,25 +125,16 @@ public class LegalRelationshipService {
 
 
         return PageResponse.<LegalRelationshipResponse>builder()
-                .number(page.getNumber())
-                .size(page.getSize())
-                .numberOfElement(page.getNumberOfElements())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .hasNext(page.hasNext())
-                .hasPrevious(page.hasPrevious())
-                .isFirst(page.isFirst())
-                .isLast(page.isLast())
-                .content(page.getContent())
+                .number(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .numberOfElement(resultPage.getNumberOfElements())
+                .totalElements(resultPage.getTotalElements())
+                .totalPages(resultPage.getTotalPages())
+                .hasNext(resultPage.hasNext())
+                .hasPrevious(resultPage.hasPrevious())
+                .isFirst(resultPage.isFirst())
+                .isLast(resultPage.isLast())
+                .content(resultPage.getContent())
                 .build();
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalRelationshipResponse> getLimit(int limit) {
-        return legalRelationshipRepository
-                .getLimit(PageRequest.of(0, limit))
-                .stream()
-                .map(legalRelationshipMapper::toLegalRelationshipResponse)
-                .toList();
     }
 }
