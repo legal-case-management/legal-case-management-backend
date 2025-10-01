@@ -171,4 +171,24 @@ public class AuthenticationController {
                 .data(authenticationService.getMyInfo())
                 .build();
     }
+
+    @PatchMapping("/account/block/{id}")
+    public ApiResponse<Void> blockAccount(@PathVariable String id) {
+        authenticationService.blockAccount(id);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .build();
+    }
+
+    @PatchMapping("/account/active/{id}")
+    public ApiResponse<Void> activeAccount(@PathVariable String id) {
+        authenticationService.activeAccount(id);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .build();
+    }
 }

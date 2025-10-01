@@ -400,4 +400,23 @@ public class AuthenticationService {
                 .stream().map(accountMapper::toAccountResponse)
                 .toList();
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public void blockAccount(String id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        account.setStatusOfAccount(StatusOfAccount.BLOCKED);
+        accountRepository.save(account);
+
+        tokenRedis.delete("account:" + account.getAccountId() + ":token");
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public void activeAccount(String id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+        account.setStatusOfAccount(StatusOfAccount.ACTIVE);
+        accountRepository.save(account);
+    }
 }
