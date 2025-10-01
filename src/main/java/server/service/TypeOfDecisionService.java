@@ -76,10 +76,6 @@ public class TypeOfDecisionService {
         TypeOfDecision existing = typeOfDecisionRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
-        if (typeOfDecisionRepository.existsByTypeOfDecisionName(existing.getTypeOfDecisionName())) {
-            throw new AppException(ErrorCode.TYPE_OF_DECISION_NAME_EXISTED);
-        }
-
         typeOfDecisionMapper.toTypeOfDecision(request, existing);
         typeOfDecisionRepository.save(existing);
     }

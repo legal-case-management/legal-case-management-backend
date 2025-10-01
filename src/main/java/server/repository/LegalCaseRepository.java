@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
-    @Query("""
+    @Query(value = """
             SELECT lc FROM LegalCase lc
             LEFT JOIN lc.judge j
             LEFT JOIN lc.legalRelationship lr
@@ -32,7 +32,8 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND (:batchId IS NULL OR (lc.batch IS NOT NULL AND lc.batch.batchId = :batchId))
             AND (:startStorageDate IS NULL OR lc.storageDate >= :startStorageDate)
             AND (:endStorageDate IS NULL OR lc.storageDate <= :endStorageDate)
-            """)
+            """
+    )
     Page<LegalCase> search(
             String acceptanceNumber,
             LocalDate startAcceptanceDate,
@@ -51,6 +52,8 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             LocalDate endStorageDate,
             Pageable pageable
     );
+
+
 
     @Query("""
                 SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 7, 4) AS int))
