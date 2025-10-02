@@ -92,7 +92,7 @@ public class LegalCaseService {
     @Transactional
     public void create(LegalCaseRequest request) {
         Batch batch = null;
-        if (request.getBatchId() != null){
+        if (request.getBatchId() != null) {
             batch = batchRepository.findById(request.getBatchId())
                     .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
         }
@@ -147,7 +147,7 @@ public class LegalCaseService {
         if (legalCase.getStatusOfLegalCase() == null)
             legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);
 
-        if (request.getJudgeId() != null){
+        if (request.getJudgeId() != null) {
             Judge existingJudge = judgeRepository.findById(request.getJudgeId())
                     .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
             legalCase.setJudge(existingJudge);
@@ -185,7 +185,7 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void delete(String id) {
-         LegalCase legalCaseSaved = legalCaseRepository.findById(id)
+        LegalCase legalCaseSaved = legalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
         legalCaseRepository.delete(legalCaseSaved);
     }
@@ -295,15 +295,50 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<LegalCaseResponse> getAssignmentList(AssignmentListRequest request) {
-        LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository
-                .findById(request.getLegalRelationshipGroupId())
-                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
+    public PageResponse<LegalCaseResponse> getAssignmentList(AssignmentListRequest request, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
+        if (request.isMediator()) {
+            Page<LegalCaseResponse> resultPage = legalCaseRepository.getAssignmentListHasMediator(pageable)
+                    .map(legalCaseMapper::toLegalCaseResponse);
+
+            return PageResponse.<LegalCaseResponse>builder()
+                    .number(resultPage.getNumber())
+                    .size(resultPage.getSize())
+                    .numberOfElement(resultPage.getNumberOfElements())
+                    .totalElements(resultPage.getTotalElements())
+                    .totalPages(resultPage.getTotalPages())
+                    .hasNext(resultPage.hasNext())
+                    .hasPrevious(resultPage.hasPrevious())
+                    .isFirst(resultPage.isFirst())
+                    .isLast(resultPage.isLast())
+                    .content(resultPage.getContent())
+                    .build();
+        } else {
+            if (request.getLegalRelationshipGroupId() == null) {
+                throw new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED);
+            }
+
+            LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
+                    .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
 
-        return legalCaseRepository
-                .getAssignmentList(request.isMediator(), legalRelationshipGroup.getLegalRelationshipGroupId())
-                .stream().map(legalCaseMapper::toLegalCaseResponse)
-                .toList();
+            Page<LegalCaseResponse> resultPage = legalCaseRepository.getAssignmentListByLegalRelationshipGroup(
+                            legalRelationshipGroup.getLegalRelationshipGroupId(),
+                            pageable
+                    ).map(legalCaseMapper::toLegalCaseResponse);
+
+            return PageResponse.<LegalCaseResponse>builder()
+                    .number(resultPage.getNumber())
+                    .size(resultPage.getSize())
+                    .numberOfElement(resultPage.getNumberOfElements())
+                    .totalElements(resultPage.getTotalElements())
+                    .totalPages(resultPage.getTotalPages())
+                    .hasNext(resultPage.hasNext())
+                    .hasPrevious(resultPage.hasPrevious())
+                    .isFirst(resultPage.isFirst())
+                    .isLast(resultPage.isLast())
+                    .content(resultPage.getContent())
+                    .build();
+        }
     }
 }

@@ -24,8 +24,9 @@ import java.util.List;
 @Slf4j
 public class LegalCaseController {
     LegalCaseService legalCaseService;
+
     @GetMapping("/all")
-    public ApiResponse<List<LegalCaseResponse>> getAll(){
+    public ApiResponse<List<LegalCaseResponse>> getAll() {
         return ApiResponse.<List<LegalCaseResponse>>builder()
                 .success(true)
                 .status(200)
@@ -41,7 +42,7 @@ public class LegalCaseController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "legalCaseId") String sortBy
-    ){
+    ) {
         return ApiResponse.<PageResponse<LegalCaseResponse>>builder()
                 .success(true)
                 .status(200)
@@ -51,7 +52,7 @@ public class LegalCaseController {
     }
 
     @PostMapping
-    public ApiResponse<Void> create(@RequestBody @Valid LegalCaseRequest request){
+    public ApiResponse<Void> create(@RequestBody @Valid LegalCaseRequest request) {
         legalCaseService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -61,7 +62,7 @@ public class LegalCaseController {
     }
 
     @PostMapping("/import-excel")
-    public ApiResponse<Void> importFromExcel(@RequestBody @Valid LegalCasesRequest request){
+    public ApiResponse<Void> importFromExcel(@RequestBody @Valid LegalCasesRequest request) {
         legalCaseService.importFromExcel(request);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -71,7 +72,7 @@ public class LegalCaseController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid LegalCaseRequest request){
+    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid LegalCaseRequest request) {
         legalCaseService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -81,7 +82,7 @@ public class LegalCaseController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable String id){
+    public ApiResponse<Void> delete(@PathVariable String id) {
         legalCaseService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -91,7 +92,7 @@ public class LegalCaseController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<LegalCaseResponse> getById(@PathVariable String id){
+    public ApiResponse<LegalCaseResponse> getById(@PathVariable String id) {
         return ApiResponse.<LegalCaseResponse>builder()
                 .success(true)
                 .status(200)
@@ -121,12 +122,17 @@ public class LegalCaseController {
     }
 
     @PostMapping("/assignment-list")
-    public ApiResponse<List<LegalCaseResponse>> getAssignmentList(@RequestBody @Valid AssignmentListRequest request){
-        return ApiResponse.<List<LegalCaseResponse>>builder()
+    public ApiResponse<PageResponse<LegalCaseResponse>> getAssignmentList(
+            @RequestBody @Valid AssignmentListRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "legalCaseId") String sortBy
+    ) {
+        return ApiResponse.<PageResponse<LegalCaseResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalCaseService.getAssignmentList(request))
+                .data(legalCaseService.getAssignmentList(request, page, size, sortBy))
                 .build();
     }
 

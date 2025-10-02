@@ -87,11 +87,17 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             LEFT JOIN lc.legalRelationship lr
             WHERE lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
             AND lc.judge IS NULL
-            AND (
-                (:isMediator = true AND lc.mediator IS NULL)
-                OR
-                (:isMediator = false AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId))
-            )
+            AND lc.mediator IS NOT NULL
             """)
-    List<LegalCase> getAssignmentList(boolean isMediator, String legalRelationshipGroupId);
+    Page<LegalCase> getAssignmentListHasMediator(Pageable pageable);
+
+
+    @Query("""
+            SELECT lc FROM LegalCase lc
+            LEFT JOIN lc.legalRelationship lr
+            WHERE lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
+            AND lc.judge IS NULL
+            AND lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId
+            """)
+    Page<LegalCase> getAssignmentListByLegalRelationshipGroup(String legalRelationshipGroupId, Pageable pageable);
 }
