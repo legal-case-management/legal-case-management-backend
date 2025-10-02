@@ -23,6 +23,7 @@ import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalCaseMapper;
 import server.repository.*;
+import server.utils.DateUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -169,6 +170,12 @@ public class LegalCaseService {
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
         legalCaseMapper.toLegalCase(request, legalCaseSaved);
+        if (request.getLegalRelationshipId() != null) {
+            LegalRelationship legalRelationship = legalRelationshipRepository.findById(request.getLegalRelationshipId())
+                    .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
+            legalCaseSaved.setLegalRelationship(legalRelationship);
+        }
+
         if (request.getAcceptanceDate() != null
                 && !legalCaseSaved.getStatusOfLegalCase().equals(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT)
                 && legalCaseSaved.getDecisions().isEmpty()
@@ -191,15 +198,14 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Synchronized
     @Transactional
-    public List<LegalCaseResponse> randomAssignment(RandomAssignmentRequest request) {
+    public void randomAssignment(RandomAssignmentRequest request) {
         if (request == null) {
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
         }
 
         // Lấy danh sách thẩm phán
-        List<JudgeResponse> judges = judgeRepository.getAssignAssignment(LocalDate.now().minusYears(1));
+        List<JudgeResponse> judges = judgeRepository.getAssignAssignment(DateUtil.getMilestoneDate());
         if (judges.isEmpty()) {
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
         }
@@ -252,23 +258,6 @@ public class LegalCaseService {
                 break;
             }
         }
-
-        return getAssignAssigned(
-                legalCasesAssigned
-                        .stream()
-                        .map(LegalCase::getLegalCaseId)
-                        .collect(Collectors.toList())
-        );
-    }
-
-
-    @Transactional
-    public List<LegalCaseResponse> getAssignAssigned(List<String> legalCaseIds) {
-        return legalCaseRepository
-                .getAssignAssigned(legalCaseIds)
-                .stream()
-                .map(legalCaseMapper::toLegalCaseResponse)
-                .toList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

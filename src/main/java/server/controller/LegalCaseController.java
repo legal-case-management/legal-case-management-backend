@@ -102,12 +102,12 @@ public class LegalCaseController {
     }
 
     @PostMapping("/random-assignment")
-    public ApiResponse<List<LegalCaseResponse>> randomAssignment(@RequestBody @Valid RandomAssignmentRequest request) {
-        return ApiResponse.<List<LegalCaseResponse>>builder()
+    public ApiResponse<Void> randomAssignment(@RequestBody @Valid RandomAssignmentRequest request) {
+        legalCaseService.randomAssignment(request);
+        return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
                 .message("Phân công án ngẫu nhiên thành công")
-                .data(legalCaseService.randomAssignment(request))
                 .build();
     }
 
@@ -135,5 +135,4 @@ public class LegalCaseController {
                 .data(legalCaseService.getAssignmentList(request, page, size, sortBy))
                 .build();
     }
-
 }

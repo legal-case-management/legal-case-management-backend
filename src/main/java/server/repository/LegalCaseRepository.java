@@ -71,6 +71,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
                     SELECT lc FROM LegalCase lc
                     WHERE lc.legalCaseId IN :legalCaseIds
                       AND lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
+                      AND lc.judge IS NULL
             """)
     List<LegalCase> getAssignAssignment(Iterable<String> legalCaseIds);
 
