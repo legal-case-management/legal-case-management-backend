@@ -16,7 +16,7 @@ public interface TypeOfDecisionRepository extends JpaRepository<TypeOfDecision, 
     @Query("""
             SELECT tod FROM TypeOfDecision tod
             WHERE (:typeOfDecisionId IS NULL OR tod.typeOfDecisionId LIKE %:typeOfDecisionId%)
-            AND (:typeOfLegalCaseId IS NULL OR tod.typeOfDecisionName LIKE %:typeOfDecisionName%)
+            AND (:typeOfDecisionName IS NULL OR tod.typeOfDecisionName LIKE %:typeOfDecisionName%)
             AND (:typeOfLegalCaseId IS NULL OR tod.typeOfLegalCase.typeOfLegalCaseId = :typeOfLegalCaseId)
             AND (:courtIssued IS NULL OR tod.courtIssued = :courtIssued)
             AND (:theEndDecision IS NULL OR tod.theEndDecision = :theEndDecision)

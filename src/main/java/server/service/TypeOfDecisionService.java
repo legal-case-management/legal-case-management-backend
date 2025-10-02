@@ -50,6 +50,7 @@ public class TypeOfDecisionService {
     public void create(TypeOfDecisionRequest request) {
         TypeOfDecision typeOfDecision = TypeOfDecision.builder().build();
         typeOfDecisionMapper.toTypeOfDecision(request, typeOfDecision);
+
         if (typeOfDecisionRepository.existsByTypeOfDecisionName(typeOfDecision.getTypeOfDecisionName())) {
             throw new AppException(ErrorCode.TYPE_OF_DECISION_NAME_EXISTED);
         }
@@ -58,15 +59,18 @@ public class TypeOfDecisionService {
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
         Integer maxId = typeOfDecisionRepository.getMaxId(typeOfLegalCase.getCodeName()).orElse(0);
-        String typeOfLegalCaseId = String.format("%s%02d", typeOfLegalCase.getCodeName(), maxId + 1);
-        if (typeOfDecisionRepository.existsById(typeOfLegalCaseId)) {
+        String typeOfDecisionId = String.format("%s%02d", typeOfLegalCase.getCodeName(), maxId + 1);
+
+        if (typeOfDecisionRepository.existsById(typeOfDecisionId)) {
             throw new AppException(ErrorCode.TYPE_OF_DECISION_EXISTED);
         }
 
-        typeOfLegalCase.setTypeOfLegalCaseId(typeOfLegalCaseId);
+        typeOfDecision.setTypeOfDecisionId(typeOfDecisionId);
+        typeOfDecision.setTypeOfLegalCase(typeOfLegalCase);
 
-        typeOfLegalCaseRepository.save(typeOfLegalCase);
+        typeOfDecisionRepository.save(typeOfDecision);
     }
+
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
@@ -77,6 +81,13 @@ public class TypeOfDecisionService {
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
         typeOfDecisionMapper.toTypeOfDecision(request, existing);
+
+        if(request.getTypeOfLegalCaseId() != null) {
+            TypeOfLegalCase typeOfLegalCase = typeOfLegalCaseRepository.findById(request.getTypeOfLegalCaseId())
+                    .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
+            existing.setTypeOfLegalCase(typeOfLegalCase);
+        }
+
         typeOfDecisionRepository.save(existing);
     }
 

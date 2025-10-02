@@ -73,8 +73,6 @@ public class TypeOfDecisionController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "typeOfDecisionId") String sortBy
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-
         return ApiResponse.<PageResponse<TypeOfDecisionResponse>>builder()
                 .success(true)
                 .status(200)

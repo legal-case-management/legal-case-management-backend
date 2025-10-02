@@ -3,6 +3,7 @@ package server.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.Synchronized;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import server.dto.request.authentication.*;
 import server.dto.response.ApiResponse;
+import server.dto.response.PageResponse;
 import server.dto.response.authentication.AccountResponse;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.dto.response.authentication.VerifyOtpResponse;
@@ -387,18 +389,29 @@ public class AuthenticationService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<AccountResponse> search(AccountSearchRequest request, int page, int size, String sortBy) {
+    public PageResponse<AccountResponse> search(AccountSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-        return accountRepository.search(
-                        request.getUsername(),
-                        request.getEmail(),
-                        request.getRole(),
-                        request.getStatusOfAccount(),
-                        request.getFullName(),
-                        pageable
-                )
-                .stream().map(accountMapper::toAccountResponse)
-                .toList();
+        Page<AccountResponse> resultPage = accountRepository.search(
+                request.getUsername(),
+                request.getEmail(),
+                request.getRole(),
+                request.getStatusOfAccount(),
+                request.getFullName(),
+                pageable
+        ).map(accountMapper::toAccountResponse);
+
+        return PageResponse.<AccountResponse>builder()
+                .number(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .numberOfElement(resultPage.getNumberOfElements())
+                .totalElements(resultPage.getTotalElements())
+                .totalPages(resultPage.getTotalPages())
+                .hasNext(resultPage.hasNext())
+                .hasPrevious(resultPage.hasPrevious())
+                .isFirst(resultPage.isFirst())
+                .isLast(resultPage.isLast())
+                .content(resultPage.getContent())
+                .build();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
