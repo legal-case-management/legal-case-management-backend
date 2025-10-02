@@ -216,7 +216,6 @@ public class LegalCaseService {
             throw new AppException(ErrorCode.NO_LEGAL_CASES_FOUND);
         }
 
-        List<LegalCase> legalCasesAssigned = new ArrayList<>();
         Random random = new Random();
         int judgeIndex = 0;
 
@@ -245,7 +244,6 @@ public class LegalCaseService {
                 }
 
                 legalCases.remove(caseIndex);
-                legalCasesAssigned.add(legalCase);
             }
 
             judgeIndex = (judgeIndex + 1) % judges.size();
@@ -286,6 +284,7 @@ public class LegalCaseService {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public PageResponse<LegalCaseResponse> getAssignmentList(AssignmentListRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
+
         if (request.isMediator()) {
             Page<LegalCaseResponse> resultPage = legalCaseRepository.getAssignmentListHasMediator(pageable)
                     .map(legalCaseMapper::toLegalCaseResponse);
@@ -309,7 +308,6 @@ public class LegalCaseService {
 
             LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
                     .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
-
 
             Page<LegalCaseResponse> resultPage = legalCaseRepository.getAssignmentListByLegalRelationshipGroup(
                             legalRelationshipGroup.getLegalRelationshipGroupId(),

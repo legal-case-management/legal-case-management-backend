@@ -391,6 +391,7 @@ public class AuthenticationService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     public PageResponse<AccountResponse> search(AccountSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        System.out.println(request);
         Page<AccountResponse> resultPage = accountRepository.search(
                 request.getUsername(),
                 request.getEmail(),

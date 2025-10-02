@@ -12,6 +12,7 @@ import server.entity.enums.StatusOfAccount;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString
 public class AccountSearchRequest {
     String username;
     String email;

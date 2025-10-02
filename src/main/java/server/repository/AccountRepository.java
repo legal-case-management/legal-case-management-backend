@@ -28,11 +28,11 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     @Query("""
             SELECT a FROM Account a
             LEFT JOIN FETCH a.officer o
-            WHERE :username IS NULL OR a.username = :username
-            AND :email IS NULL OR a.email = :email
-            AND :role IS NULL OR a.role = :role
-            AND :statusOfAccount IS NULL OR a.statusOfAccount = :statusOfAccount
-            AND (:fullName IS NOT NULL OR o.fullName LIKE %:fullName%)
+            WHERE (:username IS NULL OR a.username = :username)
+              AND (:email IS NULL OR a.email = :email)
+              AND (:role IS NULL OR a.role = :role)
+              AND (:statusOfAccount IS NULL OR a.statusOfAccount = :statusOfAccount)
+              AND (:fullName IS NULL OR o.fullName LIKE %:fullName%)
             """)
     Page<Account> search(
             String username,
