@@ -46,10 +46,10 @@ public class LegalCase {
     @JoinColumn(name = "legal_relationship_id", nullable = false)
     LegalRelationship legalRelationship;
     @Column(name = "storage_date", nullable = false)
-    LocalDate storageDate;
+    LocalDateTime storageDate;
     Assignment assignment;
     @Column(name = "assignment_date")
-    LocalDate assignmentDate;
+    LocalDateTime assignmentDate;
     @Enumerated(EnumType.STRING)
     @Column(name = "status_of_legal_case", nullable = false)
     StatusOfLegalCase statusOfLegalCase;

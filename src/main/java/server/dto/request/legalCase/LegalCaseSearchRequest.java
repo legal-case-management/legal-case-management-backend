@@ -1,10 +1,12 @@
 package server.dto.request.legalCase;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.entity.enums.StatusOfLegalCase;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,7 +17,9 @@ import java.time.LocalDate;
 @ToString
 public class LegalCaseSearchRequest {
     String acceptanceNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate startAcceptanceDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate endAcceptanceDate;
     String plaintiff;
     String plaintiffAddress;
@@ -27,6 +31,8 @@ public class LegalCaseSearchRequest {
     StatusOfLegalCase statusOfLegalCase;
     String judgeName;
     String batchId;
-    LocalDate startStorageDate;
-    LocalDate endStorageDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime startStorageDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime endStorageDate;
 }

@@ -9,6 +9,7 @@ import server.entity.LegalCase;
 import server.entity.enums.StatusOfLegalCase;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,8 +19,8 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             LEFT JOIN lc.judge j
             LEFT JOIN lc.legalRelationship lr
             WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber LIKE %:acceptanceNumber%)
-            AND (:startAcceptanceDate IS NULL OR lc.acceptanceDate >= :startAcceptanceDate)
-            AND (:endAcceptanceDate IS NULL OR lc.acceptanceDate <= :endAcceptanceDate)
+            AND (cast(:startAcceptanceDate as date) IS NULL OR lc.acceptanceDate >= :startAcceptanceDate)
+            AND (cast(:endAcceptanceDate as date) IS NULL OR lc.acceptanceDate <= :endAcceptanceDate)
             AND (:plaintiff IS NULL OR lc.plaintiff LIKE %:plaintiff%)
             AND (:plaintiffAddress IS NULL OR lc.plaintiffAddress LIKE %:plaintiffAddress%)
             AND (:defendant IS NULL OR lc.defendant LIKE %:defendant%)
@@ -30,8 +31,8 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND (:statusOfLegalCase IS NULL OR lc.statusOfLegalCase = :statusOfLegalCase)
             AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))
             AND (:batchId IS NULL OR (lc.batch IS NOT NULL AND lc.batch.batchId = :batchId))
-            AND (:startStorageDate IS NULL OR lc.storageDate >= :startStorageDate)
-            AND (:endStorageDate IS NULL OR lc.storageDate <= :endStorageDate)
+            AND (cast(:startStorageDate as timestamp) IS NULL OR lc.storageDate >= :startStorageDate)
+            AND (cast(:endStorageDate as timestamp) IS NULL OR lc.storageDate <= :endStorageDate)
             """
     )
     Page<LegalCase> search(
@@ -48,8 +49,8 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             StatusOfLegalCase statusOfLegalCase,
             String judgeName,
             String batchId,
-            LocalDate startStorageDate,
-            LocalDate endStorageDate,
+            LocalDateTime startStorageDate,
+            LocalDateTime endStorageDate,
             Pageable pageable
     );
 

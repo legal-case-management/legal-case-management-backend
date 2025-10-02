@@ -33,11 +33,11 @@ public class LegalCaseResponse {
     String defendant;
     String defendantAddress;
     LegalRelationshipResponse legalRelationship;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    LocalDate storageDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime storageDate;
     Assignment assignment;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    LocalDate assignmentDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime assignmentDate;
     StatusOfLegalCase statusOfLegalCase;
     BatchResponse batch;
     JudgeResponse judge;
