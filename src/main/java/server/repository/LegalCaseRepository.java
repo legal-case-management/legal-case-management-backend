@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import server.entity.Batch;
 import server.entity.LegalCase;
 import server.entity.enums.StatusOfLegalCase;
 
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
+    long countLegalCaseByBatch(Batch batch);
+    
     @Query(value = """
             SELECT lc FROM LegalCase lc
             LEFT JOIN lc.judge j
@@ -75,13 +78,6 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             """)
     List<LegalCase> getAssignAssignment(Iterable<String> legalCaseIds);
 
-    @Query("""
-                    SELECT lc FROM LegalCase lc
-                    LEFT JOIN FETCH lc.judge j
-                    WHERE lc.legalCaseId IN :legalCaseIds
-            """)
-    List<LegalCase> getAssignAssigned(Iterable<String> legalCaseIds);
-
 
     @Query("""
             SELECT lc FROM LegalCase lc
@@ -101,4 +97,6 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId
             """)
     Page<LegalCase> getAssignmentListByLegalRelationshipGroup(String legalRelationshipGroupId, Pageable pageable);
+    
+    
 }

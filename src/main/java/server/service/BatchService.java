@@ -21,6 +21,7 @@ import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.BatchMapper;
 import server.repository.BatchRepository;
+import server.repository.LegalCaseRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BatchService {
     BatchRepository batchRepository;
+    LegalCaseRepository legalCaseRepository;
 
     BatchMapper batchMapper;
 
@@ -70,15 +72,13 @@ public class BatchService {
     public void delete(String id) {
         Batch existing = batchRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
-        batchRepository.delete(existing);
-    }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<BatchResponse> getAll() {
-        return batchRepository
-                .findAll()
-                .stream().map(batchMapper::toBatchResponse)
-                .toList();
+        long legalCaseCount = legalCaseRepository.countLegalCaseByBatch(existing);
+        if(legalCaseCount > 0) {
+            throw new AppException(ErrorCode.BATCH_CANNOT_BE_DELETED);
+        }
+
+        batchRepository.delete(existing);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
