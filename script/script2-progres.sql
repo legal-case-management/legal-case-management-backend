@@ -67,3 +67,10 @@ INSERT INTO mediators (officer_id)
 VALUES ('HG05');
 INSERT INTO  accounts (account_id, username, password, role, email, officer_id, status_of_account)
 VALUES ('HG05', 'HG05', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'MEDIATOR', 'nguyenvank@gmail.com', 'HG05', 'ACTIVE');
+
+INSERT INTO  accounts (account_id, username, password, role, email, officer_id, status_of_account)
+VALUES ('QL01', 'QL01', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'MANAGER', 'nguyenvankkk@gmail.com', NULL, 'ACTIVE');
+
+INSERT INTO  accounts (account_id, username, password, role, email, officer_id, status_of_account)
+VALUES ('QL02', 'QL02', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'MANAGER', 'nguyenvankkkj@gmail.com', NULL, 'ACTIVE');
+
