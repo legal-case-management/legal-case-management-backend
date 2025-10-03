@@ -19,7 +19,9 @@ public class LegalCaseRequest {
     String plaintiffAddress;
     String defendant;
     String defendantAddress;
+    String note;
     String legalRelationshipId;
     String judgeId;
+    String mediatorId;
     String batchId;
 }

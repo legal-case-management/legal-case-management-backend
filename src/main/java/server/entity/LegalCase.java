@@ -54,6 +54,8 @@ public class LegalCase {
     @Column(name = "status_of_legal_case", nullable = false)
     StatusOfLegalCase statusOfLegalCase;
 
+    String note;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "judge_id")
     Judge judge;

@@ -38,7 +38,7 @@ public class BatchService {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Synchronized
     @Transactional
-    public Batch create(BatchRequest request) {
+    public void create(BatchRequest request) {
         Batch batch = Batch.builder().build();
         batchMapper.updateBatchFromRequest(request, batch);
         batch.setStorageDate(LocalDateTime.now());
@@ -51,7 +51,7 @@ public class BatchService {
         }
 
         batch.setBatchId(batchId);
-        return batchRepository.save(batch);
+        batchRepository.save(batch);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

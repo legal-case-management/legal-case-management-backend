@@ -16,5 +16,5 @@ import java.util.List;
 @ToString
 public class LegalCasesRequest {
     List<LegalCaseRequest> legalCases;
-    BatchRequest batch;
+    String batchId;
 }

@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import server.dto.response.batch.BatchResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.dto.response.legalRelationship.LegalRelationshipResponse;
+import server.dto.response.mediator.MediatorResponse;
 import server.entity.Batch;
 import server.entity.Judge;
 import server.entity.LegalRelationship;
@@ -32,6 +33,7 @@ public class LegalCaseResponse {
     String plaintiffAddress;
     String defendant;
     String defendantAddress;
+    String note;
     LegalRelationshipResponse legalRelationship;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime storageDate;
@@ -41,4 +43,5 @@ public class LegalCaseResponse {
     StatusOfLegalCase statusOfLegalCase;
     BatchResponse batch;
     JudgeResponse judge;
+    MediatorResponse mediator;
 }

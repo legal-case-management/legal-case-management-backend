@@ -28,7 +28,6 @@ import server.utils.DateUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,10 +39,10 @@ public class LegalCaseService {
 
     JudgeRepository judgeRepository;
     BatchRepository batchRepository;
+    MediatorRepository mediatorRepository;
 
     LegalCaseMapper legalCaseMapper;
 
-    BatchService batchService;
 
     public List<LegalCaseResponse> getAll() {
         return legalCaseRepository
@@ -92,11 +91,8 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void create(LegalCaseRequest request) {
-        Batch batch = null;
-        if (request.getBatchId() != null) {
-            batch = batchRepository.findById(request.getBatchId())
-                    .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
-        }
+        Batch batch = batchRepository.findById(request.getBatchId())
+                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
 
         createSingle(request, batch);
     }
@@ -112,7 +108,8 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void importFromExcel(LegalCasesRequest request) {
-        Batch batch = batchService.create(request.getBatch());
+        Batch batch = batchRepository.findById(request.getBatchId())
+                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
 
         for (LegalCaseRequest legalCaseRequest : request.getLegalCases()) {
             createSingle(legalCaseRequest, batch);
@@ -152,6 +149,12 @@ public class LegalCaseService {
             Judge existingJudge = judgeRepository.findById(request.getJudgeId())
                     .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
             legalCase.setJudge(existingJudge);
+        }
+
+        if (request.getMediatorId() != null) {
+            Mediator existingMediator = mediatorRepository.findById(request.getMediatorId())
+                    .orElseThrow(() -> new AppException(ErrorCode.MEDIATOR_NOT_EXISTED));
+            legalCase.setMediator(existingMediator);
         }
 
         if (batch != null)
