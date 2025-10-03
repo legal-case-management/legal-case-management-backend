@@ -16,7 +16,7 @@ public interface TypeOfLegalCaseRepository extends JpaRepository<TypeOfLegalCase
 
     @Query("""
             SELECT t FROM TypeOfLegalCase t
-            WHERE (:typeOfLegalCaseId IS NULL OR t.typeOfLegalCaseId = :typeOfLegalCaseId)
+            WHERE (:typeOfLegalCaseId IS NULL OR t.typeOfLegalCaseId LIKE %:typeOfLegalCaseId%)
             AND (:typeOfLegalCaseName IS NULL OR t.typeOfLegalCaseName LIKE %:typeOfLegalCaseName%)
             AND (:codeName IS NULL OR t.codeName LIKE %:codeName%)
             """)

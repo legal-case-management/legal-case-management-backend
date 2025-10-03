@@ -88,8 +88,8 @@ public class BatchService {
                 request.getBatchId(),
                 request.getBatchName(),
                 request.getNote(),
-                request.getStorageDateStart(),
-                request.getStorageDateEnd(),
+                request.getStartStorageDate(),
+                request.getEndStorageDate(),
                 pageable
         ).map(batchMapper::toBatchResponse);
 

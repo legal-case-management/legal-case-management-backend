@@ -29,15 +29,15 @@ public interface BatchRepository extends JpaRepository<Batch, String> {
             WHERE (:batchId IS NULL OR b.batchId LIKE %:batchId%)
             AND (:batchName IS NULL OR b.batchName LIKE %:batchName%)
             AND (:note IS NULL OR b.note LIKE %:note%)
-            AND (:storageDateStart IS NULL OR b.storageDate >= :storageDateStart)
-            AND (:storageDateEnd IS NULL OR b.storageDate <= :storageDateEnd)
+            AND (cast(:startStorageDate as timestamp) IS NULL OR b.storageDate >= :startStorageDate)
+            AND (cast(:endStorageDate as timestamp) IS NULL OR b.storageDate <= :endStorageDate)
             """)
     Page<Batch> search(
             String batchId,
             String batchName,
             String note,
-            LocalDateTime storageDateStart,
-            LocalDateTime storageDateEnd,
+            LocalDateTime startStorageDate,
+            LocalDateTime endStorageDate,
             Pageable pageable
     );
 }

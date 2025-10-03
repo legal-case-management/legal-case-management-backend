@@ -103,8 +103,8 @@ public class TypeOfLegalCaseService {
 
         Page<TypeOfLegalCaseResponse> resultPage = typeOfLegalCaseRepository.search(
                 request.getTypeOfLegalCaseId(),
-                request.getCodeName(),
                 request.getTypeOfLegalCaseName(),
+                request.getCodeName(),
                 pageable
         ).map(typeOfLegalCaseMapper::toTypeOfLegalCaseResponse);
 
