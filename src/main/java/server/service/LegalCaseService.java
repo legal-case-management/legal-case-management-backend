@@ -179,6 +179,22 @@ public class LegalCaseService {
             legalCaseSaved.setLegalRelationship(legalRelationship);
         }
 
+        if (request.getJudgeId() != null) {
+            Judge existingJudge = judgeRepository.findById(request.getJudgeId())
+                    .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
+            legalCaseSaved.setJudge(existingJudge);
+        } else {
+            legalCaseSaved.setJudge(null);
+        }
+
+        if (request.getMediatorId() != null) {
+            Mediator existingMediator = mediatorRepository.findById(request.getMediatorId())
+                    .orElseThrow(() -> new AppException(ErrorCode.MEDIATOR_NOT_EXISTED));
+            legalCaseSaved.setMediator(existingMediator);
+        } else {
+            legalCaseSaved.setMediator(null);
+        }
+
         if (request.getAcceptanceDate() != null
                 && !legalCaseSaved.getStatusOfLegalCase().equals(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT)
                 && legalCaseSaved.getDecisions().isEmpty()
@@ -313,9 +329,9 @@ public class LegalCaseService {
                     .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
             Page<LegalCaseResponse> resultPage = legalCaseRepository.getAssignmentListByLegalRelationshipGroup(
-                            legalRelationshipGroup.getLegalRelationshipGroupId(),
-                            pageable
-                    ).map(legalCaseMapper::toLegalCaseResponse);
+                    legalRelationshipGroup.getLegalRelationshipGroupId(),
+                    pageable
+            ).map(legalCaseMapper::toLegalCaseResponse);
 
             return PageResponse.<LegalCaseResponse>builder()
                     .number(resultPage.getNumber())
