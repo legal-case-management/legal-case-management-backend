@@ -24,7 +24,7 @@ import java.util.List;
 public class HandleTypeOfDecisionController {
     HandleTypeOfDecisionService handleTypeOfDecisionService;
 
-    @PostMapping("/")
+    @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid HandleTypeOfDecisionRequest request) {
         handleTypeOfDecisionService.create(request);
         return ApiResponse.<Void>builder()

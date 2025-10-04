@@ -41,20 +41,25 @@ public class HandleTypeOfDecisionService {
         HandleTypeOfDecision handleTypeOfDecision = HandleTypeOfDecision.builder().build();
         handleTypeOfDecisionMapper.toHandleTypeOfDecision(request, handleTypeOfDecision);
 
+        TypeOfDecision typeOfDecision = typeOfDecisionRepository.findById(request.getTypeOfDecisionId())
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
+
         HandleTypeOfDecisionId id = HandleTypeOfDecisionId.builder()
-                .typeOfDecision(TypeOfDecision.builder().typeOfDecisionId(request.getTypeOfDecisionId()).build())
+                .typeOfDecision(typeOfDecision)
                 .preStatus(request.getPreStatus())
                 .build();
 
-        if(handleTypeOfDecisionRepository.existsById(id)) {
+        if (handleTypeOfDecisionRepository.existsById(id)) {
             throw new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_EXISTED);
         }
 
-        handleTypeOfDecision.setTypeOfDecision(id.getTypeOfDecision());
-        handleTypeOfDecision.setPreStatus(id.getPreStatus());
+        handleTypeOfDecision.setTypeOfDecision(typeOfDecision);
+        handleTypeOfDecision.setPreStatus(request.getPreStatus());
 
         handleTypeOfDecisionRepository.save(handleTypeOfDecision);
     }
+
+
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
