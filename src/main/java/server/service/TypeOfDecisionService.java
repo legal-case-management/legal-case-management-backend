@@ -44,6 +44,13 @@ public class TypeOfDecisionService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
+    public TypeOfDecisionResponse getById(String id) {
+        return typeOfDecisionRepository.findById(id)
+                .map(typeOfDecisionMapper::toTypeOfDecisionResponse)
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Synchronized
     @Transactional

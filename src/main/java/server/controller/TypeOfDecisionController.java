@@ -26,6 +26,16 @@ import java.util.List;
 public class TypeOfDecisionController {
     TypeOfDecisionService typeOfDecisionService;
 
+    @GetMapping("/{id}")
+    public ApiResponse<TypeOfDecisionResponse> getById(@PathVariable String id) {
+        return ApiResponse.<TypeOfDecisionResponse>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(typeOfDecisionService.getById(id))
+                .build();
+    }
+
     @GetMapping("/all")
     public ApiResponse<List<TypeOfDecisionResponse>> getAll() {
         return ApiResponse.<List<TypeOfDecisionResponse>>builder()

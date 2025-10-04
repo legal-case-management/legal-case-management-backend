@@ -285,6 +285,7 @@ public class LegalCaseService {
         if (request == null) {
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
         }
+
         LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
@@ -294,6 +295,13 @@ public class LegalCaseService {
 
         legalCase.setAssignment(Assignment.ASSIGN);
         legalCase.setAssignmentDate(LocalDateTime.now());
+
+        TypeOfLegalCase typeOfLegalCase = legalCase.getLegalRelationship().getTypeOfLegalCase();
+
+        legalCase.setExpiredDate(
+                typeOfLegalCase.getCodeName().equals("HS")
+                        ? legalCase.getAcceptanceDate().plusMonths(2)
+                        : legalCase.getAcceptanceDate().plusMonths(4));
         legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
         legalCase.setJudge(judge);
 

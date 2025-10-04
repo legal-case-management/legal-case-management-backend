@@ -18,7 +18,19 @@ public class JudgeResponse extends OfficerResponse {
     long numberOfOverdue;
     long numberOfCanceledAndEdited;
 
-    public JudgeResponse(String officerId, String lastName, String firstName, String fullName, StatusOfOfficer statusOfJudge, String email, long maxNumberOfLegalCase, long numberOfCanceledAndEdited, long numberOfLegalCases, long numberOfOverdue, long numberOfTemporarySuspension) {
+    public JudgeResponse(
+            String officerId,
+            String lastName,
+            String firstName,
+            String fullName,
+            StatusOfOfficer statusOfJudge,
+            String email,
+            long maxNumberOfLegalCase,
+            long numberOfLegalCases,
+            long numberOfTemporarySuspension,
+            long numberOfOverdue,
+            long numberOfCanceledAndEdited
+    ) {
         super(officerId, lastName, firstName, fullName, statusOfJudge, email);
         this.maxNumberOfLegalCase = maxNumberOfLegalCase;
         this.numberOfCanceledAndEdited = numberOfCanceledAndEdited;
