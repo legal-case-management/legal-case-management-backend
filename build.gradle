@@ -41,6 +41,7 @@ dependencies {
 
     /* Redis */
     implementation("org.springframework.boot:spring-boot-starter-data-redis:3.5.3")
+    implementation ("io.lettuce:lettuce-core")
 
     implementation("org.springframework.boot:spring-boot-starter-mail:3.5.5")
 
