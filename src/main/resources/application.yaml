@@ -56,7 +56,7 @@ auth:
 # Server (chỉ chạy HTTP, không SSL)
 server:
   address: 0.0.0.0
-  port: ${PORT:8080}
+  port: ${SERVER_PORT}
 
 logging:
   level:
