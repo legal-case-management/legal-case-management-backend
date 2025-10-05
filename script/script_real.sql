@@ -1,15 +1,25 @@
 /* Index */
+-- Generated column
 ALTER TABLE officers
-    MODIFY COLUMN full_name VARCHAR(255)
-    GENERATED ALWAYS AS (CONCAT(last_name, ' ', first_name)) STORED;
+    DROP COLUMN full_name;
+
 ALTER TABLE officers
-    ADD FULLTEXT INDEX idx_full_name (full_name);
+    ADD COLUMN full_name VARCHAR(255)
+        GENERATED ALWAYS AS (last_name || ' ' || first_name) STORED;
 
-ALTER TABLE legal_cases
-    ADD FULLTEXT INDEX idx_plaintiff (plaintiff);
+-- Fulltext search indexes
+CREATE INDEX idx_full_name
+    ON officers
+        USING GIN (to_tsvector('simple', full_name));
 
-ALTER TABLE legal_cases
-    ADD FULLTEXT INDEX idx_defendant (defendant);
+CREATE INDEX idx_plaintiff
+    ON legal_cases
+        USING GIN (to_tsvector('simple', plaintiff));
+
+CREATE INDEX idx_defendant
+    ON legal_cases
+        USING GIN (to_tsvector('simple', defendant));
+
 
 /* Mộ số dữ liệu liên quan */
 /* type of legal case */
@@ -1952,14 +1962,14 @@ VALUES ('TP09', 'Võ Thị Ngọc', 'Minh', 'WORKING');
 INSERT INTO judges(officer_id, max_number_of_legal_case)
 VALUES ('TP09', -1);
 INSERT INTO  accounts (account_id, username, password, role, email, officer_id, status_of_account)
-VALUES ('TP09', 'TP08','$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'JUDGE', 'minhminhtatp@gmail.com', 'TP09', 'ACTIVE');
+VALUES ('TP09', 'TP09','$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'JUDGE', 'minhminhtatp@gmail.com', 'TP09', 'ACTIVE');
 
 INSERT INTO officers (officer_id, last_name, first_name, status_of_officer)
 VALUES ('TP10', 'Trương Trường', 'Chinh', 'WORKING');
 INSERT INTO judges(officer_id, max_number_of_legal_case)
 VALUES ('TP10', -1);
 INSERT INTO  accounts (account_id, username, password, role, email, officer_id, status_of_account)
-VALUES ('TP10', 'TP09','$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'JUDGE', 'emailtamthoi02@gmail.com', 'TP10', 'ACTIVE');
+VALUES ('TP10', 'TP10','$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'JUDGE', 'emailtamthoi02@gmail.com', 'TP10', 'ACTIVE');
 
 INSERT INTO officers (officer_id, last_name, first_name, status_of_officer)
 VALUES ('TP11', 'Phạm Thị Kim', 'Yến', 'WORKING');

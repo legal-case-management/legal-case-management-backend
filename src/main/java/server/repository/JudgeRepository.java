@@ -116,7 +116,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                                  AND lc.acceptanceDate >= :milestoneDate
                             THEN 1 ELSE 0
                         END) ASC,
-                    j.fullName ASC
+                    j.firstName ASC
             """)
     List<JudgeResponse> getAssignAssignment(@Param("milestoneDate") LocalDate milestoneDate);
 
