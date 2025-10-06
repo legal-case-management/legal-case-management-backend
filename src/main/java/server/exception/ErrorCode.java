@@ -30,6 +30,7 @@ public enum ErrorCode {
     OTP_SENT(400, HttpStatus.BAD_REQUEST, "Mã OTP đã được gửi, vui lòng kiểm tra email"),
     OTP_INVALID(400, HttpStatus.BAD_REQUEST, "Mã OTP không hợp lệ"),
     VERIFY_OTP_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Xác thực mã OTP thất bại"),
+    ACCOUNT_BLOCKED(400, HttpStatus.BAD_REQUEST, "Tài khoản đã bị khóa"),
 
     /* Verify token */
     TOKEN_EXPIRED(400, HttpStatus.BAD_REQUEST, "Token quá hạn"),

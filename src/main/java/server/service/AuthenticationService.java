@@ -94,6 +94,9 @@ public class AuthenticationService {
                 : accountRepository.findAccountByUsername(identifier)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
+        if (account.getStatusOfAccount().equals(StatusOfAccount.BLOCKED))
+            throw new AppException(ErrorCode.ACCOUNT_BLOCKED);
+
         /* 2. Check password*/
         boolean authenticated = passwordEncoder.matches(request.getPassword(), account.getPassword());
         if (!authenticated)
