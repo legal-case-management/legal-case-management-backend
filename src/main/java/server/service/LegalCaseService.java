@@ -149,6 +149,13 @@ public class LegalCaseService {
             Judge existingJudge = judgeRepository.findById(request.getJudgeId())
                     .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
             legalCase.setJudge(existingJudge);
+            legalCase.setAssignment(Assignment.ASSIGN);
+            legalCase.setAssignmentDate(LocalDateTime.now());
+            legalCase.setExpiredDate(
+                    legalRelationship.getTypeOfLegalCase().getCodeName().equals("HS")
+                            ? legalCase.getAcceptanceDate().plusMonths(2)
+                            : legalCase.getAcceptanceDate().plusMonths(4)
+            );
         }
 
         if (request.getMediatorId() != null) {

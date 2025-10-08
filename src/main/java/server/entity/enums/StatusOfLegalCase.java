@@ -15,6 +15,7 @@ public enum StatusOfLegalCase {
     EDITED("Án sửa"),
     WAITING_FOR_ASSIGNMENT("Chờ được phân công"),
     IN_PROCESS("Đang giải quyết"),
-    SOLVED("Đã được giải quyết");
+    SOLVED("Đã được giải quyết"),
+    UNDEFINED("Chưa xác định");
     String name;
 }
