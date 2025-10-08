@@ -14,7 +14,7 @@ import server.entity.enums.StatusOfOfficer;
 public class JudgeResponse extends OfficerResponse {
     long maxNumberOfLegalCase;
     long numberOfLegalCase;
-    long numberOfLegalCases;
+    long numberOfInProcess;
     long numberOfTemporarySuspension;
     long numberOfOverdue;
     long numberOfCanceledAndEdited;
@@ -28,7 +28,7 @@ public class JudgeResponse extends OfficerResponse {
             String email,
             long maxNumberOfLegalCase,
             long numberOfLegalCase,
-            long numberOfLegalCases,
+            long numberOfInProcess,
             long numberOfTemporarySuspension,
             long numberOfOverdue,
             long numberOfCanceledAndEdited
@@ -36,8 +36,8 @@ public class JudgeResponse extends OfficerResponse {
         super(officerId, lastName, firstName, fullName, statusOfJudge, email);
         this.maxNumberOfLegalCase = maxNumberOfLegalCase;
         this.numberOfLegalCase = numberOfLegalCase;
+        this.numberOfInProcess = numberOfInProcess;
         this.numberOfCanceledAndEdited = numberOfCanceledAndEdited;
-        this.numberOfLegalCases = numberOfLegalCases;
         this.numberOfOverdue = numberOfOverdue;
         this.numberOfTemporarySuspension = numberOfTemporarySuspension;
     }

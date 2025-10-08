@@ -240,7 +240,7 @@ public class LegalCaseService {
 
         while (!legalCases.isEmpty()) {
             JudgeResponse judge = judges.get(judgeIndex);
-            long currentCases = judge.getNumberOfLegalCases();
+            long currentCases = judge.getNumberOfLegalCase();
             long maxCases = judge.getMaxNumberOfLegalCase();
 
             if (maxCases == -1 || currentCases < maxCases) {
@@ -265,7 +265,7 @@ public class LegalCaseService {
 
                 legalCaseRepository.save(legalCase);
                 if (maxCases != -1) {
-                    judge.setNumberOfLegalCases(currentCases + 1);
+                    judge.setNumberOfLegalCase(currentCases + 1);
                 }
 
                 legalCases.remove(caseIndex);
@@ -275,7 +275,7 @@ public class LegalCaseService {
 
             boolean anyJudgeAvailable = judges.stream()
                     .anyMatch(j -> j.getMaxNumberOfLegalCase() == -1 ||
-                            j.getNumberOfLegalCases() < j.getMaxNumberOfLegalCase());
+                            j.getNumberOfLegalCase() < j.getMaxNumberOfLegalCase());
 
             if (!anyJudgeAvailable) {
                 break;
