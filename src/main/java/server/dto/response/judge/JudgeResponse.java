@@ -13,6 +13,7 @@ import server.entity.enums.StatusOfOfficer;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JudgeResponse extends OfficerResponse {
     long maxNumberOfLegalCase;
+    long numberOfLegalCase;
     long numberOfLegalCases;
     long numberOfTemporarySuspension;
     long numberOfOverdue;
@@ -26,6 +27,7 @@ public class JudgeResponse extends OfficerResponse {
             StatusOfOfficer statusOfJudge,
             String email,
             long maxNumberOfLegalCase,
+            long numberOfLegalCase,
             long numberOfLegalCases,
             long numberOfTemporarySuspension,
             long numberOfOverdue,
@@ -33,6 +35,7 @@ public class JudgeResponse extends OfficerResponse {
     ) {
         super(officerId, lastName, firstName, fullName, statusOfJudge, email);
         this.maxNumberOfLegalCase = maxNumberOfLegalCase;
+        this.numberOfLegalCase = numberOfLegalCase;
         this.numberOfCanceledAndEdited = numberOfCanceledAndEdited;
         this.numberOfLegalCases = numberOfLegalCases;
         this.numberOfOverdue = numberOfOverdue;

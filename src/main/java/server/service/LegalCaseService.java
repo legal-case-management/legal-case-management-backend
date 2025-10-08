@@ -248,7 +248,13 @@ public class LegalCaseService {
                 LegalCase legalCase = legalCases.get(caseIndex);
 
                 legalCase.setAssignment(Assignment.RANDOM);
-                legalCase.setExpiredDate(legalCase.getAcceptanceDate().plusMonths(4));
+
+                legalCase.setExpiredDate(
+                        legalCase.getLegalRelationship().getTypeOfLegalCase().getCodeName().equals("HS")
+                                ? legalCase.getAcceptanceDate().plusMonths(2)
+                                : legalCase.getAcceptanceDate().plusMonths(4)
+                );
+
                 legalCase.setAssignmentDate(LocalDateTime.now());
                 legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
                 legalCase.setJudge(
