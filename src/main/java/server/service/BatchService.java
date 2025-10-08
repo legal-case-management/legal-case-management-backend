@@ -65,7 +65,7 @@ public class BatchService {
         batchRepository.save(existing);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Async
     @Synchronized
     @Transactional
@@ -105,6 +105,12 @@ public class BatchService {
                 .isLast(resultPage.isLast())
                 .content(resultPage.getContent())
                 .build();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public List<BatchResponse> getAll() {
+        return batchRepository.findAll()
+                .stream().map(batchMapper::toBatchResponse).toList();
     }
 
 }

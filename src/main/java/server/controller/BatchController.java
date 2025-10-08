@@ -26,6 +26,16 @@ import java.util.List;
 public class BatchController {
     BatchService batchService;
 
+    @GetMapping("/all")
+    public ApiResponse<List<BatchResponse>> getAll() {
+        return ApiResponse.<List<BatchResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(batchService.getAll())
+                .build();
+    }
+
     @PostMapping("/search")
     public ApiResponse<PageResponse<BatchResponse>> search(
             @RequestBody @Valid BatchSearchRequest request,
