@@ -151,11 +151,7 @@ public class LegalCaseService {
             legalCase.setJudge(existingJudge);
             legalCase.setAssignment(Assignment.ASSIGN);
             legalCase.setAssignmentDate(LocalDateTime.now());
-            legalCase.setExpiredDate(
-                    legalRelationship.getTypeOfLegalCase().getCodeName().equals("HS")
-                            ? legalCase.getAcceptanceDate().plusMonths(2)
-                            : legalCase.getAcceptanceDate().plusMonths(4)
-            );
+            legalCase.setExpiredDate(legalCase.getAcceptanceDate().plusMonths(4));
         }
 
         if (request.getMediatorId() != null) {
@@ -256,11 +252,7 @@ public class LegalCaseService {
 
                 legalCase.setAssignment(Assignment.RANDOM);
 
-                legalCase.setExpiredDate(
-                        legalCase.getLegalRelationship().getTypeOfLegalCase().getCodeName().equals("HS")
-                                ? legalCase.getAcceptanceDate().plusMonths(2)
-                                : legalCase.getAcceptanceDate().plusMonths(4)
-                );
+                legalCase.setExpiredDate(legalCase.getAcceptanceDate().plusMonths(4));
 
                 legalCase.setAssignmentDate(LocalDateTime.now());
                 legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
@@ -309,12 +301,7 @@ public class LegalCaseService {
         legalCase.setAssignment(Assignment.ASSIGN);
         legalCase.setAssignmentDate(LocalDateTime.now());
 
-        TypeOfLegalCase typeOfLegalCase = legalCase.getLegalRelationship().getTypeOfLegalCase();
-
-        legalCase.setExpiredDate(
-                typeOfLegalCase.getCodeName().equals("HS")
-                        ? legalCase.getAcceptanceDate().plusMonths(2)
-                        : legalCase.getAcceptanceDate().plusMonths(4));
+        legalCase.setExpiredDate(legalCase.getAcceptanceDate().plusMonths(4));
         legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
         legalCase.setJudge(judge);
 
