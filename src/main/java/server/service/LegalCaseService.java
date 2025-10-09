@@ -229,6 +229,8 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Async
+    @Synchronized
     @Transactional
     public void randomAssignment(RandomAssignmentRequest request) {
         if (request == null) {
@@ -382,5 +384,53 @@ public class LegalCaseService {
                     .content(resultPage.getContent())
                     .build();
         }
+    }
+
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Async
+    @Synchronized
+    @Transactional
+    public void changeBatch(ChangeBatchRequest request) {
+        if (request == null
+                || request.getLegalCaseIds() == null
+                || request.getLegalCaseIds().isEmpty()
+                || request.getBatchId() == null
+        ) {
+            throw new AppException(ErrorCode.BATCH_CHANGE_FAILED);
+        }
+
+        Batch batch = batchRepository.findById(request.getBatchId())
+                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
+
+        request.getLegalCaseIds().forEach(legalCaseId -> {
+            LegalCase legalCase = legalCaseRepository.findById(legalCaseId)
+                    .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
+
+            legalCase.setBatch(batch);
+            legalCaseRepository.save(legalCase);
+        });
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public PageResponse<LegalCaseResponse> getPending(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
+        Page<LegalCaseResponse> resultPage = legalCaseRepository.getPending(
+                DateUtil.getMilestoneDate(),
+                pageable
+        ).map(legalCaseMapper::toLegalCaseResponse);
+
+        return PageResponse.<LegalCaseResponse>builder()
+                .number(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .numberOfElement(resultPage.getNumberOfElements())
+                .totalElements(resultPage.getTotalElements())
+                .totalPages(resultPage.getTotalPages())
+                .hasNext(resultPage.hasNext())
+                .hasPrevious(resultPage.hasPrevious())
+                .isFirst(resultPage.isFirst())
+                .isLast(resultPage.isLast())
+                .content(resultPage.getContent())
+                .build();
     }
 }

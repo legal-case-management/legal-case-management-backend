@@ -5,9 +5,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import server.dto.request.legalCase.*;
 import server.dto.response.ApiResponse;
@@ -133,6 +130,31 @@ public class LegalCaseController {
                 .status(200)
                 .message("Thành công")
                 .data(legalCaseService.getAssignmentList(request, page, size, sortBy))
+                .build();
+    }
+
+    @GetMapping("/pending")
+    public ApiResponse<PageResponse<LegalCaseResponse>> getPendingLegalCases(
+            @RequestBody @Valid AssignmentListRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "legalCaseId") String sortBy
+    ) {
+        return ApiResponse.<PageResponse<LegalCaseResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(legalCaseService.getPending(page, size, sortBy))
+                .build();
+    }
+
+    @PostMapping("/change-batch")
+    public ApiResponse<Void> changeBatch(@RequestBody @Valid ChangeBatchRequest request) {
+        legalCaseService.changeBatch(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Chuyển đợt nhập án thành công")
                 .build();
     }
 }

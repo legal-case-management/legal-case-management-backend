@@ -31,9 +31,11 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
-            WHERE (:officerId IS NULL OR j.officerId LIKE %:officerId%)
-                AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
-                AND (:statusOfOfficer IS NULL OR j.statusOfOfficer = :statusOfOfficer)
+            LEFT JOIN lc.batch b
+            WHERE  b.storageDate >= :milestoneDate
+                    AND(:officerId IS NULL OR j.officerId LIKE %:officerId%)
+                    AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
+                    AND (:statusOfOfficer IS NULL OR j.statusOfOfficer = :statusOfOfficer)
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
                      j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
             ORDER BY j.officerId
@@ -70,6 +72,8 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
+            LEFT JOIN lc.batch b
+                  WHERE  b.storageDate >= :milestoneDate
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
                      j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
             ORDER BY j.officerId
@@ -93,7 +97,8 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
-            WHERE j.statusOfOfficer = 'WORKING'
+            LEFT JOIN lc.batch b
+            WHERE j.statusOfOfficer = 'WORKING' AND b.storageDate >= :milestoneDate
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
                      j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
             HAVING j.maxNumberOfLegalCase < 0

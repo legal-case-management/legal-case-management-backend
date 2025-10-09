@@ -49,6 +49,7 @@ public enum ErrorCode {
     LEGAL_CASE_NOT_WAITING_FOR_ASSIGNMENT(400, HttpStatus.BAD_REQUEST, "Vụ án không ở trạng thái chờ phân công"),
 
     RANDOM_ASSIGNMENT_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Phân công án ngẫu nhiên thất bại"),
+    BATCH_CHANGE_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Chuyển đợt nhập án thất bại"),
 
     /* Judge */
     JUDGE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Thẩm phán không tồn tại"),

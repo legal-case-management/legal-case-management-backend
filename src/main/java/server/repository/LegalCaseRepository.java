@@ -97,6 +97,19 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId
             """)
     Page<LegalCase> getAssignmentListByLegalRelationshipGroup(String legalRelationshipGroupId, Pageable pageable);
-    
-    
+
+    @Query("""
+            SELECT lc FROM LegalCase lc
+            LEFT JOIN lc.legalRelationship lr
+            LEFT JOIN lc.batch b
+            WHERE (lc.statusOfLegalCase = 'IN_PROCESS'
+                   OR lc.statusOfLegalCase = 'OVERDUE'
+                   OR lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
+                   OR lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION')
+                  AND b.storageDate < :milestoneDate
+            """)
+    Page<LegalCase> getPending(
+            @Param("milestoneDate") LocalDate milestoneDate,
+            Pageable pageable
+    );
 }
