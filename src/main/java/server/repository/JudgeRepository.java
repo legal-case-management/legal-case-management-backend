@@ -111,6 +111,4 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.firstName ASC
             """)
     List<JudgeResponse> getAssignAssignment(@Param("milestoneDate") LocalDate milestoneDate);
-
-
 }

@@ -32,7 +32,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND (:typeOfLegalCaseId IS NULL OR lr.typeOfLegalCase.typeOfLegalCaseId = :typeOfLegalCaseId)
             AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId)
             AND (:statusOfLegalCase IS NULL OR lc.statusOfLegalCase = :statusOfLegalCase)
-            AND (:judgeName IS NULL OR (j IS NOT NULL AND j.fullName LIKE %:judgeName%))
+            AND (:judgeId IS NULL OR (j IS NOT NULL AND j.officerId = :judgeId))
             AND (:batchId IS NULL OR (lc.batch IS NOT NULL AND lc.batch.batchId = :batchId))
             AND (cast(:startStorageDate as timestamp) IS NULL OR lc.storageDate >= :startStorageDate)
             AND (cast(:endStorageDate as timestamp) IS NULL OR lc.storageDate <= :endStorageDate)
@@ -50,7 +50,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             String typeOfLegalCaseId,
             String legalRelationshipGroupId,
             StatusOfLegalCase statusOfLegalCase,
-            String judgeName,
+            String judgeId,
             String batchId,
             LocalDateTime startStorageDate,
             LocalDateTime endStorageDate,

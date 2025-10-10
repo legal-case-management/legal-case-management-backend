@@ -66,7 +66,7 @@ public class LegalCaseService {
                 request.getTypeOfLegalCaseId(),
                 request.getLegalRelationshipGroupId(),
                 request.getStatusOfLegalCase(),
-                request.getJudgeName(),
+                request.getJudgeId(),
                 request.getBatchId(),
                 request.getStartStorageDate(),
                 request.getEndStorageDate(),

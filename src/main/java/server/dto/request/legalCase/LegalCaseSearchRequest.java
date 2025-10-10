@@ -29,7 +29,7 @@ public class LegalCaseSearchRequest {
     String legalRelationshipId;
     String legalRelationshipGroupId;
     StatusOfLegalCase statusOfLegalCase;
-    String judgeName;
+    String judgeId;
     String batchId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime startStorageDate;
