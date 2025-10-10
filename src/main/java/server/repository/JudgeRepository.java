@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import server.entity.enums.StatusOfOfficer;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             String officerId,
             String fullName,
             StatusOfOfficer statusOfOfficer,
-            @Param("milestoneDate") LocalDate milestoneDate,
+            @Param("milestoneDate") LocalDateTime milestoneDate,
             Pageable pageable
     );
 
@@ -78,7 +79,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                      j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
             ORDER BY j.officerId
             """)
-    List<JudgeResponse> getAll(@Param("milestoneDate") LocalDate milestoneDate);
+    List<JudgeResponse> getAll(@Param("milestoneDate") LocalDateTime milestoneDate);
 
     @Query("""
             SELECT new server.dto.response.judge.JudgeResponse(
@@ -110,5 +111,5 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 SUM(CASE WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED') THEN 1 ELSE 0 END) ASC,
                 j.firstName ASC
             """)
-    List<JudgeResponse> getAssignAssignment(@Param("milestoneDate") LocalDate milestoneDate);
+    List<JudgeResponse> getAssignAssignment(@Param("milestoneDate") LocalDateTime milestoneDate);
 }

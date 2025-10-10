@@ -238,7 +238,7 @@ public class LegalCaseService {
         }
 
         // Lấy danh sách thẩm phán
-        List<JudgeResponse> judges = judgeRepository.getAssignAssignment(DateUtil.getMilestoneDate());
+        List<JudgeResponse> judges = judgeRepository.getAssignAssignment(DateUtil.getMilestoneDateTime());
         if (judges.isEmpty()) {
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
         }

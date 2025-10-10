@@ -53,12 +53,12 @@ public class JudgeService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> getAll() {
-        return judgeRepository.getAll(DateUtil.getMilestoneDate());
+        return judgeRepository.getAll(DateUtil.getMilestoneDateTime());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> listAssignment() {
-        return judgeRepository.getAssignAssignment(DateUtil.getMilestoneDate());
+        return judgeRepository.getAssignAssignment(DateUtil.getMilestoneDateTime());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -68,7 +68,7 @@ public class JudgeService {
                 request.getOfficerId(),
                 request.getFullName(),
                 request.getStatusOfOfficer(),
-                DateUtil.getMilestoneDate(),
+                DateUtil.getMilestoneDateTime(),
                 pageable
         );
 
