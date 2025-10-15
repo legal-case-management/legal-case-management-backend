@@ -14,4 +14,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
             WHERE n.account = :account
             """)
     Page<Notification> getNotificationByAccount(Account account, Pageable pageable);
+
+    boolean existsByLegalCaseAndAccountAndTitle(LegalCase legalCase, Account account, String title);
 }

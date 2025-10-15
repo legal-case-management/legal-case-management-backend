@@ -4,7 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import server.entity.LegalCase;
 import server.entity.LegalCaseType;
+import server.entity.LegalRelationship;
 
 import java.util.Optional;
 
@@ -32,4 +35,11 @@ public interface LegalCaseTypeRepository extends JpaRepository<LegalCaseType, St
               WHERE SUBSTRING(t.legalCaseTypeId, 1, 1) = 'L'
             """)
     Optional<Integer> getMaxId();
+
+    @Query("""
+        SELECT lr.legalCaseType
+        FROM LegalRelationship lr
+        WHERE lr = :legalRelationship
+    """)
+    Optional<LegalCaseType> getByLegalRelationships(@Param("legalRelationship") LegalRelationship legalRelationship);
 }

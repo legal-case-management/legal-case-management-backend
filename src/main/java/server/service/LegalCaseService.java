@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -229,6 +230,14 @@ public class LegalCaseService {
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
         }
 
+        if(request.getLegalRelationshipGroupId() != null){
+            LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
+                    .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
+
+            if(legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
+                throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
+        }
+
         // Lấy danh sách thẩm phán
         List<JudgeResponse> judges = judgeService.listAssignment(request.getLegalRelationshipGroupId());
         if (judges.isEmpty()) {
@@ -236,7 +245,7 @@ public class LegalCaseService {
         }
 
         // Lấy danh sách vụ án
-        List<LegalCase> legalCases = legalCaseRepository.getAssignAssignment(request.getLegalCaseIds());
+        List<LegalCase> legalCases = legalCaseRepository.getAssignAssignment(request.getLegalCaseIds(), request.getLegalRelationshipGroupId());
         if (legalCases.isEmpty()) {
             throw new AppException(ErrorCode.NO_LEGAL_CASES_FOUND);
         }
@@ -255,10 +264,7 @@ public class LegalCaseService {
 
                 legalCase.setAssignment(Assignment.RANDOM);
 
-                LegalRelationship legalRelationship = legalRelationshipRepository.findById(legalCase.getLegalRelationship().getLegalRelationshipId())
-                        .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
-
-                LegalCaseType legalCaseType = legalCaseTypeRepository.findById(legalRelationship.getLegalCaseType().getLegalCaseTypeId())
+                LegalCaseType legalCaseType = legalCaseTypeRepository.getByLegalRelationships(legalCase.getLegalRelationship())
                         .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
                 legalCase.setExpiredDate(
@@ -314,10 +320,7 @@ public class LegalCaseService {
         legalCase.setAssignment(Assignment.ASSIGN);
         legalCase.setAssignmentDate(LocalDateTime.now());
 
-        LegalRelationship legalRelationship = legalRelationshipRepository.findById(legalCase.getLegalRelationship().getLegalRelationshipId())
-                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
-
-        LegalCaseType legalCaseType = legalCaseTypeRepository.findById(legalRelationship.getLegalCaseType().getLegalCaseTypeId())
+        LegalCaseType legalCaseType = legalCaseTypeRepository.getByLegalRelationships(legalCase.getLegalRelationship())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
         legalCase.setExpiredDate(
@@ -338,18 +341,7 @@ public class LegalCaseService {
             Page<LegalCaseResponse> resultPage = legalCaseRepository.getAssignmentListHasMediator(pageable)
                     .map(legalCaseMapper::toLegalCaseResponse);
 
-            return PageResponse.<LegalCaseResponse>builder()
-                    .number(resultPage.getNumber())
-                    .size(resultPage.getSize())
-                    .numberOfElement(resultPage.getNumberOfElements())
-                    .totalElements(resultPage.getTotalElements())
-                    .totalPages(resultPage.getTotalPages())
-                    .hasNext(resultPage.hasNext())
-                    .hasPrevious(resultPage.hasPrevious())
-                    .isFirst(resultPage.isFirst())
-                    .isLast(resultPage.isLast())
-                    .content(resultPage.getContent())
-                    .build();
+            return pageMapper.map(resultPage);
         } else {
             if (request.getLegalRelationshipGroupId() == null) {
                 throw new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED);
@@ -363,18 +355,7 @@ public class LegalCaseService {
                     pageable
             ).map(legalCaseMapper::toLegalCaseResponse);
 
-            return PageResponse.<LegalCaseResponse>builder()
-                    .number(resultPage.getNumber())
-                    .size(resultPage.getSize())
-                    .numberOfElement(resultPage.getNumberOfElements())
-                    .totalElements(resultPage.getTotalElements())
-                    .totalPages(resultPage.getTotalPages())
-                    .hasNext(resultPage.hasNext())
-                    .hasPrevious(resultPage.hasPrevious())
-                    .isFirst(resultPage.isFirst())
-                    .isLast(resultPage.isLast())
-                    .content(resultPage.getContent())
-                    .build();
+            return pageMapper.map(resultPage);
         }
     }
 
@@ -412,17 +393,15 @@ public class LegalCaseService {
                 pageable
         ).map(legalCaseMapper::toLegalCaseResponse);
 
-        return PageResponse.<LegalCaseResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
+    }
+
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")
+    public void updateCaseStatuses() {
+        int waiting = legalCaseRepository.updateWaitingForAssignment();
+        int overdue = legalCaseRepository.updateOverdue();
+        System.out.println("✅ Cập nhật trạng thái vụ án lúc 0h00: "
+                + waiting + " WAITING_FOR_ASSIGNMENT, "
+                + overdue + " OVERDUE");
     }
 }

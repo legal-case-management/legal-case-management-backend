@@ -32,7 +32,6 @@ public class LegalCaseController {
                 .build();
     }
 
-
     @PostMapping("/search")
     public ApiResponse<PageResponse<LegalCaseResponse>> search(
             @RequestBody @Valid LegalCaseSearchRequest request,
