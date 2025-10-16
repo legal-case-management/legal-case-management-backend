@@ -1,12 +1,8 @@
 package server.dto.request.legalRelationship;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.TypeOfLegalCase;
+import server.entity.LegalCaseType;
 
 @Getter
 @Setter
@@ -17,7 +13,6 @@ import server.entity.TypeOfLegalCase;
 @ToString
 public class LegalRelationshipRequest {
     String legalRelationshipName;
-    TypeOfLegalCase typeOfLegalCase;
-    String typeOfLegalCaseId;
+    String legalCaseTypeId;
     String legalRelationshipGroupId;
 }

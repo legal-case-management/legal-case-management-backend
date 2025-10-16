@@ -1,8 +1,7 @@
-package server.dto.request.typeOfDecision;
+package server.dto.request.decisionType;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.TypeOfLegalCase;
 import server.entity.enums.CourtIssued;
 
 @Getter
@@ -12,9 +11,9 @@ import server.entity.enums.CourtIssued;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-public class TypeOfDecisionRequest {
-    String typeOfDecisionName;
-    String typeOfLegalCaseId;
+public class DecisionTypeRequest {
+    String decisionTypeName;
+    String legalCaseTypeId;
     CourtIssued courtIssued;
     boolean theEndDecision;
 }

@@ -2,8 +2,10 @@ package server.dto.request.legalCase;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.dto.request.litigant.LitigantRequest;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,12 +17,9 @@ import java.time.LocalDate;
 public class LegalCaseRequest {
     String acceptanceNumber;
     LocalDate acceptanceDate;
-    String plaintiff;
-    String plaintiffAddress;
-    String defendant;
-    String defendantAddress;
     String note;
     String legalRelationshipId;
+    List<LitigantRequest> litigants;
     String judgeId;
     String mediatorId;
     String batchId;

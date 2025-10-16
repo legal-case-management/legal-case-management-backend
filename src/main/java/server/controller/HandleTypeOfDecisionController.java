@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import server.dto.request.handleTypeOfDecision.HandleTypeOfDecisionRequest;
+import server.dto.request.handleDecisionType.HandleDecisionTypeRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.handleTypeOfDecision.HandleTypeOfDecisionResponse;
-import server.entity.HandleTypeOfDecisionId;
-import server.entity.TypeOfDecision;
-import server.entity.enums.StatusOfLegalCase;
+import server.entity.HandleDecisionTypeId;
+import server.entity.DecisionType;
+import server.entity.enums.LegalCaseStatus;
 import server.service.HandleTypeOfDecisionService;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class HandleTypeOfDecisionController {
     HandleTypeOfDecisionService handleTypeOfDecisionService;
 
     @PostMapping
-    public ApiResponse<Void> create(@RequestBody @Valid HandleTypeOfDecisionRequest request) {
+    public ApiResponse<Void> create(@RequestBody @Valid HandleDecisionTypeRequest request) {
         handleTypeOfDecisionService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -37,11 +37,11 @@ public class HandleTypeOfDecisionController {
     @PutMapping("/{typeOfDecisionId}/{preStatusOfLegalCase}")
     public ApiResponse<Void> update(
             @PathVariable String typeOfDecisionId,
-            @PathVariable StatusOfLegalCase preStatusOfLegalCase,
-            @RequestBody @Valid HandleTypeOfDecisionRequest request
+            @PathVariable LegalCaseStatus preStatusOfLegalCase,
+            @RequestBody @Valid HandleDecisionTypeRequest request
     ) {
-        HandleTypeOfDecisionId id = HandleTypeOfDecisionId.builder()
-                .typeOfDecision(TypeOfDecision.builder().typeOfDecisionId(typeOfDecisionId).build())
+        HandleDecisionTypeId id = HandleDecisionTypeId.builder()
+                .typeOfDecision(DecisionType.builder().typeOfDecisionId(typeOfDecisionId).build())
                 .preStatus(preStatusOfLegalCase)
                 .build();
 
@@ -56,10 +56,10 @@ public class HandleTypeOfDecisionController {
     @DeleteMapping("/{typeOfDecisionId}/{preStatusOfLegalCase}")
     public ApiResponse<Void> delete(
             @PathVariable String typeOfDecisionId,
-            @PathVariable StatusOfLegalCase preStatusOfLegalCase
+            @PathVariable LegalCaseStatus preStatusOfLegalCase
     ) {
-        HandleTypeOfDecisionId id = HandleTypeOfDecisionId.builder()
-                .typeOfDecision(TypeOfDecision.builder().typeOfDecisionId(typeOfDecisionId).build())
+        HandleDecisionTypeId id = HandleDecisionTypeId.builder()
+                .typeOfDecision(DecisionType.builder().typeOfDecisionId(typeOfDecisionId).build())
                 .preStatus(preStatusOfLegalCase)
                 .build();
         handleTypeOfDecisionService.delete(id);

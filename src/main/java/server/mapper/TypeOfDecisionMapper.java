@@ -4,12 +4,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
-import server.dto.request.typeOfDecision.TypeOfDecisionRequest;
-import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
+import server.dto.request.decisionType.DecisionTypeRequest;
 import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
-import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
-import server.entity.TypeOfDecision;
-import server.entity.TypeOfLegalCase;
+import server.entity.DecisionType;
 
 @Mapper(
         componentModel = "spring",
@@ -17,7 +14,7 @@ import server.entity.TypeOfLegalCase;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface TypeOfDecisionMapper {
-    TypeOfDecisionResponse toTypeOfDecisionResponse(TypeOfDecision typeOfDecision);
-    void toTypeOfDecision(TypeOfDecisionRequest request, @MappingTarget TypeOfDecision typeOfLegalCase);
+    TypeOfDecisionResponse toTypeOfDecisionResponse(DecisionType typeOfDecision);
+    void toTypeOfDecision(DecisionTypeRequest request, @MappingTarget DecisionType typeOfLegalCase);
 
 }

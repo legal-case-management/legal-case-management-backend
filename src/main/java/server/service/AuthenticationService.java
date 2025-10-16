@@ -14,17 +14,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 import server.dto.request.authentication.*;
-import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
 import server.dto.response.authentication.AccountResponse;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.dto.response.authentication.VerifyOtpResponse;
-import server.dto.response.judge.JudgeResponse;
-import server.dto.response.mediator.MediatorResponse;
 import server.entity.Account;
-import server.entity.enums.StatusOfAccount;
+import server.entity.enums.AccountStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.AccountMapper;
@@ -94,7 +90,7 @@ public class AuthenticationService {
                 : accountRepository.findAccountByUsername(identifier)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
-        if (account.getStatusOfAccount().equals(StatusOfAccount.BLOCKED))
+        if (account.getAccountStatus().equals(AccountStatus.BLOCKED))
             throw new AppException(ErrorCode.ACCOUNT_BLOCKED);
 
         /* 2. Check password*/
@@ -240,7 +236,7 @@ public class AuthenticationService {
         }
 
         account.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
-        account.setStatusOfAccount(StatusOfAccount.ACTIVE);
+        account.setAccountStatus(AccountStatus.ACTIVE);
         accountRepository.save(account);
     }
 
@@ -423,7 +419,7 @@ public class AuthenticationService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
-        account.setStatusOfAccount(StatusOfAccount.BLOCKED);
+        account.setStatusOfAccount(AccountStatus.BLOCKED);
         accountRepository.save(account);
 
         tokenRedis.delete("account:" + account.getAccountId() + ":token");
@@ -433,7 +429,7 @@ public class AuthenticationService {
     public void activeAccount(String id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
-        account.setStatusOfAccount(StatusOfAccount.ACTIVE);
+        account.setStatusOfAccount(AccountStatus.ACTIVE);
         accountRepository.save(account);
     }
 }

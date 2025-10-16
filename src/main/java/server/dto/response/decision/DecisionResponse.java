@@ -20,6 +20,6 @@ public class DecisionResponse {
     LocalDate releaseDate;
     LocalDate addedDate;
     String note;
-    TypeOfDecisionResponse typeOfDecision;
+    TypeOfDecisionResponse decisionType;
     LegalCaseResponse legalCase;
 }

@@ -3,7 +3,6 @@ package server.dto.response.typeOfDecision;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
-import server.entity.TypeOfLegalCase;
 import server.entity.enums.CourtIssued;
 
 @Getter

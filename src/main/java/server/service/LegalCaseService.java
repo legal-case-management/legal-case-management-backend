@@ -18,7 +18,7 @@ import server.dto.response.judge.JudgeResponse;
 import server.dto.response.legalCase.LegalCaseResponse;
 import server.entity.*;
 import server.entity.enums.Assignment;
-import server.entity.enums.StatusOfLegalCase;
+import server.entity.enums.LegalCaseStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalCaseMapper;
@@ -126,13 +126,13 @@ public class LegalCaseService {
 
         Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxId(
                 String.format("%04d", legalCase.getAcceptanceDate().getYear()),
-                legalRelationship.getTypeOfLegalCase().getCodeName()
+                legalRelationship.getLegalCaseType().getCodeName()
         ).orElse(0);
 
         String legalCaseId = String.format(
                 "%04d%s%04d",
                 legalCase.getAcceptanceDate().getYear(),
-                legalRelationship.getTypeOfLegalCase().getCodeName(),
+                legalRelationship.getLegalCaseType().getCodeName(),
                 legalCaseMaxNumberOfId + 1
         );
         if (legalCaseRepository.existsById(legalCaseId)) {
@@ -144,7 +144,7 @@ public class LegalCaseService {
         legalCase.setLegalRelationship(legalRelationship);
 
         if (legalCase.getStatusOfLegalCase() == null)
-            legalCase.setStatusOfLegalCase(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT);
+            legalCase.setStatusOfLegalCase(LegalCaseStatus.WAITING_FOR_ASSIGNMENT);
 
         if (request.getJudgeId() != null) {
             Judge existingJudge = judgeRepository.findById(request.getJudgeId())
@@ -153,7 +153,7 @@ public class LegalCaseService {
             legalCase.setAssignment(Assignment.ASSIGN);
             legalCase.setAssignmentDate(LocalDateTime.now());
 
-            TypeOfLegalCase typeOfLegalCase = typeOfLegalCaseRepository.findById(legalRelationship.getTypeOfLegalCase().getTypeOfLegalCaseId())
+            LegalCaseType typeOfLegalCase = typeOfLegalCaseRepository.findById(legalRelationship.getLegalCaseType().getTypeOfLegalCaseId())
                     .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
             legalCase.setExpiredDate(
@@ -208,7 +208,7 @@ public class LegalCaseService {
         }
 
         if (request.getAcceptanceDate() != null
-                && !legalCaseSaved.getStatusOfLegalCase().equals(StatusOfLegalCase.WAITING_FOR_ASSIGNMENT)
+                && !legalCaseSaved.getStatusOfLegalCase().equals(LegalCaseStatus.WAITING_FOR_ASSIGNMENT)
                 && legalCaseSaved.getDecisions().isEmpty()
         ) {
             LocalDate expiredDate = legalCaseSaved.getAcceptanceDate().plusMonths(4);
@@ -266,7 +266,7 @@ public class LegalCaseService {
                 LegalRelationship legalRelationship = legalRelationshipRepository.findById(legalCase.getLegalRelationship().getLegalRelationshipId())
                         .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
 
-                TypeOfLegalCase typeOfLegalCase = typeOfLegalCaseRepository.findById(legalRelationship.getTypeOfLegalCase().getTypeOfLegalCaseId())
+                LegalCaseType typeOfLegalCase = typeOfLegalCaseRepository.findById(legalRelationship.getLegalCaseType().getTypeOfLegalCaseId())
                         .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
                 legalCase.setExpiredDate(
@@ -276,7 +276,7 @@ public class LegalCaseService {
                 );
 
                 legalCase.setAssignmentDate(LocalDateTime.now());
-                legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
+                legalCase.setStatusOfLegalCase(LegalCaseStatus.IN_PROCESS);
                 legalCase.setJudge(
                         Judge.builder()
                                 .officerId(judge.getOfficerId())
@@ -325,14 +325,14 @@ public class LegalCaseService {
         LegalRelationship legalRelationship = legalRelationshipRepository.findById(legalCase.getLegalRelationship().getLegalRelationshipId())
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
 
-        TypeOfLegalCase typeOfLegalCase = typeOfLegalCaseRepository.findById(legalRelationship.getTypeOfLegalCase().getTypeOfLegalCaseId())
+        LegalCaseType typeOfLegalCase = typeOfLegalCaseRepository.findById(legalRelationship.getLegalCaseType().getTypeOfLegalCaseId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
         legalCase.setExpiredDate(
                 typeOfLegalCase.getCodeName().equals("HS")
                         ? legalCase.getAcceptanceDate().plusMonths(2)
                         : legalCase.getAcceptanceDate().plusMonths(4));
-        legalCase.setStatusOfLegalCase(StatusOfLegalCase.IN_PROCESS);
+        legalCase.setStatusOfLegalCase(LegalCaseStatus.IN_PROCESS);
         legalCase.setJudge(judge);
 
         legalCaseRepository.save(legalCase);

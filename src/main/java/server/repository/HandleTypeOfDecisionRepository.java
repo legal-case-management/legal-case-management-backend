@@ -1,12 +1,12 @@
 package server.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import server.entity.HandleTypeOfDecision;
-import server.entity.HandleTypeOfDecisionId;
-import server.entity.TypeOfDecision;
+import server.entity.DecisionType;
+import server.entity.HandleDecisionType;
+import server.entity.HandleDecisionTypeId;
 
 import java.util.List;
 
-public interface HandleTypeOfDecisionRepository extends JpaRepository<HandleTypeOfDecision, HandleTypeOfDecisionId> {
-    List<HandleTypeOfDecision> findAllByTypeOfDecision(TypeOfDecision typeOfDecision);
+public interface HandleTypeOfDecisionRepository extends JpaRepository<HandleDecisionType, HandleDecisionTypeId> {
+    List<HandleDecisionType> findAllByTypeOfDecision(DecisionType typeOfDecision);
 }

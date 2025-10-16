@@ -23,8 +23,9 @@ public class LegalRelationship {
     String legalRelationshipName;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "type_of_legal_case_id", nullable = false)
-    TypeOfLegalCase typeOfLegalCase;
+    @JoinColumn(name = "legal_case_type_id", nullable = false)
+    LegalCaseType legalCaseType;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "legal_relationship_group_id", nullable = false)

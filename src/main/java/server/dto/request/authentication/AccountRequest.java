@@ -3,7 +3,7 @@ package server.dto.request.authentication;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.entity.enums.Role;
-import server.entity.enums.StatusOfAccount;
+import server.entity.enums.AccountStatus;
 
 @Getter
 @Setter
@@ -16,5 +16,5 @@ public class AccountRequest {
     String password;
     String email;
     Role role;
-    StatusOfAccount statusOfAccount;
+    AccountStatus accountStatus;
 }

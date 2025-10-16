@@ -26,8 +26,8 @@ public class Decision {
     @Column(name = "added_date", nullable = false)
     LocalDate addedDate;
     @ManyToOne
-    @JoinColumn(name = "type_of_decision_id", nullable = false)
-    TypeOfDecision typeOfDecision;
+    @JoinColumn(name = "decision_type_id", nullable = false)
+    DecisionType decisionType;
     String note;
 
     @ManyToOne(fetch = FetchType.EAGER)

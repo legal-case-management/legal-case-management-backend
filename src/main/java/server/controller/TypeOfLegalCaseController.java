@@ -5,12 +5,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
-import server.dto.request.typeOfLegalCase.TypeOfLegalCaseSearchRequest;
+import server.dto.request.legalCaseType.LegalCaseTypeRequest;
+import server.dto.request.legalCaseType.LegalCaseTypeSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
 import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
@@ -37,7 +34,7 @@ public class TypeOfLegalCaseController {
     }
 
     @PostMapping
-    public ApiResponse<Void> create(@RequestBody @Valid TypeOfLegalCaseRequest request) {
+    public ApiResponse<Void> create(@RequestBody @Valid LegalCaseTypeRequest request) {
         typeOfLegalCaseService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -47,7 +44,7 @@ public class TypeOfLegalCaseController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid TypeOfLegalCaseRequest request) {
+    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid LegalCaseTypeRequest request) {
         typeOfLegalCaseService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -68,7 +65,7 @@ public class TypeOfLegalCaseController {
 
     @PostMapping("/search")
     public ApiResponse<PageResponse<TypeOfLegalCaseResponse>> search(
-            @RequestBody @Valid TypeOfLegalCaseSearchRequest request,
+            @RequestBody @Valid LegalCaseTypeSearchRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "typeOfLegalCaseId") String sortBy

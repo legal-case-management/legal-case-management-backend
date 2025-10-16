@@ -3,10 +3,10 @@ package server.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.StatusOfLegalCase;
+import server.entity.enums.LegalCaseStatus;
 
 @Entity
-@Table(name = "handle_type_of_decisions")
+@Table(name = "handle_decision_types")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -15,21 +15,21 @@ import server.entity.enums.StatusOfLegalCase;
 @ToString
 @Builder
 @EqualsAndHashCode
-@IdClass(HandleTypeOfDecisionId.class)
-public class HandleTypeOfDecision {
+@IdClass(HandleDecisionTypeId.class)
+public class HandleDecisionType {
     @Id
     @ManyToOne
-    @JoinColumn(name = "type_of_decision_id", nullable = false)
+    @JoinColumn(name = "decision_type_id", nullable = false)
     @EqualsAndHashCode.Include
-    TypeOfDecision typeOfDecision;
+    DecisionType decisionType;
     @Id
     @Enumerated(EnumType.STRING)
     @Column(name = "pre_status", nullable = false)
     @EqualsAndHashCode.Include
-    StatusOfLegalCase preStatus;
+    LegalCaseStatus preStatus;
     @Enumerated(EnumType.STRING)
     @Column(name = "post_status")
-    StatusOfLegalCase postStatus;
+    LegalCaseStatus postStatus;
     @Column(name = "extension_period")
     int extensionPeriod;
 }

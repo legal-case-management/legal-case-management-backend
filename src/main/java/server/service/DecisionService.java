@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.decision.DecisionRequest;
 import server.dto.response.decision.DecisionResponse;
 import server.entity.Decision;
-import server.entity.HandleTypeOfDecision;
+import server.entity.HandleDecisionType;
 import server.entity.LegalCase;
-import server.entity.TypeOfDecision;
+import server.entity.DecisionType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.DecisionMapper;
@@ -42,7 +42,7 @@ public class DecisionService {
         Decision decision = Decision.builder().build();
         decisionMapper.toDecision(request, decision);
 
-        TypeOfDecision typeOfDecision = typeOfDecisionRepository.findById(request.getTypeOfDecisionId())
+        DecisionType typeOfDecision = typeOfDecisionRepository.findById(request.getTypeOfDecisionId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
         LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
@@ -52,7 +52,7 @@ public class DecisionService {
         if (!typeOfDecision.getHandleTypeOfDecisions().isEmpty()) {
             boolean updated = false;
 
-            for (HandleTypeOfDecision handle : typeOfDecision.getHandleTypeOfDecisions()) {
+            for (HandleDecisionType handle : typeOfDecision.getHandleTypeOfDecisions()) {
                 if (handle.getPreStatus().equals(legalCase.getStatusOfLegalCase())) {
                     legalCase.setStatusOfLegalCase(handle.getPostStatus());
 
@@ -82,7 +82,7 @@ public class DecisionService {
 
 
         decision.setDecisionId(decisionId);
-        decision.setTypeOfDecision(typeOfDecision);
+        decision.setDecisionType(typeOfDecision);
         decision.setLegalCase(legalCase);
         decision.setAddedDate(LocalDate.now());
 

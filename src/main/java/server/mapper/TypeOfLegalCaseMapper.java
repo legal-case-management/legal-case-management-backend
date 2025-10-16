@@ -4,9 +4,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
-import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
+import server.dto.request.legalCaseType.LegalCaseTypeRequest;
 import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
-import server.entity.TypeOfLegalCase;
+import server.entity.LegalCaseType;
 
 @Mapper(
         componentModel = "spring",
@@ -14,6 +14,6 @@ import server.entity.TypeOfLegalCase;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface TypeOfLegalCaseMapper {
-    TypeOfLegalCaseResponse toTypeOfLegalCaseResponse(TypeOfLegalCase typeOfLegalCase);
-    void toTypeOfLegalCase(TypeOfLegalCaseRequest request, @MappingTarget TypeOfLegalCase typeOfLegalCase);
+    TypeOfLegalCaseResponse toTypeOfLegalCaseResponse(LegalCaseType typeOfLegalCase);
+    void toTypeOfLegalCase(LegalCaseTypeRequest request, @MappingTarget LegalCaseType typeOfLegalCase);
 }

@@ -7,9 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import server.dto.response.judge.JudgeResponse;
 import server.entity.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
-import server.entity.enums.StatusOfOfficer;
+import server.entity.enums.OfficerStatus;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +43,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     Page<JudgeResponse> search(
             String officerId,
             String fullName,
-            StatusOfOfficer statusOfOfficer,
+            OfficerStatus statusOfOfficer,
             @Param("milestoneDate") LocalDateTime milestoneDate,
             Pageable pageable
     );

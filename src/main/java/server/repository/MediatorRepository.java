@@ -1,16 +1,13 @@
 package server.repository;
 
-import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import server.dto.response.judge.JudgeResponse;
 import server.dto.response.mediator.MediatorResponse;
 import server.entity.Mediator;
-import server.entity.enums.StatusOfOfficer;
+import server.entity.enums.OfficerStatus;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +34,7 @@ public interface MediatorRepository extends JpaRepository<Mediator, String> {
     Page<MediatorResponse> search(
             String officerId, 
             String fullName, 
-            StatusOfOfficer statusOfOfficer,
+            OfficerStatus statusOfOfficer,
             Pageable pageable
     );
 

@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 
 @Entity
-@Table(name = "type_of_legal_cases")
+@Table(name = "legal_case_types")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -15,20 +15,20 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Builder
-public class TypeOfLegalCase {
+public class LegalCaseType {
     @Id
-    @Column(name = "type_of_legal_case_id", nullable = false)
-    String typeOfLegalCaseId;
+    @Column(name = "legal_case_type_id", nullable = false)
+    String legalCaseTypeId;
 
-    @Column(name = "type_of_legal_case_name", nullable = false, unique = true)
-    String typeOfLegalCaseName;
+    @Column(name = "legal_case_type_name", nullable = false, unique = true)
+    String legalCaseTypeName;
 
     @Column(name = "code_name", nullable = false, unique = true)
     String codeName;
 
-    @OneToMany(mappedBy = "typeOfLegalCase")
+    @OneToMany(mappedBy = "legalCaseType")
     List<LegalRelationship> legalRelationships;
 
-    @OneToMany(mappedBy = "typeOfLegalCase")
-    List<TypeOfDecision> typeOfDecisions;
+    @OneToMany(mappedBy = "legalCaseType")
+    List<DecisionType> typeOfDecisions;
 }

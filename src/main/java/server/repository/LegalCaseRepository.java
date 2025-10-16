@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import server.entity.Batch;
 import server.entity.LegalCase;
-import server.entity.enums.StatusOfLegalCase;
+import server.entity.enums.LegalCaseStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,7 +49,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             String legalRelationshipId,
             String typeOfLegalCaseId,
             String legalRelationshipGroupId,
-            StatusOfLegalCase statusOfLegalCase,
+            LegalCaseStatus statusOfLegalCase,
             String judgeId,
             String batchId,
             LocalDateTime startStorageDate,

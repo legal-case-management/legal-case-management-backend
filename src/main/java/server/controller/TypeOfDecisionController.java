@@ -5,12 +5,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-import server.dto.request.typeOfDecision.TypeOfDecisionRequest;
-import server.dto.request.typeOfDecision.TypeOfDecisionSearchRequest;
+import server.dto.request.decisionType.DecisionTypeRequest;
+import server.dto.request.decisionType.DecisionTypeSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
 import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
@@ -47,7 +44,7 @@ public class TypeOfDecisionController {
     }
 
     @PostMapping
-    public ApiResponse<Void> create(@RequestBody @Valid TypeOfDecisionRequest request) {
+    public ApiResponse<Void> create(@RequestBody @Valid DecisionTypeRequest request) {
         typeOfDecisionService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -57,7 +54,7 @@ public class TypeOfDecisionController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid TypeOfDecisionRequest request) {
+    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid DecisionTypeRequest request) {
         typeOfDecisionService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
@@ -78,7 +75,7 @@ public class TypeOfDecisionController {
 
     @PostMapping("/search")
     public ApiResponse<PageResponse<TypeOfDecisionResponse>> search(
-            @RequestBody @Valid TypeOfDecisionSearchRequest request,
+            @RequestBody @Valid DecisionTypeSearchRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "typeOfDecisionId") String sortBy

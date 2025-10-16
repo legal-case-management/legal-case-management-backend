@@ -4,7 +4,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import server.dto.request.officer.OfficerRequest;
-import server.entity.enums.StatusOfOfficer;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,4 +15,5 @@ import server.entity.enums.StatusOfOfficer;
 @ToString
 public class JudgeRequest extends OfficerRequest {
     long maxNumberOfLegalCase;
+    Set<String> restrictedGroupIds;
 }

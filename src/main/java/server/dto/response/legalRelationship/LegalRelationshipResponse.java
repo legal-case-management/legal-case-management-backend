@@ -15,6 +15,6 @@ import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
 public class LegalRelationshipResponse {
     String legalRelationshipId;
     String legalRelationshipName;
-    TypeOfLegalCaseResponse typeOfLegalCase;
+    TypeOfLegalCaseResponse legalCaseType;
     LegalRelationshipGroupResponse legalRelationshipGroup;
 }

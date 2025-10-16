@@ -7,11 +7,8 @@ import server.dto.response.batch.BatchResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.dto.response.legalRelationship.LegalRelationshipResponse;
 import server.dto.response.mediator.MediatorResponse;
-import server.entity.Batch;
-import server.entity.Judge;
-import server.entity.LegalRelationship;
 import server.entity.enums.Assignment;
-import server.entity.enums.StatusOfLegalCase;
+import server.entity.enums.LegalCaseStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,7 +37,7 @@ public class LegalCaseResponse {
     Assignment assignment;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime assignmentDate;
-    StatusOfLegalCase statusOfLegalCase;
+    LegalCaseStatus statusOfLegalCase;
     BatchResponse batch;
     JudgeResponse judge;
     MediatorResponse mediator;

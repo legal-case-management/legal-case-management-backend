@@ -14,10 +14,9 @@ import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.response.PageResponse;
 import server.dto.response.judge.JudgeResponse;
-import server.dto.response.legalCase.LegalCaseResponse;
 import server.entity.*;
 import server.entity.enums.Role;
-import server.entity.enums.StatusOfOfficer;
+import server.entity.enums.OfficerStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.JudgeMapper;
@@ -26,12 +25,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import server.utils.DateUtil;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -104,7 +100,7 @@ public class JudgeService {
 
         judge.setOfficerId(judgeId);
 
-        judge.setStatusOfOfficer(StatusOfOfficer.WORKING);
+        judge.setStatusOfOfficer(OfficerStatus.WORKING);
         Judge judgeSaved = judgeRepository.save(judge);
 
         Account account = Account.builder()

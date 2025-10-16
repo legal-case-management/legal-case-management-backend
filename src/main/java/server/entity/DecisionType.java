@@ -8,7 +8,7 @@ import server.entity.enums.CourtIssued;
 import java.util.List;
 
 @Entity
-@Table(name = "type_of_decisions")
+@Table(name = "decision_types")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -16,12 +16,12 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Builder
-public class TypeOfDecision {
+public class DecisionType {
     @Id
-    @Column(name = "type_of_decision_id")
-    String typeOfDecisionId;
-    @Column(name = "type_of_decision_name", nullable = false, length = 500)
-    String typeOfDecisionName;
+    @Column(name = "decision_type_id")
+    String decisionTypeId;
+    @Column(name = "decision_type_name", nullable = false, length = 500)
+    String decisionTypeName;
     @Column(name = "court_issued", nullable = false)
     @Enumerated(EnumType.STRING)
     CourtIssued courtIssued;
@@ -29,12 +29,12 @@ public class TypeOfDecision {
     boolean theEndDecision;
 
     @ManyToOne
-    @JoinColumn(name = "type_of_legal_case_id", nullable = false)
-    TypeOfLegalCase typeOfLegalCase;
+    @JoinColumn(name = "legal_case_type_id", nullable = false)
+    LegalCaseType legalCaseType;
 
-    @OneToMany(mappedBy = "typeOfDecision")
-    List<HandleTypeOfDecision> handleTypeOfDecisions;
+    @OneToMany(mappedBy = "decisionType")
+    List<HandleDecisionType> handleTypeOfDecisions;
 
-    @OneToMany(mappedBy = "typeOfDecision")
+    @OneToMany(mappedBy = "decisionType")
     List<Decision> decisions;
 }

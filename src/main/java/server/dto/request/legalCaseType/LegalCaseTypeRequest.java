@@ -1,4 +1,4 @@
-package server.dto.request.typeOfLegalCase;
+package server.dto.request.legalCaseType;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-public class TypeOfLegalCaseRequest {
-    String typeOfLegalCaseName;
+public class LegalCaseTypeRequest {
+    String legalCaseTypeName;
     String codeName;
 }

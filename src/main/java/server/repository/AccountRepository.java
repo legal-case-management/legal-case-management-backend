@@ -6,11 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import server.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import server.entity.LegalCase;
 import server.entity.enums.Role;
-import server.entity.enums.StatusOfAccount;
+import server.entity.enums.AccountStatus;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -38,7 +36,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
             String username,
             String email,
             Role role,
-            StatusOfAccount statusOfAccount,
+            AccountStatus statusOfAccount,
             String fullName,
             Pageable pageable
     );

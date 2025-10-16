@@ -7,7 +7,6 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Entity
@@ -35,24 +34,26 @@ public class LegalCase {
     LocalDate acceptanceDate;
     @Column(name = "expired_date")
     LocalDate expiredDate;
-    @Column(nullable = false)
-    String plaintiff;
-    @Column(name = "plaintiff_address")
-    String plaintiffAddress;
-    String defendant;
-    @Column(name = "defendant_address")
-    String defendantAddress;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "legal_case_litigant",
+            joinColumns = @JoinColumn(name = "legal_case_id")
+    )
+    List<Litigant> litigants;
+
     @ManyToOne
     @JoinColumn(name = "legal_relationship_id", nullable = false)
     LegalRelationship legalRelationship;
     @Column(name = "storage_date", nullable = false)
     LocalDateTime storageDate;
+    @Enumerated(EnumType.STRING)
     Assignment assignment;
     @Column(name = "assignment_date")
     LocalDateTime assignmentDate;
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_of_legal_case", nullable = false)
-    StatusOfLegalCase statusOfLegalCase;
+    @Column(name = "legal_case_status", nullable = false)
+    LegalCaseStatus legalCaseStatus;
 
     String note;
 

@@ -12,11 +12,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import server.dto.request.typeOfLegalCase.TypeOfLegalCaseRequest;
-import server.dto.request.typeOfLegalCase.TypeOfLegalCaseSearchRequest;
+import server.dto.request.legalCaseType.LegalCaseTypeRequest;
+import server.dto.request.legalCaseType.LegalCaseTypeSearchRequest;
 import server.dto.response.PageResponse;
 import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
-import server.entity.TypeOfLegalCase;
+import server.entity.LegalCaseType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.TypeOfLegalCaseMapper;
@@ -43,8 +43,8 @@ public class TypeOfLegalCaseService {
     @Async
     @Synchronized
     @Transactional
-    public void create(TypeOfLegalCaseRequest request) {
-        TypeOfLegalCase typeOfLegalCase = TypeOfLegalCase.builder().build();
+    public void create(LegalCaseTypeRequest request) {
+        LegalCaseType typeOfLegalCase = LegalCaseType.builder().build();
         typeOfLegalCaseMapper.toTypeOfLegalCase(request, typeOfLegalCase);
         if (typeOfLegalCaseRepository.existsByCodeName(typeOfLegalCase.getCodeName())) {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_CODE_EXISTED);
@@ -68,8 +68,8 @@ public class TypeOfLegalCaseService {
     @Async
     @Synchronized
     @Transactional
-    public void update(String id, TypeOfLegalCaseRequest request) {
-        TypeOfLegalCase existing = typeOfLegalCaseRepository.findById(id)
+    public void update(String id, LegalCaseTypeRequest request) {
+        LegalCaseType existing = typeOfLegalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
         if (!existing.getCodeName().equals(request.getCodeName()) &&
@@ -91,14 +91,14 @@ public class TypeOfLegalCaseService {
     @Synchronized
     @Transactional
     public void delete(String id) {
-        TypeOfLegalCase existing = typeOfLegalCaseRepository.findById(id)
+        LegalCaseType existing = typeOfLegalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
         typeOfLegalCaseRepository.delete(existing);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public PageResponse<TypeOfLegalCaseResponse> search(TypeOfLegalCaseSearchRequest request, int page, int size, String sortBy) {
+    public PageResponse<TypeOfLegalCaseResponse> search(LegalCaseTypeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
         Page<TypeOfLegalCaseResponse> resultPage = typeOfLegalCaseRepository.search(

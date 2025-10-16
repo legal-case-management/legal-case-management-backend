@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import server.dto.response.officer.OfficerResponse;
-import server.entity.enums.StatusOfOfficer;
+import server.entity.enums.OfficerStatus;
 
 @Getter
 @Setter
@@ -16,7 +16,7 @@ import server.entity.enums.StatusOfOfficer;
 public class MediatorResponse extends OfficerResponse {
     long numberOfLegalCases;
 
-    public MediatorResponse(String officerId, String lastName, String firstName, String fullName, StatusOfOfficer statusOfJudge, String email, long numberOfLegalCases) {
+    public MediatorResponse(String officerId, String lastName, String firstName, String fullName, OfficerStatus statusOfJudge, String email, long numberOfLegalCases) {
         super(officerId, lastName, firstName, fullName, statusOfJudge, email);
         this.numberOfLegalCases = numberOfLegalCases;
     }

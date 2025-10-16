@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import server.entity.enums.StatusOfOfficer;
+import server.entity.enums.OfficerStatus;
 
 @Entity
 @Table(name = "officers")
@@ -26,8 +26,8 @@ public abstract class Officer {
     @Column(name = "full_name", insertable = false, updatable = false, nullable = false)
     String fullName;
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_of_officer", nullable = false)
-    StatusOfOfficer statusOfOfficer;
+    @Column(name = "officer_status", nullable = false)
+    OfficerStatus officerStatus;
 
     @OneToOne(mappedBy = "officer")
     Account account;

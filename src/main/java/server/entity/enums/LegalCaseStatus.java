@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor
-public enum StatusOfLegalCase {
+public enum LegalCaseStatus {
     TEMPORARY_SUSPENSION("Tạm đình chỉ"),
     OVERDUE("Quá hạn"),
     CANCELED("Án hủy"),

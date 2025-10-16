@@ -2,9 +2,8 @@ package server.entity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.StatusOfLegalCase;
+import server.entity.enums.LegalCaseStatus;
 
-import java.io.Serializable;
 
 @Getter
 @Setter
@@ -13,7 +12,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HandleTypeOfDecisionId implements Serializable {
-    TypeOfDecision typeOfDecision;
-    StatusOfLegalCase preStatus;
+public class HandleDecisionTypeId {
+    DecisionType decisionType;
+    LegalCaseStatus preStatus;
 }

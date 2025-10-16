@@ -4,7 +4,10 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import server.dto.response.officer.OfficerResponse;
-import server.entity.enums.StatusOfOfficer;
+import server.entity.LegalRelationshipGroup;
+import server.entity.enums.OfficerStatus;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,13 +21,14 @@ public class JudgeResponse extends OfficerResponse {
     long numberOfTemporarySuspension;
     long numberOfOverdue;
     long numberOfCanceledAndEdited;
+    Set<LegalRelationshipGroup> restrictedGroups;
 
     public JudgeResponse(
             String officerId,
             String lastName,
             String firstName,
             String fullName,
-            StatusOfOfficer statusOfJudge,
+            OfficerStatus statusOfJudge,
             String email,
             long maxNumberOfLegalCase,
             long numberOfLegalCase,

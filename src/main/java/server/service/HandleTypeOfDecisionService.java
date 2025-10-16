@@ -8,14 +8,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import server.dto.request.handleTypeOfDecision.HandleTypeOfDecisionRequest;
-import server.dto.request.typeOfDecision.TypeOfDecisionRequest;
+import server.dto.request.handleDecisionType.HandleDecisionTypeRequest;
 import server.dto.response.handleTypeOfDecision.HandleTypeOfDecisionResponse;
-import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
-import server.entity.HandleTypeOfDecision;
-import server.entity.HandleTypeOfDecisionId;
-import server.entity.TypeOfDecision;
-import server.entity.TypeOfLegalCase;
+import server.entity.DecisionType;
+import server.entity.HandleDecisionType;
+import server.entity.HandleDecisionTypeId;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.HandleTypeOfDecisionMapper;
@@ -37,14 +34,14 @@ public class HandleTypeOfDecisionService {
     @Async
     @Synchronized
     @Transactional
-    public void create(HandleTypeOfDecisionRequest request) {
-        HandleTypeOfDecision handleTypeOfDecision = HandleTypeOfDecision.builder().build();
+    public void create(HandleDecisionTypeRequest request) {
+        HandleDecisionType handleTypeOfDecision = HandleDecisionType.builder().build();
         handleTypeOfDecisionMapper.toHandleTypeOfDecision(request, handleTypeOfDecision);
 
-        TypeOfDecision typeOfDecision = typeOfDecisionRepository.findById(request.getTypeOfDecisionId())
+        DecisionType typeOfDecision = typeOfDecisionRepository.findById(request.getTypeOfDecisionId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
-        HandleTypeOfDecisionId id = HandleTypeOfDecisionId.builder()
+        HandleDecisionTypeId id = HandleDecisionTypeId.builder()
                 .typeOfDecision(typeOfDecision)
                 .preStatus(request.getPreStatus())
                 .build();
@@ -53,7 +50,7 @@ public class HandleTypeOfDecisionService {
             throw new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_EXISTED);
         }
 
-        handleTypeOfDecision.setTypeOfDecision(typeOfDecision);
+        handleTypeOfDecision.setDecisionType(typeOfDecision);
         handleTypeOfDecision.setPreStatus(request.getPreStatus());
 
         handleTypeOfDecisionRepository.save(handleTypeOfDecision);
@@ -65,8 +62,8 @@ public class HandleTypeOfDecisionService {
     @Async
     @Synchronized
     @Transactional
-    public void update(HandleTypeOfDecisionId id, HandleTypeOfDecisionRequest request) {
-        HandleTypeOfDecision handleTypeOfDecision = handleTypeOfDecisionRepository.findById(id)
+    public void update(HandleDecisionTypeId id, HandleDecisionTypeRequest request) {
+        HandleDecisionType handleTypeOfDecision = handleTypeOfDecisionRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_NOT_EXISTED));
         handleTypeOfDecisionMapper.toHandleTypeOfDecision(request, handleTypeOfDecision);
         handleTypeOfDecisionRepository.save(handleTypeOfDecision);
@@ -76,15 +73,15 @@ public class HandleTypeOfDecisionService {
     @Async
     @Synchronized
     @Transactional
-    public void delete(HandleTypeOfDecisionId id) {
-        HandleTypeOfDecision handleTypeOfDecision = handleTypeOfDecisionRepository.findById(id)
+    public void delete(HandleDecisionTypeId id) {
+        HandleDecisionType handleTypeOfDecision = handleTypeOfDecisionRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_NOT_EXISTED));
         handleTypeOfDecisionRepository.delete(handleTypeOfDecision);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     public List<HandleTypeOfDecisionResponse> getByTypeOfDecision(String typeOfDecisionId) {
-        TypeOfDecision typeOfDecision = typeOfDecisionRepository.findById(typeOfDecisionId)
+        DecisionType typeOfDecision = typeOfDecisionRepository.findById(typeOfDecisionId)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
         return handleTypeOfDecisionRepository

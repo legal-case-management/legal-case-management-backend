@@ -3,7 +3,7 @@ package server.dto.request.legalCase;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.StatusOfLegalCase;
+import server.entity.enums.LegalCaseStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,7 +28,7 @@ public class LegalCaseSearchRequest {
     String typeOfLegalCaseId;
     String legalRelationshipId;
     String legalRelationshipGroupId;
-    StatusOfLegalCase statusOfLegalCase;
+    LegalCaseStatus statusOfLegalCase;
     String judgeId;
     String batchId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

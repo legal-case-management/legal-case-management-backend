@@ -3,7 +3,7 @@ package server.dto.response.officer;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import server.entity.enums.StatusOfOfficer;
+import server.entity.enums.OfficerStatus;
 
 @Getter
 @Setter
@@ -16,6 +16,6 @@ public class OfficerResponse {
     String lastName;
     String firstName;
     String fullName;
-    StatusOfOfficer statusOfOfficer;
+    OfficerStatus statusOfOfficer;
     String email;
 }

@@ -1,14 +1,10 @@
 package server.dto.response.authentication;
 
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.officer.OfficerResponse;
-import server.entity.Officer;
 import server.entity.enums.Role;
-import server.entity.enums.StatusOfAccount;
-
-import java.time.LocalDate;
+import server.entity.enums.AccountStatus;
 
 @Getter
 @Setter
@@ -22,5 +18,5 @@ public class AccountResponse {
     String email;
     Role role;
     OfficerResponse officer;
-    StatusOfAccount statusOfAccount;
+    AccountStatus statusOfAccount;
 }

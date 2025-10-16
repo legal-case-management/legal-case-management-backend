@@ -17,7 +17,7 @@ import server.dto.response.PageResponse;
 import server.dto.response.legalRelationship.LegalRelationshipResponse;
 import server.entity.LegalRelationship;
 import server.entity.LegalRelationshipGroup;
-import server.entity.TypeOfLegalCase;
+import server.entity.LegalCaseType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalRelationshipMapper;
@@ -56,7 +56,7 @@ public class LegalRelationshipService {
             throw new AppException(ErrorCode.LEGAL_RELATIONSHIP_NAME_EXISTED);
         }
 
-        TypeOfLegalCase typeOfLegalCase = typeOfLegalCaseRepository
+        LegalCaseType typeOfLegalCase = typeOfLegalCaseRepository
                 .findById(request.getTypeOfLegalCaseId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
@@ -73,7 +73,7 @@ public class LegalRelationshipService {
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
         legalRelationship.setLegalRelationshipId(legalRelationshipId);
-        legalRelationship.setTypeOfLegalCase(typeOfLegalCase);
+        legalRelationship.setLegalCaseType(typeOfLegalCase);
         legalRelationship.setLegalRelationshipGroup(legalRelationshipGroup);
         legalRelationshipRepository.save(legalRelationship);
     }
@@ -86,7 +86,7 @@ public class LegalRelationshipService {
         LegalRelationship legalRelationshipSaved = legalRelationshipRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
 
-        TypeOfLegalCase typeOfLegalCase = typeOfLegalCaseRepository
+        LegalCaseType typeOfLegalCase = typeOfLegalCaseRepository
                 .findById(request.getTypeOfLegalCaseId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
@@ -94,7 +94,7 @@ public class LegalRelationshipService {
                 .findById(request.getLegalRelationshipGroupId())
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-        legalRelationshipSaved.setTypeOfLegalCase(typeOfLegalCase);
+        legalRelationshipSaved.setLegalCaseType(typeOfLegalCase);
         legalRelationshipSaved.setLegalRelationshipGroup(legalRelationshipGroup);
 
         legalRelationshipMapper.toLegalRelationship(request, legalRelationshipSaved);

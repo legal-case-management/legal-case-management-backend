@@ -13,6 +13,6 @@ import lombok.experimental.FieldDefaults;
 public class LegalRelationshipSearchRequest {
     String legalRelationshipId;
     String legalRelationshipName;
-    String typeOfLegalCaseId;
+    String legalCaseTypeId;
     String legalRelationshipGroupId;
 }

@@ -2,7 +2,7 @@ package server.config;
 
 import server.entity.Account;
 import server.entity.enums.Role;
-import server.entity.enums.StatusOfAccount;
+import server.entity.enums.AccountStatus;
 import server.repository.AccountRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class ApplicationInitConfig {
                         .email("daophuckhang090@gmail.com")
                         .password(passwordEncoder.encode("admin"))
                         .role(Role.ADMIN)
-                        .statusOfAccount(StatusOfAccount.ACTIVE)
+                        .statusOfAccount(AccountStatus.ACTIVE)
                         .build();
                 accountRepository.save(account);
             }

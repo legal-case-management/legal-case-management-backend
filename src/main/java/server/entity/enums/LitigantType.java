@@ -8,11 +8,9 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor
-public enum StatusOfAccount {
-    ACTIVE("Đang hoạt động"),
-    BLOCKED("Bị khóa"),
-    ;
-
+public enum LitigantType {
+    PLAINTIFF("Nguyên đơn"),
+    DEFENDANT("Bị đơn"),
+    ACCUSED("Bị cáo");
     String name;
-
 }
