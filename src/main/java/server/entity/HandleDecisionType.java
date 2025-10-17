@@ -30,6 +30,8 @@ public class HandleDecisionType {
     @Enumerated(EnumType.STRING)
     @Column(name = "post_status")
     LegalCaseStatus postStatus;
+    @Column(name = "is_temporarily_postponed", nullable = false)
+    boolean isTemporarilyPostponed;
     @Column(name = "extension_period")
     Integer extensionPeriod;
 }

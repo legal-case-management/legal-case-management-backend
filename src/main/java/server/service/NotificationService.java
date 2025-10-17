@@ -16,7 +16,9 @@ import server.dto.response.PageResponse;
 import server.dto.response.notification.NotificationResponse;
 import server.entity.Account;
 import server.entity.LegalCase;
+import server.entity.Litigant;
 import server.entity.Notification;
+import server.entity.enums.NotificationType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.NotificationMapper;
@@ -28,7 +30,11 @@ import server.repository.NotificationRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +66,7 @@ public class NotificationService {
     @Transactional
     public void notifyExpiringCases() {
         LocalDate now = LocalDate.now();
-        int daysBeforeExpire = 7; // <-- tham số có thể đổi dễ dàng
+        int daysBeforeExpire = 7;
         LocalDate futureDate = now.plusDays(daysBeforeExpire);
 
         List<LegalCase> expiringCases =
@@ -71,27 +77,75 @@ public class NotificationService {
 
             long daysLeft = ChronoUnit.DAYS.between(now, lc.getExpiredDate());
             String title = "Vụ án sắp hết hạn";
+
+            List<Litigant> sortedLitigants = lc.getLitigants().stream()
+                    .sorted(Comparator
+                            .comparing((Litigant l) -> l.getLitigantType().ordinal())
+                            .thenComparing(Litigant::getOrdinal))
+                    .toList();
+
+            Map<String, List<String>> groupedLitigants = sortedLitigants.stream()
+                    .collect(Collectors.groupingBy(
+                            l -> l.getLitigantType().getName(),
+                            LinkedHashMap::new,
+                            Collectors.mapping(Litigant::getName, Collectors.toList())
+                    ));
+
+            String litigantsInfo = groupedLitigants.entrySet().stream()
+                    .map(entry -> String.format("%s:\n%s",
+                            entry.getKey(),
+                            entry.getValue().stream()
+                                    .map(name -> "- " + name)
+                                    .collect(Collectors.joining("\n"))
+                    ))
+                    .collect(Collectors.joining("\n\n"));
+
+            String relationshipName = lc.getLegalRelationship() != null
+                    ? lc.getLegalRelationship().getLegalRelationshipName()
+                    : "Không xác định";
+            String acceptanceDate = lc.getAcceptanceDate() != null
+                    ? lc.getAcceptanceDate().toString()
+                    : "Không xác định";
+            String expiredDate = lc.getExpiredDate() != null
+                    ? lc.getExpiredDate().toString()
+                    : "Không xác định";
+
             String content = String.format(
-                    "Vụ án %s có số thụ lý %s còn %d ngày nữa sẽ hết hạn.",
+                    """
+                    Vụ án %s có số thụ lý %s còn %d ngày nữa sẽ hết hạn.
+    
+                    • Quan hệ pháp luật: %s
+                    • Ngày thụ lý: %s
+                    • Ngày hết hạn: %s
+    
+                    Danh sách đương sự:
+                    %s
+                    """,
                     lc.getLegalCaseId(),
                     lc.getAcceptanceNumber(),
-                    daysLeft
+                    daysLeft,
+                    relationshipName,
+                    acceptanceDate,
+                    expiredDate,
+                    litigantsInfo
             );
 
-            if (!notificationRepository.existsByLegalCaseAndAccountAndTitle(lc, lc.getJudge().getAccount(), title)) {
-                Notification notification = Notification.builder()
-                        .title(title)
-                        .content(content)
-                        .createdAt(LocalDateTime.now())
-                        .isRead(false)
-                        .account(lc.getJudge().getAccount())
-                        .legalCase(lc)
-                        .build();
+            // Lưu thông báo
+            Notification notification = Notification.builder()
+                    .notificationType(NotificationType.UPCOMING_DEADLINE)
+                    .title(title)
+                    .content(content)
+                    .createdAt(LocalDateTime.now())
+                    .isRead(false)
+                    .account(lc.getJudge().getAccount())
+                    .legalCase(lc)
+                    .build();
 
-                notificationRepository.save(notification);
-            }
+            notificationRepository.save(notification);
         }
 
         System.out.println("✅ Đã gửi thông báo sắp hết hạn (" + daysBeforeExpire + " ngày) lúc 0h00");
     }
+
+
 }

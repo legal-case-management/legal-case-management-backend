@@ -1,5 +1,6 @@
 package server.dto.request.decisionType;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.entity.enums.CourtIssued;
@@ -15,5 +16,6 @@ public class DecisionTypeRequest {
     String decisionTypeName;
     String legalCaseTypeId;
     CourtIssued courtIssued;
-    boolean theEndDecision;
+    @JsonProperty("isTheEndDecision")
+    boolean isTheEndDecision;
 }

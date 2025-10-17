@@ -4,6 +4,7 @@ package server.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.entity.enums.NotificationType;
 
 import java.time.LocalDateTime;
 
@@ -21,7 +22,13 @@ public class Notification {
     @Column(name = "notification_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     String notificationId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "notification_type", nullable = false)
+    NotificationType notificationType;
+
     String title;
+    @Column(length = 2000)
     String content;
     @Column(name = "created_at", nullable = false)
     LocalDateTime createdAt;

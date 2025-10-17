@@ -17,5 +17,5 @@ public class DecisionTypeResponse {
     String decisionTypeName;
     LegalCaseTypeResponse legalCaseType;
     CourtIssued courtIssued;
-    boolean theEndDecision;
+    boolean isTheEndDecision;
 }

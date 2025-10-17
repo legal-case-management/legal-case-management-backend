@@ -23,8 +23,8 @@ public class Litigant {
     @Enumerated(EnumType.STRING)
     @Column(name = "litigant_type", nullable = false)
     LitigantType litigantType;
-    @Column(name = "numerical_order", nullable = false)
-    Integer numericalOrder;
+    @Column(nullable = false)
+    Integer ordinal;
     @Column(nullable = false)
     String name;
     @Column(name = "year_of_birth")

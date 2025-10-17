@@ -25,8 +25,8 @@ public class DecisionType {
     @Column(name = "court_issued", nullable = false)
     @Enumerated(EnumType.STRING)
     CourtIssued courtIssued;
-    @Column(name = "the_end_decision", nullable = false)
-    boolean theEndDecision;
+    @Column(name = "is_the_end_decision", nullable = false)
+    boolean isTheEndDecision;
 
     @ManyToOne
     @JoinColumn(name = "legal_case_type_id", nullable = false)

@@ -15,5 +15,6 @@ public class HandleDecisionTypeResponse {
     DecisionTypeResponse decisionType;
     LegalCaseStatus preStatus;
     LegalCaseStatus postStatus;
-    int extensionPeriod;
+    boolean isTemporarilyPostponed;
+    Integer extensionPeriod;
 }

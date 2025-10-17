@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor
 public enum LitigantType {
+    ACCUSED("Bị cáo"),
     PLAINTIFF("Nguyên đơn"),
-    DEFENDANT("Bị đơn"),
-    ACCUSED("Bị cáo");
+    DEFENDANT("Bị đơn");
     String name;
 }
