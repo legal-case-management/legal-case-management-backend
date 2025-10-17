@@ -32,7 +32,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class LegalRelationshipService {
     LegalRelationshipRepository legalRelationshipRepository;
-    LegalCaseTypeRepository typeOfLegalCaseRepository;
+    LegalCaseTypeRepository legalCaseTypeRepository;
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
 
     LegalRelationshipMapper legalRelationshipMapper;
@@ -56,14 +56,14 @@ public class LegalRelationshipService {
             throw new AppException(ErrorCode.LEGAL_RELATIONSHIP_NAME_EXISTED);
         }
 
-        LegalCaseType typeOfLegalCase = typeOfLegalCaseRepository
-                .findById(request.getTypeOfLegalCaseId())
+        LegalCaseType legalCaseType = legalCaseTypeRepository
+                .findById(request.getLegalCaseTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
-        Integer maxId = legalRelationshipRepository.getMaxId(typeOfLegalCase.getCodeName())
+        Integer maxId = legalRelationshipRepository.getMaxId(legalCaseType.getCodeName())
                 .orElse(0);
 
-        String legalRelationshipId = String.format("%s%03d", typeOfLegalCase.getCodeName(), maxId + 1);
+        String legalRelationshipId = String.format("%s%03d", legalCaseType.getCodeName(), maxId + 1);
         if (legalRelationshipRepository.existsById(legalRelationshipId)) {
             throw new AppException(ErrorCode.LEGAL_RELATIONSHIP_EXISTED);
         }
@@ -73,7 +73,7 @@ public class LegalRelationshipService {
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
         legalRelationship.setLegalRelationshipId(legalRelationshipId);
-        legalRelationship.setLegalCaseType(typeOfLegalCase);
+        legalRelationship.setLegalCaseType(legalCaseType);
         legalRelationship.setLegalRelationshipGroup(legalRelationshipGroup);
         legalRelationshipRepository.save(legalRelationship);
     }
@@ -86,15 +86,15 @@ public class LegalRelationshipService {
         LegalRelationship legalRelationshipSaved = legalRelationshipRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
 
-        LegalCaseType typeOfLegalCase = typeOfLegalCaseRepository
-                .findById(request.getTypeOfLegalCaseId())
+        LegalCaseType legalCaseType = legalCaseTypeRepository
+                .findById(request.getLegalCaseTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
         LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository
                 .findById(request.getLegalRelationshipGroupId())
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-        legalRelationshipSaved.setLegalCaseType(typeOfLegalCase);
+        legalRelationshipSaved.setLegalCaseType(legalCaseType);
         legalRelationshipSaved.setLegalRelationshipGroup(legalRelationshipGroup);
 
         legalRelationshipMapper.toLegalRelationship(request, legalRelationshipSaved);
@@ -118,7 +118,7 @@ public class LegalRelationshipService {
         Page<LegalRelationshipResponse> resultPage = legalRelationshipRepository.search(
                 request.getLegalRelationshipId(),
                 request.getLegalRelationshipName(),
-                request.getTypeOfLegalCaseId(),
+                request.getLegalCaseTypeId(),
                 request.getLegalRelationshipGroupId(),
                 pageable
         ).map(legalRelationshipMapper::toLegalRelationshipResponse);

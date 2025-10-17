@@ -63,7 +63,7 @@ public class JudgeService {
         Page<JudgeResponse> resultPage = judgeRepository.search(
                 request.getOfficerId(),
                 request.getFullName(),
-                request.getStatusOfOfficer(),
+                request.getOfficerStatus(),
                 DateUtil.getMilestoneDateTime(),
                 pageable
         );
@@ -100,7 +100,7 @@ public class JudgeService {
 
         judge.setOfficerId(judgeId);
 
-        judge.setStatusOfOfficer(OfficerStatus.WORKING);
+        judge.setOfficerStatus(OfficerStatus.WORKING);
         Judge judgeSaved = judgeRepository.save(judge);
 
         Account account = Account.builder()

@@ -21,14 +21,10 @@ public class LegalCaseSearchRequest {
     LocalDate startAcceptanceDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate endAcceptanceDate;
-    String plaintiff;
-    String plaintiffAddress;
-    String defendant;
-    String defendantAddress;
-    String typeOfLegalCaseId;
+    String legalCaseTypeId;
     String legalRelationshipId;
     String legalRelationshipGroupId;
-    LegalCaseStatus statusOfLegalCase;
+    LegalCaseStatus legalCaseStatus;
     String judgeId;
     String batchId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

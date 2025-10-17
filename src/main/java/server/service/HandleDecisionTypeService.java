@@ -24,25 +24,25 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class HandleTypeOfDecisionService {
+public class HandleDecisionTypeService {
     HandleDecisionTypeRepository handleDecisionTypeRepository;
     DecisionTypeRepository decisionTypeRepository;
 
-    HandleDecisionTypeMapper handleTypeOfDecisionMapper;
+    HandleDecisionTypeMapper handleDecisionTypeMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Synchronized
     @Transactional
     public void create(HandleDecisionTypeRequest request) {
-        HandleDecisionType handleTypeOfDecision = HandleDecisionType.builder().build();
-        handleTypeOfDecisionMapper.toHandleDecisionType(request, handleTypeOfDecision);
+        HandleDecisionType handleDecisionType = HandleDecisionType.builder().build();
+        handleDecisionTypeMapper.toHandleDecisionType(request, handleDecisionType);
 
-        DecisionType typeOfDecision = decisionTypeRepository.findById(request.getTypeOfDecisionId())
+        DecisionType decisionType = decisionTypeRepository.findById(request.getDecisionTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
         HandleDecisionTypeId id = HandleDecisionTypeId.builder()
-                .typeOfDecision(typeOfDecision)
+                .decisionType(decisionType)
                 .preStatus(request.getPreStatus())
                 .build();
 
@@ -50,23 +50,21 @@ public class HandleTypeOfDecisionService {
             throw new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_EXISTED);
         }
 
-        handleTypeOfDecision.setDecisionType(typeOfDecision);
-        handleTypeOfDecision.setPreStatus(request.getPreStatus());
+        handleDecisionType.setDecisionType(decisionType);
+        handleDecisionType.setPreStatus(request.getPreStatus());
 
-        handleDecisionTypeRepository.save(handleTypeOfDecision);
+        handleDecisionTypeRepository.save(handleDecisionType);
     }
-
-
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Synchronized
     @Transactional
     public void update(HandleDecisionTypeId id, HandleDecisionTypeRequest request) {
-        HandleDecisionType handleTypeOfDecision = handleDecisionTypeRepository.findById(id)
+        HandleDecisionType handleDecisionType = handleDecisionTypeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_NOT_EXISTED));
-        handleTypeOfDecisionMapper.toHandleDecisionType(request, handleTypeOfDecision);
-        handleDecisionTypeRepository.save(handleTypeOfDecision);
+        handleDecisionTypeMapper.toHandleDecisionType(request, handleDecisionType);
+        handleDecisionTypeRepository.save(handleDecisionType);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
@@ -74,19 +72,19 @@ public class HandleTypeOfDecisionService {
     @Synchronized
     @Transactional
     public void delete(HandleDecisionTypeId id) {
-        HandleDecisionType handleTypeOfDecision = handleDecisionTypeRepository.findById(id)
+        HandleDecisionType handleDecisionType = handleDecisionTypeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_NOT_EXISTED));
-        handleDecisionTypeRepository.delete(handleTypeOfDecision);
+        handleDecisionTypeRepository.delete(handleDecisionType);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<HandleDecisionTypeResponse> getByTypeOfDecision(String typeOfDecisionId) {
-        DecisionType typeOfDecision = decisionTypeRepository.findById(typeOfDecisionId)
+    public List<HandleDecisionTypeResponse> getByDecisionType(String decisionTypeId) {
+        DecisionType decisionType = decisionTypeRepository.findById(decisionTypeId)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
         return handleDecisionTypeRepository
-                .findAllByTypeOfDecision(typeOfDecision)
-                .stream().map(handleTypeOfDecisionMapper::toHandleDecisionTypeResponse)
+                .findAllByDecisionType(decisionType)
+                .stream().map(handleDecisionTypeMapper::toHandleDecisionTypeResponse)
                 .toList();
     }
 }

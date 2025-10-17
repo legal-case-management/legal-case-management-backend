@@ -59,15 +59,15 @@ public class MediatorService {
     public void create(MediatorRequest request) {
         Mediator mediator = mediatorMapper.toMediator(request);
 
-        Integer numberOfId = mediatorRepository.getMaxId()
+        Integer numberId = mediatorRepository.getMaxId()
                 .orElse(0);
-        String mediatorId = String.format("%s%02d", "HG", numberOfId + 1);
+        String mediatorId = String.format("%s%02d", "HG", numberId + 1);
         if (mediatorRepository.existsById(mediatorId)) {
             throw new AppException(ErrorCode.MEDIATOR_EXISTED);
         }
 
         mediator.setOfficerId(mediatorId);
-        mediator.setStatusOfOfficer(OfficerStatus.WORKING);
+        mediator.setOfficerStatus(OfficerStatus.WORKING);
         Mediator mediatorSaved = mediatorRepository.save(mediator);
 
         Account account = Account.builder()
@@ -113,7 +113,7 @@ public class MediatorService {
         Page<MediatorResponse> resultPage = mediatorRepository.search(
                 request.getOfficerId(),
                 request.getFullName(),
-                request.getStatusOfOfficer(),
+                request.getOfficerStatus(),
                 pageable
         );
 

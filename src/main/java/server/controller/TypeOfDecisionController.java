@@ -11,7 +11,7 @@ import server.dto.request.decisionType.DecisionTypeSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
 import server.dto.response.decisionType.DecisionTypeResponse;
-import server.service.TypeOfDecisionService;
+import server.service.DecisionTypeService;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/type-of-decision")
 @Slf4j
 public class TypeOfDecisionController {
-    TypeOfDecisionService typeOfDecisionService;
+    DecisionTypeService typeOfDecisionService;
 
     @GetMapping("/{id}")
     public ApiResponse<DecisionTypeResponse> getById(@PathVariable String id) {

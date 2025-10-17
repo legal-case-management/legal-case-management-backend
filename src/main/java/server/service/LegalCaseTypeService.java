@@ -27,15 +27,15 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class TypeOfLegalCaseService {
-    LegalCaseTypeRepository typeOfLegalCaseRepository;
-    LegalCaseTypeMapper typeOfLegalCaseMapper;
+public class LegalCaseTypeService {
+    LegalCaseTypeRepository legalCaseTypeRepository;
+    LegalCaseTypeMapper legalCaseTypeMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     public List<LegalCaseTypeResponse> getAll() {
-        return typeOfLegalCaseRepository
+        return legalCaseTypeRepository
                 .findAll()
-                .stream().map(typeOfLegalCaseMapper::toLegalCaseTypeResponse)
+                .stream().map(legalCaseTypeMapper::toLegalCaseTypeResponse)
                 .toList();
     }
 
@@ -44,24 +44,24 @@ public class TypeOfLegalCaseService {
     @Synchronized
     @Transactional
     public void create(LegalCaseTypeRequest request) {
-        LegalCaseType typeOfLegalCase = LegalCaseType.builder().build();
-        typeOfLegalCaseMapper.toLegalCaseType(request, typeOfLegalCase);
-        if (typeOfLegalCaseRepository.existsByCodeName(typeOfLegalCase.getCodeName())) {
+        LegalCaseType legalCaseType = LegalCaseType.builder().build();
+        legalCaseTypeMapper.toLegalCaseType(request, legalCaseType);
+        if (legalCaseTypeRepository.existsByCodeName(legalCaseType.getCodeName())) {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_CODE_EXISTED);
         }
 
-        if (typeOfLegalCaseRepository.existsByTypeOfLegalCaseName(typeOfLegalCase.getTypeOfLegalCaseName())) {
+        if (legalCaseTypeRepository.existsByLegalCaseTypeName(legalCaseType.getLegalCaseTypeName())) {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NAME_EXISTED);
         }
 
-        Integer maxId = typeOfLegalCaseRepository.getMaxId().orElse(0);
+        Integer maxId = legalCaseTypeRepository.getMaxId().orElse(0);
         String typeOfLegalCaseId =  String.format("%s%02d", "L", maxId + 1);
-        if (typeOfLegalCaseRepository.existsById(typeOfLegalCaseId)) {
+        if (legalCaseTypeRepository.existsById(typeOfLegalCaseId)) {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_EXISTED);
         }
 
-        typeOfLegalCase.setTypeOfLegalCaseId(typeOfLegalCaseId);
-        typeOfLegalCaseRepository.save(typeOfLegalCase);
+        legalCaseType.setLegalCaseTypeId(typeOfLegalCaseId);
+        legalCaseTypeRepository.save(legalCaseType);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
@@ -69,21 +69,21 @@ public class TypeOfLegalCaseService {
     @Synchronized
     @Transactional
     public void update(String id, LegalCaseTypeRequest request) {
-        LegalCaseType existing = typeOfLegalCaseRepository.findById(id)
+        LegalCaseType existing = legalCaseTypeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
         if (!existing.getCodeName().equals(request.getCodeName()) &&
-                typeOfLegalCaseRepository.existsByCodeName(request.getCodeName())) {
+                legalCaseTypeRepository.existsByCodeName(request.getCodeName())) {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_CODE_EXISTED);
         }
 
-        if (!existing.getTypeOfLegalCaseName().equals(request.getTypeOfLegalCaseName()) &&
-                typeOfLegalCaseRepository.existsByTypeOfLegalCaseName(request.getTypeOfLegalCaseName())) {
+        if (!existing.getLegalCaseTypeName().equals(request.getLegalCaseTypeName()) &&
+                legalCaseTypeRepository.existsByLegalCaseTypeName(request.getLegalCaseTypeName())) {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NAME_EXISTED);
         }
 
-        typeOfLegalCaseMapper.toLegalCaseType(request, existing);
-        typeOfLegalCaseRepository.save(existing);
+        legalCaseTypeMapper.toLegalCaseType(request, existing);
+        legalCaseTypeRepository.save(existing);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
@@ -91,22 +91,22 @@ public class TypeOfLegalCaseService {
     @Synchronized
     @Transactional
     public void delete(String id) {
-        LegalCaseType existing = typeOfLegalCaseRepository.findById(id)
+        LegalCaseType existing = legalCaseTypeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
-        typeOfLegalCaseRepository.delete(existing);
+        legalCaseTypeRepository.delete(existing);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     public PageResponse<LegalCaseTypeResponse> search(LegalCaseTypeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
-        Page<LegalCaseTypeResponse> resultPage = typeOfLegalCaseRepository.search(
-                request.getTypeOfLegalCaseId(),
-                request.getTypeOfLegalCaseName(),
+        Page<LegalCaseTypeResponse> resultPage = legalCaseTypeRepository.search(
+                request.getLegalCaseTypeId(),
+                request.getLegalCaseTypeName(),
                 request.getCodeName(),
                 pageable
-        ).map(typeOfLegalCaseMapper::toLegalCaseTypeResponse);
+        ).map(legalCaseTypeMapper::toLegalCaseTypeResponse);
 
         return PageResponse.<LegalCaseTypeResponse>builder()
                 .number(resultPage.getNumber())

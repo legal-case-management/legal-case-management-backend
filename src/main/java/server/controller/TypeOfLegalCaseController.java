@@ -11,7 +11,7 @@ import server.dto.request.legalCaseType.LegalCaseTypeSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
 import server.dto.response.legalCaseType.LegalCaseTypeResponse;
-import server.service.TypeOfLegalCaseService;
+import server.service.LegalCaseTypeService;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/type-of-legal-case")
 @Slf4j
 public class TypeOfLegalCaseController {
-    TypeOfLegalCaseService typeOfLegalCaseService;
+    LegalCaseTypeService typeOfLegalCaseService;
 
     @GetMapping("/all")
     public ApiResponse<List<LegalCaseTypeResponse>> getAll() {

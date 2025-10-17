@@ -12,7 +12,7 @@ import server.dto.response.handleDecisionType.HandleDecisionTypeResponse;
 import server.entity.HandleDecisionTypeId;
 import server.entity.DecisionType;
 import server.entity.enums.LegalCaseStatus;
-import server.service.HandleTypeOfDecisionService;
+import server.service.HandleDecisionTypeService;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/handle-type-of-decision")
 @Slf4j
 public class HandleTypeOfDecisionController {
-    HandleTypeOfDecisionService handleTypeOfDecisionService;
+    HandleDecisionTypeService handleTypeOfDecisionService;
 
     @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid HandleDecisionTypeRequest request) {
@@ -76,7 +76,7 @@ public class HandleTypeOfDecisionController {
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(handleTypeOfDecisionService.getByTypeOfDecision(typeOfDecisionId))
+                .data(handleTypeOfDecisionService.getByDecisionType(typeOfDecisionId))
                 .build();
     }
 }

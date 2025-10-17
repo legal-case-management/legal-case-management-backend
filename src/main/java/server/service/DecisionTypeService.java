@@ -29,24 +29,24 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class TypeOfDecisionService {
-    DecisionTypeRepository typeOfDecisionRepository;
-    LegalCaseTypeRepository typeOfLegalCaseRepository;
+public class DecisionTypeService {
+    DecisionTypeRepository decisionTypeRepository;
+    LegalCaseTypeRepository legalCaseTypeRepository;
 
-    DecisionTypeMapper typeOfDecisionMapper;
+    DecisionTypeMapper decisionTypeMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     public List<DecisionTypeResponse> getAll() {
-        return typeOfDecisionRepository
+        return decisionTypeRepository
                 .findAll()
-                .stream().map(typeOfDecisionMapper::toDecisionTypeResponse)
+                .stream().map(decisionTypeMapper::toDecisionTypeResponse)
                 .toList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     public DecisionTypeResponse getById(String id) {
-        return typeOfDecisionRepository.findById(id)
-                .map(typeOfDecisionMapper::toDecisionTypeResponse)
+        return decisionTypeRepository.findById(id)
+                .map(decisionTypeMapper::toDecisionTypeResponse)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
     }
 
@@ -55,27 +55,27 @@ public class TypeOfDecisionService {
     @Synchronized
     @Transactional
     public void create(DecisionTypeRequest request) {
-        DecisionType typeOfDecision = DecisionType.builder().build();
-        typeOfDecisionMapper.toDecisionType(request, typeOfDecision);
+        DecisionType decisionType = DecisionType.builder().build();
+        decisionTypeMapper.toDecisionType(request, decisionType);
 
-        if (typeOfDecisionRepository.existsByTypeOfDecisionName(typeOfDecision.getTypeOfDecisionName())) {
+        if (decisionTypeRepository.existsByDecisionTypeName(decisionType.getDecisionTypeName())) {
             throw new AppException(ErrorCode.TYPE_OF_DECISION_NAME_EXISTED);
         }
 
-        LegalCaseType typeOfLegalCase = typeOfLegalCaseRepository.findById(request.getTypeOfLegalCaseId())
+        LegalCaseType legalCaseType = legalCaseTypeRepository.findById(request.getLegalCaseTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
-        Integer maxId = typeOfDecisionRepository.getMaxId(typeOfLegalCase.getCodeName()).orElse(0);
-        String typeOfDecisionId = String.format("%s%02d", typeOfLegalCase.getCodeName(), maxId + 1);
+        Integer maxId = decisionTypeRepository.getMaxId(legalCaseType.getCodeName()).orElse(0);
+        String decisionTypeId = String.format("%s%02d", legalCaseType.getCodeName(), maxId + 1);
 
-        if (typeOfDecisionRepository.existsById(typeOfDecisionId)) {
+        if (decisionTypeRepository.existsById(decisionTypeId)) {
             throw new AppException(ErrorCode.TYPE_OF_DECISION_EXISTED);
         }
 
-        typeOfDecision.setTypeOfDecisionId(typeOfDecisionId);
-        typeOfDecision.setTypeOfLegalCase(typeOfLegalCase);
+        decisionType.setDecisionTypeId(decisionTypeId);
+        decisionType.setLegalCaseType(legalCaseType);
 
-        typeOfDecisionRepository.save(typeOfDecision);
+        decisionTypeRepository.save(decisionType);
     }
 
 
@@ -84,18 +84,18 @@ public class TypeOfDecisionService {
     @Synchronized
     @Transactional
     public void update(String id, DecisionTypeRequest request) {
-        DecisionType existing = typeOfDecisionRepository.findById(id)
+        DecisionType existing = decisionTypeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
-        typeOfDecisionMapper.toDecisionType(request, existing);
+        decisionTypeMapper.toDecisionType(request, existing);
 
-        if(request.getTypeOfLegalCaseId() != null) {
-            LegalCaseType typeOfLegalCase = typeOfLegalCaseRepository.findById(request.getTypeOfLegalCaseId())
+        if(request.getLegalCaseTypeId() != null) {
+            LegalCaseType legalCaseType = legalCaseTypeRepository.findById(request.getLegalCaseTypeId())
                     .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
-            existing.setTypeOfLegalCase(typeOfLegalCase);
+            existing.setLegalCaseType(legalCaseType);
         }
 
-        typeOfDecisionRepository.save(existing);
+        decisionTypeRepository.save(existing);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
@@ -103,24 +103,24 @@ public class TypeOfDecisionService {
     @Synchronized
     @Transactional
     public void delete(String id) {
-        DecisionType existing = typeOfDecisionRepository.findById(id)
+        DecisionType existing = decisionTypeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
-        typeOfDecisionRepository.delete(existing);
+        decisionTypeRepository.delete(existing);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     public PageResponse<DecisionTypeResponse> search(DecisionTypeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
-        Page<DecisionTypeResponse> resultPage = typeOfDecisionRepository.search(
-                request.getTypeOfDecisionId(),
-                request.getTypeOfDecisionName(),
-                request.getTypeOfLegalCaseId(),
+        Page<DecisionTypeResponse> resultPage = decisionTypeRepository.search(
+                request.getDecisionTypeId(),
+                request.getDecisionTypeName(),
+                request.getLegalCaseTypeId(),
                 request.getCourtIssued(),
                 request.isTheEndDecision(),
                 pageable
-        ).map(typeOfDecisionMapper::toDecisionTypeResponse);
+        ).map(decisionTypeMapper::toDecisionTypeResponse);
 
         return PageResponse.<DecisionTypeResponse>builder()
                 .number(resultPage.getNumber())
