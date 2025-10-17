@@ -18,10 +18,10 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("/type-of-legal-case")
+@RequestMapping("/legal-case-type")
 @Slf4j
-public class TypeOfLegalCaseController {
-    LegalCaseTypeService typeOfLegalCaseService;
+public class LegalCaseTypeController {
+    LegalCaseTypeService legalCaseTypeService;
 
     @GetMapping("/all")
     public ApiResponse<List<LegalCaseTypeResponse>> getAll() {
@@ -29,13 +29,13 @@ public class TypeOfLegalCaseController {
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(typeOfLegalCaseService.getAll())
+                .data(legalCaseTypeService.getAll())
                 .build();
     }
 
     @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid LegalCaseTypeRequest request) {
-        typeOfLegalCaseService.create(request);
+        legalCaseTypeService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -45,7 +45,7 @@ public class TypeOfLegalCaseController {
 
     @PutMapping("/{id}")
     public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid LegalCaseTypeRequest request) {
-        typeOfLegalCaseService.update(id, request);
+        legalCaseTypeService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -55,7 +55,7 @@ public class TypeOfLegalCaseController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> delete(@PathVariable String id) {
-        typeOfLegalCaseService.delete(id);
+        legalCaseTypeService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -74,7 +74,7 @@ public class TypeOfLegalCaseController {
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(typeOfLegalCaseService.search(request, page, size, sortBy))
+                .data(legalCaseTypeService.search(request, page, size, sortBy))
                 .build();
     }
 

@@ -19,14 +19,14 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("/handle-type-of-decision")
+@RequestMapping("/handle-decision-type")
 @Slf4j
-public class HandleTypeOfDecisionController {
-    HandleDecisionTypeService handleTypeOfDecisionService;
+public class HandleDecisionTypeController {
+    HandleDecisionTypeService handleDecisionTypeService;
 
     @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid HandleDecisionTypeRequest request) {
-        handleTypeOfDecisionService.create(request);
+        handleDecisionTypeService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -34,18 +34,18 @@ public class HandleTypeOfDecisionController {
                 .build();
     }
 
-    @PutMapping("/{typeOfDecisionId}/{preStatusOfLegalCase}")
+    @PutMapping("/{decisionTypeId}/{preLegalCaseStatus}")
     public ApiResponse<Void> update(
-            @PathVariable String typeOfDecisionId,
-            @PathVariable LegalCaseStatus preStatusOfLegalCase,
+            @PathVariable String decisionTypeId,
+            @PathVariable LegalCaseStatus preLegalCaseStatus,
             @RequestBody @Valid HandleDecisionTypeRequest request
     ) {
         HandleDecisionTypeId id = HandleDecisionTypeId.builder()
-                .typeOfDecision(DecisionType.builder().typeOfDecisionId(typeOfDecisionId).build())
-                .preStatus(preStatusOfLegalCase)
+                .decisionType(DecisionType.builder().decisionTypeId(decisionTypeId).build())
+                .preStatus(preLegalCaseStatus)
                 .build();
 
-        handleTypeOfDecisionService.update(id, request);
+        handleDecisionTypeService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -53,16 +53,16 @@ public class HandleTypeOfDecisionController {
                 .build();
     }
 
-    @DeleteMapping("/{typeOfDecisionId}/{preStatusOfLegalCase}")
+    @DeleteMapping("/{decisionTypeId}/{preLegalCaseStatus}")
     public ApiResponse<Void> delete(
-            @PathVariable String typeOfDecisionId,
-            @PathVariable LegalCaseStatus preStatusOfLegalCase
+            @PathVariable String decisionTypeId,
+            @PathVariable LegalCaseStatus preLegalCaseStatus
     ) {
         HandleDecisionTypeId id = HandleDecisionTypeId.builder()
-                .typeOfDecision(DecisionType.builder().typeOfDecisionId(typeOfDecisionId).build())
-                .preStatus(preStatusOfLegalCase)
+                .decisionType(DecisionType.builder().decisionTypeId(decisionTypeId).build())
+                .preStatus(preLegalCaseStatus)
                 .build();
-        handleTypeOfDecisionService.delete(id);
+        handleDecisionTypeService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -76,7 +76,7 @@ public class HandleTypeOfDecisionController {
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(handleTypeOfDecisionService.getByDecisionType(typeOfDecisionId))
+                .data(handleDecisionTypeService.getByDecisionType(typeOfDecisionId))
                 .build();
     }
 }

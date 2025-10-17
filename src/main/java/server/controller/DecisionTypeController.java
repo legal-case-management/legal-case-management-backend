@@ -18,10 +18,10 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("/type-of-decision")
+@RequestMapping("/decision-type")
 @Slf4j
-public class TypeOfDecisionController {
-    DecisionTypeService typeOfDecisionService;
+public class DecisionTypeController {
+    DecisionTypeService decisionTypeService;
 
     @GetMapping("/{id}")
     public ApiResponse<DecisionTypeResponse> getById(@PathVariable String id) {
@@ -29,7 +29,7 @@ public class TypeOfDecisionController {
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(typeOfDecisionService.getById(id))
+                .data(decisionTypeService.getById(id))
                 .build();
     }
 
@@ -39,13 +39,13 @@ public class TypeOfDecisionController {
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(typeOfDecisionService.getAll())
+                .data(decisionTypeService.getAll())
                 .build();
     }
 
     @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid DecisionTypeRequest request) {
-        typeOfDecisionService.create(request);
+        decisionTypeService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -55,7 +55,7 @@ public class TypeOfDecisionController {
 
     @PutMapping("/{id}")
     public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid DecisionTypeRequest request) {
-        typeOfDecisionService.update(id, request);
+        decisionTypeService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -65,7 +65,7 @@ public class TypeOfDecisionController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> delete(@PathVariable String id) {
-        typeOfDecisionService.delete(id);
+        decisionTypeService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -78,13 +78,13 @@ public class TypeOfDecisionController {
             @RequestBody @Valid DecisionTypeSearchRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "typeOfDecisionId") String sortBy
+            @RequestParam(defaultValue = "decisionTypeId") String sortBy
     ) {
         return ApiResponse.<PageResponse<DecisionTypeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(typeOfDecisionService.search(request, page, size, sortBy))
+                .data(decisionTypeService.search(request, page, size, sortBy))
                 .build();
     }
 

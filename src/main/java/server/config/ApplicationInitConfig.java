@@ -31,7 +31,7 @@ public class ApplicationInitConfig {
                         .email("daophuckhang090@gmail.com")
                         .password(passwordEncoder.encode("admin"))
                         .role(Role.ADMIN)
-                        .statusOfAccount(AccountStatus.ACTIVE)
+                        .accountStatus(AccountStatus.ACTIVE)
                         .build();
                 accountRepository.save(account);
             }
