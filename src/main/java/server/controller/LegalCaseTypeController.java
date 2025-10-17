@@ -68,7 +68,7 @@ public class LegalCaseTypeController {
             @RequestBody @Valid LegalCaseTypeSearchRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "typeOfLegalCaseId") String sortBy
+            @RequestParam(defaultValue = "legalCaseTypeId") String sortBy
     ) {
         return ApiResponse.<PageResponse<LegalCaseTypeResponse>>builder()
                 .success(true)
