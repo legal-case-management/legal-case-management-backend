@@ -10,7 +10,7 @@ import server.dto.request.decisionType.DecisionTypeRequest;
 import server.dto.request.decisionType.DecisionTypeSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
-import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
+import server.dto.response.decisionType.DecisionTypeResponse;
 import server.service.TypeOfDecisionService;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class TypeOfDecisionController {
     TypeOfDecisionService typeOfDecisionService;
 
     @GetMapping("/{id}")
-    public ApiResponse<TypeOfDecisionResponse> getById(@PathVariable String id) {
-        return ApiResponse.<TypeOfDecisionResponse>builder()
+    public ApiResponse<DecisionTypeResponse> getById(@PathVariable String id) {
+        return ApiResponse.<DecisionTypeResponse>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
@@ -34,8 +34,8 @@ public class TypeOfDecisionController {
     }
 
     @GetMapping("/all")
-    public ApiResponse<List<TypeOfDecisionResponse>> getAll() {
-        return ApiResponse.<List<TypeOfDecisionResponse>>builder()
+    public ApiResponse<List<DecisionTypeResponse>> getAll() {
+        return ApiResponse.<List<DecisionTypeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
@@ -74,13 +74,13 @@ public class TypeOfDecisionController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<PageResponse<TypeOfDecisionResponse>> search(
+    public ApiResponse<PageResponse<DecisionTypeResponse>> search(
             @RequestBody @Valid DecisionTypeSearchRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "typeOfDecisionId") String sortBy
     ) {
-        return ApiResponse.<PageResponse<TypeOfDecisionResponse>>builder()
+        return ApiResponse.<PageResponse<DecisionTypeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")

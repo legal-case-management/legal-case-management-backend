@@ -20,14 +20,14 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.lastName,
                 j.firstName,
                 j.fullName,
-                j.statusOfOfficer,
+                j.officerStatus,
                 j.account.email,
                 j.maxNumberOfLegalCase,
                 SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED') THEN 1 ELSE 0 END)
+                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
@@ -35,15 +35,15 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             WHERE  b.storageDate >= :milestoneDate
                     AND(:officerId IS NULL OR j.officerId LIKE %:officerId%)
                     AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
-                    AND (:statusOfOfficer IS NULL OR j.statusOfOfficer = :statusOfOfficer)
+                    AND (:officerStatus IS NULL OR j.officerStatus = :officerStatus)
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
-                     j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
+                     j.maxNumberOfLegalCase, j.officerStatus, j.account.email
             ORDER BY j.officerId
             """)
     Page<JudgeResponse> search(
             String officerId,
             String fullName,
-            OfficerStatus statusOfOfficer,
+            OfficerStatus officerStatus,
             @Param("milestoneDate") LocalDateTime milestoneDate,
             Pageable pageable
     );
@@ -61,21 +61,21 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.lastName,
                 j.firstName,
                 j.fullName,
-                j.statusOfOfficer,
+                j.officerStatus,
                 j.account.email,
                 j.maxNumberOfLegalCase,
                 SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED') THEN 1 ELSE 0 END)
+                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
             LEFT JOIN lc.batch b
                   WHERE  b.storageDate >= :milestoneDate
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
-                     j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
+                     j.maxNumberOfLegalCase, j.officerStatus, j.account.email
             ORDER BY j.officerId
             """)
     List<JudgeResponse> getAll(@Param("milestoneDate") LocalDateTime milestoneDate);
@@ -86,28 +86,28 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.lastName,
                 j.firstName,
                 j.fullName,
-                j.statusOfOfficer,
+                j.officerStatus,
                 j.account.email,
                 j.maxNumberOfLegalCase,
                 SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED') THEN 1 ELSE 0 END)
+                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
             )
             FROM Judge j
             LEFT JOIN j.legalCases lc
             LEFT JOIN lc.batch b
-            WHERE j.statusOfOfficer = 'WORKING' AND b.storageDate >= :milestoneDate
+            WHERE j.officerStatus = 'WORKING' AND b.storageDate >= :milestoneDate
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
-                     j.maxNumberOfLegalCase, j.statusOfOfficer, j.account.email
+                     j.maxNumberOfLegalCase, j.officerStatus, j.account.email
             HAVING j.maxNumberOfLegalCase < 0
-                   OR SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END) < j.maxNumberOfLegalCase
+                   OR SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END) < j.maxNumberOfLegalCase
             ORDER BY
-                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END) ASC,
-                SUM(CASE WHEN lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END) DESC,
-                SUM(CASE WHEN lc.statusOfLegalCase = 'OVERDUE' THEN 1 ELSE 0 END) ASC,
-                SUM(CASE WHEN (lc.statusOfLegalCase = 'CANCELED' OR lc.statusOfLegalCase = 'EDITED') THEN 1 ELSE 0 END) ASC,
+                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END) ASC,
+                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END) DESC,
+                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END) ASC,
+                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END) ASC,
                 j.firstName ASC
             """)
     List<JudgeResponse> getAssignAssignment(@Param("milestoneDate") LocalDateTime milestoneDate);

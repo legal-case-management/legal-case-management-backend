@@ -3,7 +3,7 @@ package server.dto.response.legalRelationship;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.legalRelationshipGroup.LegalRelationshipGroupResponse;
-import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
+import server.dto.response.legalCaseType.LegalCaseTypeResponse;
 
 @Getter
 @Setter
@@ -15,6 +15,6 @@ import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
 public class LegalRelationshipResponse {
     String legalRelationshipId;
     String legalRelationshipName;
-    TypeOfLegalCaseResponse legalCaseType;
+    LegalCaseTypeResponse legalCaseType;
     LegalRelationshipGroupResponse legalRelationshipGroup;
 }

@@ -90,7 +90,7 @@ public class MediatorService {
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.MEDIATOR_NOT_EXISTED));
 
-        mediatorMapper.updateMediatorFromRequest(request, mediatorSaved);
+        mediatorMapper.toMediator(request, mediatorSaved);
         mediatorRepository.save(mediatorSaved);
     }
 

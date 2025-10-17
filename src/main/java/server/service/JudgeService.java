@@ -123,7 +123,7 @@ public class JudgeService {
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
-        judgeMapper.updateJudgeFromRequest(request, judgeSaved);
+        judgeMapper.toJudge(request, judgeSaved);
         judgeRepository.save(judgeSaved);
     }
 

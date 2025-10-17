@@ -12,23 +12,22 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MediatorRepository extends JpaRepository<Mediator, String> {
-    Optional<Mediator> findByAccount_AccountId(String accountId);
     @Query("""
             SELECT new server.dto.response.mediator.MediatorResponse(
                 m.officerId,
                 m.lastName,
                 m.firstName,
                 m.fullName,
-                m.statusOfOfficer,
+                m.officerStatus,
                 m.account.email,
-                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END)
+                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END)
             )
             FROM Mediator m
             LEFT JOIN m.legalCases lc
             WHERE (:officerId IS NULL OR m.officerId LIKE %:officerId%)
               AND (:fullName IS NULL OR m.fullName LIKE %:fullName%)
-              AND (:statusOfOfficer IS NULL OR m.statusOfOfficer = :statusOfOfficer)
-            GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.statusOfOfficer, m.account.email
+              AND (:statusOfOfficer IS NULL OR m.officerStatus = :statusOfOfficer)
+            GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.officerStatus, m.account.email
             ORDER BY m.officerId
             """)
     Page<MediatorResponse> search(
@@ -44,13 +43,13 @@ public interface MediatorRepository extends JpaRepository<Mediator, String> {
                 m.lastName,
                 m.firstName,
                 m.fullName,
-                m.statusOfOfficer,
+                m.officerStatus,
                 m.account.email,
-                SUM(CASE WHEN lc.statusOfLegalCase = 'IN_PROCESS' THEN 1 ELSE 0 END)
+                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END)
             )
              FROM Mediator m
              LEFT JOIN m.legalCases lc
-             GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.statusOfOfficer, m.account.email
+             GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.officerStatus, m.account.email
              ORDER BY m.officerId
             """)
     List<MediatorResponse> getAll();

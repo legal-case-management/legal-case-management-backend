@@ -390,12 +390,11 @@ public class AuthenticationService {
     @PreAuthorize("hasAnyRole('ADMIN')")
     public PageResponse<AccountResponse> search(AccountSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-        System.out.println(request);
         Page<AccountResponse> resultPage = accountRepository.search(
                 request.getUsername(),
                 request.getEmail(),
                 request.getRole(),
-                request.getStatusOfAccount(),
+                request.getAccountStatus(),
                 request.getFullName(),
                 pageable
         ).map(accountMapper::toAccountResponse);
@@ -419,7 +418,7 @@ public class AuthenticationService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
-        account.setStatusOfAccount(AccountStatus.BLOCKED);
+        account.setAccountStatus(AccountStatus.BLOCKED);
         accountRepository.save(account);
 
         tokenRedis.delete("account:" + account.getAccountId() + ":token");
@@ -429,7 +428,7 @@ public class AuthenticationService {
     public void activeAccount(String id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
-        account.setStatusOfAccount(AccountStatus.ACTIVE);
+        account.setAccountStatus(AccountStatus.ACTIVE);
         accountRepository.save(account);
     }
 }

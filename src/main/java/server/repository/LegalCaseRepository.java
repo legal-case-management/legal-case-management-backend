@@ -24,14 +24,10 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber LIKE %:acceptanceNumber%)
             AND (cast(:startAcceptanceDate as date) IS NULL OR lc.acceptanceDate >= :startAcceptanceDate)
             AND (cast(:endAcceptanceDate as date) IS NULL OR lc.acceptanceDate <= :endAcceptanceDate)
-            AND (:plaintiff IS NULL OR lc.plaintiff LIKE %:plaintiff%)
-            AND (:plaintiffAddress IS NULL OR lc.plaintiffAddress LIKE %:plaintiffAddress%)
-            AND (:defendant IS NULL OR lc.defendant LIKE %:defendant%)
-            AND (:defendantAddress IS NULL OR lc.defendantAddress LIKE %:defendantAddress%)
             AND (:legalRelationshipId IS NULL OR lr.legalRelationshipId = :legalRelationshipId)
-            AND (:typeOfLegalCaseId IS NULL OR lr.typeOfLegalCase.typeOfLegalCaseId = :typeOfLegalCaseId)
+            AND (:legalCaseTypeId IS NULL OR lr.legalCaseType.legalCaseTypeId = :legalCaseTypeId)
             AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId)
-            AND (:statusOfLegalCase IS NULL OR lc.statusOfLegalCase = :statusOfLegalCase)
+            AND (:legalCaseStatus IS NULL OR lc.legalCaseStatus = :legalCaseStatus)
             AND (:judgeId IS NULL OR (j IS NOT NULL AND j.officerId = :judgeId))
             AND (:batchId IS NULL OR (lc.batch IS NOT NULL AND lc.batch.batchId = :batchId))
             AND (cast(:startStorageDate as timestamp) IS NULL OR lc.storageDate >= :startStorageDate)
@@ -47,17 +43,15 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             String defendant,
             String defendantAddress,
             String legalRelationshipId,
-            String typeOfLegalCaseId,
+            String legalCaseTypeId,
             String legalRelationshipGroupId,
-            LegalCaseStatus statusOfLegalCase,
+            LegalCaseStatus legalCaseStatus,
             String judgeId,
             String batchId,
             LocalDateTime startStorageDate,
             LocalDateTime endStorageDate,
             Pageable pageable
     );
-
-
 
     @Query("""
                 SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 7, 4) AS int))
@@ -73,7 +67,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     @Query("""
                     SELECT lc FROM LegalCase lc
                     WHERE lc.legalCaseId IN :legalCaseIds
-                      AND lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
+                      AND lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT'
                       AND lc.judge IS NULL
             """)
     List<LegalCase> getAssignAssignment(Iterable<String> legalCaseIds);
@@ -82,7 +76,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     @Query("""
             SELECT lc FROM LegalCase lc
             LEFT JOIN lc.legalRelationship lr
-            WHERE lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
+            WHERE lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT'
             AND lc.judge IS NULL
             AND lc.mediator IS NOT NULL
             """)
@@ -92,7 +86,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     @Query("""
             SELECT lc FROM LegalCase lc
             LEFT JOIN lc.legalRelationship lr
-            WHERE lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
+            WHERE lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT'
             AND lc.judge IS NULL
             AND lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId
             """)
@@ -102,10 +96,10 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             SELECT lc FROM LegalCase lc
             LEFT JOIN lc.legalRelationship lr
             LEFT JOIN lc.batch b
-            WHERE (lc.statusOfLegalCase = 'IN_PROCESS'
-                   OR lc.statusOfLegalCase = 'OVERDUE'
-                   OR lc.statusOfLegalCase = 'WAITING_FOR_ASSIGNMENT'
-                   OR lc.statusOfLegalCase = 'TEMPORARY_SUSPENSION')
+            WHERE (lc.legalCaseStatus = 'IN_PROCESS'
+                   OR lc.legalCaseStatus = 'OVERDUE'
+                   OR lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT'
+                   OR lc.legalCaseStatus = 'TEMPORARY_SUSPENSION')
                   AND b.storageDate < :milestoneDate
             """)
     Page<LegalCase> getPending(

@@ -5,7 +5,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import server.dto.request.handleDecisionType.HandleDecisionTypeRequest;
-import server.dto.response.handleTypeOfDecision.HandleTypeOfDecisionResponse;
+import server.dto.response.handleDecisionType.HandleDecisionTypeResponse;
 import server.entity.HandleDecisionType;
 
 @Mapper(
@@ -13,8 +13,7 @@ import server.entity.HandleDecisionType;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
-public interface HandleTypeOfDecisionMapper {
-    HandleTypeOfDecisionResponse toHandleTypeOfDecisionResponse(HandleDecisionType handleTypeOfDecision);
-    void toHandleTypeOfDecision(HandleDecisionTypeRequest request, @MappingTarget HandleDecisionType handleTypeOfDecision);
-
+public interface HandleDecisionTypeMapper {
+    HandleDecisionTypeResponse toHandleDecisionTypeResponse(HandleDecisionType handleDecisionType);
+    void toHandleDecisionType(HandleDecisionTypeRequest request, @MappingTarget HandleDecisionType handleDecisionType);
 }

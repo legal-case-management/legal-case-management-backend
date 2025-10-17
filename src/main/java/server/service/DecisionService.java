@@ -19,7 +19,7 @@ import server.exception.ErrorCode;
 import server.mapper.DecisionMapper;
 import server.repository.DecisionRepository;
 import server.repository.LegalCaseRepository;
-import server.repository.TypeOfDecisionRepository;
+import server.repository.DecisionTypeRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DecisionService {
     DecisionRepository decisionRepository;
-    TypeOfDecisionRepository typeOfDecisionRepository;
+    DecisionTypeRepository decisionTypeRepository;
     LegalCaseRepository legalCaseRepository;
 
     DecisionMapper decisionMapper;
@@ -42,7 +42,7 @@ public class DecisionService {
         Decision decision = Decision.builder().build();
         decisionMapper.toDecision(request, decision);
 
-        DecisionType typeOfDecision = typeOfDecisionRepository.findById(request.getTypeOfDecisionId())
+        DecisionType typeOfDecision = decisionTypeRepository.findById(request.getTypeOfDecisionId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
         LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
@@ -53,8 +53,8 @@ public class DecisionService {
             boolean updated = false;
 
             for (HandleDecisionType handle : typeOfDecision.getHandleTypeOfDecisions()) {
-                if (handle.getPreStatus().equals(legalCase.getStatusOfLegalCase())) {
-                    legalCase.setStatusOfLegalCase(handle.getPostStatus());
+                if (handle.getPreStatus().equals(legalCase.getLegalCaseStatus())) {
+                    legalCase.setLegalCaseStatus(handle.getPostStatus());
 
                     if (handle.getExtensionPeriod() > 0) {
                         legalCase.setExpiredDate(LocalDate.now().plusMonths(

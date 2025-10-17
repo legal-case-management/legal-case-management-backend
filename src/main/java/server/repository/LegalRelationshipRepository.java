@@ -24,24 +24,24 @@ public interface LegalRelationshipRepository extends JpaRepository<LegalRelation
 
     @Query("""
             SELECT lr FROM LegalRelationship lr
-            LEFT JOIN lr.typeOfLegalCase tolc
+            LEFT JOIN lr.legalCaseType lt
             LEFT JOIN lr.legalRelationshipGroup lrg
             WHERE (:legalRelationshipId IS NULL OR lr.legalRelationshipId LIKE %:legalRelationshipId%)
             AND (:legalRelationshipName IS NULL OR lr.legalRelationshipName LIKE %:legalRelationshipName%)
-            AND (:typeOfLegalCaseId IS NULL OR tolc.typeOfLegalCaseId LIKE %:typeOfLegalCaseId%)
+            AND (:legalCaseTypeId IS NULL OR lt.legalCaseTypeId LIKE %:legalCaseTypeId%)
             AND (:legalRelationshipGroupId IS NULL OR lrg.legalRelationshipGroupId LIKE %:legalRelationshipGroupId%)
-            ORDER BY tolc.typeOfLegalCaseId, lr.legalRelationshipId
+            ORDER BY lt.legalCaseTypeId, lr.legalRelationshipId
             """)
     Page<LegalRelationship> search(
             String legalRelationshipId,
             String legalRelationshipName,
-            String typeOfLegalCaseId,
+            String legalCaseTypeId,
             String legalRelationshipGroupId,
             Pageable pageable
     );
 
     @Query("""
-            SELECT lr FROM LegalRelationship lr ORDER BY lr.typeOfLegalCase.typeOfLegalCaseId, lr.legalRelationshipId
+            SELECT lr FROM LegalRelationship lr ORDER BY lr.legalCaseType.legalCaseTypeId, lr.legalRelationshipId
             """)
     List<LegalRelationship> getAll();
 }

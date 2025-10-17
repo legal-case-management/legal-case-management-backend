@@ -3,7 +3,7 @@ package server.dto.response.decision;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.legalCase.LegalCaseResponse;
-import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
+import server.dto.response.decisionType.DecisionTypeResponse;
 
 import java.time.LocalDate;
 
@@ -20,6 +20,6 @@ public class DecisionResponse {
     LocalDate releaseDate;
     LocalDate addedDate;
     String note;
-    TypeOfDecisionResponse decisionType;
+    DecisionTypeResponse decisionType;
     LegalCaseResponse legalCase;
 }

@@ -18,5 +18,5 @@ public class AccountResponse {
     String email;
     Role role;
     OfficerResponse officer;
-    AccountStatus statusOfAccount;
+    AccountStatus accountStatus;
 }

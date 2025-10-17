@@ -15,14 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.decisionType.DecisionTypeRequest;
 import server.dto.request.decisionType.DecisionTypeSearchRequest;
 import server.dto.response.PageResponse;
-import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
+import server.dto.response.decisionType.DecisionTypeResponse;
 import server.entity.DecisionType;
 import server.entity.LegalCaseType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
-import server.mapper.TypeOfDecisionMapper;
-import server.repository.TypeOfDecisionRepository;
-import server.repository.TypeOfLegalCaseRepository;
+import server.mapper.DecisionTypeMapper;
+import server.repository.DecisionTypeRepository;
+import server.repository.LegalCaseTypeRepository;
 
 import java.util.List;
 
@@ -30,23 +30,23 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TypeOfDecisionService {
-    TypeOfDecisionRepository typeOfDecisionRepository;
-    TypeOfLegalCaseRepository typeOfLegalCaseRepository;
+    DecisionTypeRepository typeOfDecisionRepository;
+    LegalCaseTypeRepository typeOfLegalCaseRepository;
 
-    TypeOfDecisionMapper typeOfDecisionMapper;
+    DecisionTypeMapper typeOfDecisionMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<TypeOfDecisionResponse> getAll() {
+    public List<DecisionTypeResponse> getAll() {
         return typeOfDecisionRepository
                 .findAll()
-                .stream().map(typeOfDecisionMapper::toTypeOfDecisionResponse)
+                .stream().map(typeOfDecisionMapper::toDecisionTypeResponse)
                 .toList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public TypeOfDecisionResponse getById(String id) {
+    public DecisionTypeResponse getById(String id) {
         return typeOfDecisionRepository.findById(id)
-                .map(typeOfDecisionMapper::toTypeOfDecisionResponse)
+                .map(typeOfDecisionMapper::toDecisionTypeResponse)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
     }
 
@@ -56,7 +56,7 @@ public class TypeOfDecisionService {
     @Transactional
     public void create(DecisionTypeRequest request) {
         DecisionType typeOfDecision = DecisionType.builder().build();
-        typeOfDecisionMapper.toTypeOfDecision(request, typeOfDecision);
+        typeOfDecisionMapper.toDecisionType(request, typeOfDecision);
 
         if (typeOfDecisionRepository.existsByTypeOfDecisionName(typeOfDecision.getTypeOfDecisionName())) {
             throw new AppException(ErrorCode.TYPE_OF_DECISION_NAME_EXISTED);
@@ -87,7 +87,7 @@ public class TypeOfDecisionService {
         DecisionType existing = typeOfDecisionRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
-        typeOfDecisionMapper.toTypeOfDecision(request, existing);
+        typeOfDecisionMapper.toDecisionType(request, existing);
 
         if(request.getTypeOfLegalCaseId() != null) {
             LegalCaseType typeOfLegalCase = typeOfLegalCaseRepository.findById(request.getTypeOfLegalCaseId())
@@ -110,19 +110,19 @@ public class TypeOfDecisionService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public PageResponse<TypeOfDecisionResponse> search(DecisionTypeSearchRequest request, int page, int size, String sortBy) {
+    public PageResponse<DecisionTypeResponse> search(DecisionTypeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
-        Page<TypeOfDecisionResponse> resultPage = typeOfDecisionRepository.search(
+        Page<DecisionTypeResponse> resultPage = typeOfDecisionRepository.search(
                 request.getTypeOfDecisionId(),
                 request.getTypeOfDecisionName(),
                 request.getTypeOfLegalCaseId(),
                 request.getCourtIssued(),
                 request.isTheEndDecision(),
                 pageable
-        ).map(typeOfDecisionMapper::toTypeOfDecisionResponse);
+        ).map(typeOfDecisionMapper::toDecisionTypeResponse);
 
-        return PageResponse.<TypeOfDecisionResponse>builder()
+        return PageResponse.<DecisionTypeResponse>builder()
                 .number(resultPage.getNumber())
                 .size(resultPage.getSize())
                 .numberOfElement(resultPage.getNumberOfElements())

@@ -23,7 +23,7 @@ import server.exception.ErrorCode;
 import server.mapper.LegalRelationshipMapper;
 import server.repository.LegalRelationshipGroupRepository;
 import server.repository.LegalRelationshipRepository;
-import server.repository.TypeOfLegalCaseRepository;
+import server.repository.LegalCaseTypeRepository;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class LegalRelationshipService {
     LegalRelationshipRepository legalRelationshipRepository;
-    TypeOfLegalCaseRepository typeOfLegalCaseRepository;
+    LegalCaseTypeRepository typeOfLegalCaseRepository;
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
 
     LegalRelationshipMapper legalRelationshipMapper;

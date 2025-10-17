@@ -5,7 +5,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import server.dto.request.decisionType.DecisionTypeRequest;
-import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
+import server.dto.response.decisionType.DecisionTypeResponse;
 import server.entity.DecisionType;
 
 @Mapper(
@@ -13,8 +13,7 @@ import server.entity.DecisionType;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
-public interface TypeOfDecisionMapper {
-    TypeOfDecisionResponse toTypeOfDecisionResponse(DecisionType typeOfDecision);
-    void toTypeOfDecision(DecisionTypeRequest request, @MappingTarget DecisionType typeOfLegalCase);
-
+public interface DecisionTypeMapper {
+    DecisionTypeResponse toDecisionTypeResponse(DecisionType decisionType);
+    void toDecisionType(DecisionTypeRequest request, @MappingTarget DecisionType decisionType);
 }

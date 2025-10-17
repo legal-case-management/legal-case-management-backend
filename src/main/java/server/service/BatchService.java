@@ -40,7 +40,7 @@ public class BatchService {
     @Transactional
     public void create(BatchRequest request) {
         Batch batch = Batch.builder().build();
-        batchMapper.updateBatchFromRequest(request, batch);
+        batchMapper.toBatch(request, batch);
         batch.setStorageDate(LocalDateTime.now());
 
         Integer judgeNumberOfId = batchRepository.getMaxId(String.format("%4d", batch.getStorageDate().getYear()))
@@ -61,7 +61,7 @@ public class BatchService {
     public void update(String id, BatchRequest request) {
         Batch existing = batchRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
-        batchMapper.updateBatchFromRequest(request, existing);
+        batchMapper.toBatch(request, existing);
         batchRepository.save(existing);
     }
 

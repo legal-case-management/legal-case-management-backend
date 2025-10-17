@@ -14,7 +14,7 @@ import org.mapstruct.ReportingPolicy;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface JudgeMapper {
-    Judge toJudge(JudgeRequest request);
     JudgeResponse toJudgeResponse(Judge judge);
-    void updateJudgeFromRequest(JudgeRequest request, @MappingTarget Judge judge);
+    Judge toJudge(JudgeRequest request);
+    void toJudge(JudgeRequest request, @MappingTarget Judge judge);
 }

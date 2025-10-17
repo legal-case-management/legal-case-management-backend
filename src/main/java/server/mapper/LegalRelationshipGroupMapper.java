@@ -14,6 +14,6 @@ import server.entity.LegalRelationshipGroup;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface LegalRelationshipGroupMapper {
-    void toLegalRelationshipGroup(LegalRelationshipGroupRequest request, @MappingTarget LegalRelationshipGroup legalRelationshipGroup);
     LegalRelationshipGroupResponse toLegalRelationshipGroupResponse(LegalRelationshipGroup legalRelationshipGroup);
+    void toLegalRelationshipGroup(LegalRelationshipGroupRequest request, @MappingTarget LegalRelationshipGroup legalRelationshipGroup);
 }

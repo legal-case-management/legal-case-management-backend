@@ -7,6 +7,6 @@ import server.entity.HandleDecisionTypeId;
 
 import java.util.List;
 
-public interface HandleTypeOfDecisionRepository extends JpaRepository<HandleDecisionType, HandleDecisionTypeId> {
-    List<HandleDecisionType> findAllByTypeOfDecision(DecisionType typeOfDecision);
+public interface HandleDecisionTypeRepository extends JpaRepository<HandleDecisionType, HandleDecisionTypeId> {
+    List<HandleDecisionType> findAllByDecisionType(DecisionType decisionType);
 }

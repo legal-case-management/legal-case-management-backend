@@ -1,8 +1,8 @@
-package server.dto.response.handleTypeOfDecision;
+package server.dto.response.handleDecisionType;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.dto.response.typeOfDecision.TypeOfDecisionResponse;
+import server.dto.response.decisionType.DecisionTypeResponse;
 import server.entity.enums.LegalCaseStatus;
 
 @Getter
@@ -11,8 +11,8 @@ import server.entity.enums.LegalCaseStatus;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HandleTypeOfDecisionResponse {
-    TypeOfDecisionResponse decisionType;
+public class HandleDecisionTypeResponse {
+    DecisionTypeResponse decisionType;
     LegalCaseStatus preStatus;
     LegalCaseStatus postStatus;
     int extensionPeriod;

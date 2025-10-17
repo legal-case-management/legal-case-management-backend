@@ -5,7 +5,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import server.dto.request.legalCaseType.LegalCaseTypeRequest;
-import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
+import server.dto.response.legalCaseType.LegalCaseTypeResponse;
 import server.entity.LegalCaseType;
 
 @Mapper(
@@ -13,7 +13,7 @@ import server.entity.LegalCaseType;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
-public interface TypeOfLegalCaseMapper {
-    TypeOfLegalCaseResponse toTypeOfLegalCaseResponse(LegalCaseType typeOfLegalCase);
-    void toTypeOfLegalCase(LegalCaseTypeRequest request, @MappingTarget LegalCaseType typeOfLegalCase);
+public interface LegalCaseTypeMapper {
+    LegalCaseTypeResponse toLegalCaseTypeResponse(LegalCaseType legalCaseType);
+    void toLegalCaseType(LegalCaseTypeRequest request, @MappingTarget LegalCaseType legalCaseType);
 }

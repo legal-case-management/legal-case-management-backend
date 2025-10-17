@@ -15,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.legalCaseType.LegalCaseTypeRequest;
 import server.dto.request.legalCaseType.LegalCaseTypeSearchRequest;
 import server.dto.response.PageResponse;
-import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
+import server.dto.response.legalCaseType.LegalCaseTypeResponse;
 import server.entity.LegalCaseType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
-import server.mapper.TypeOfLegalCaseMapper;
-import server.repository.TypeOfLegalCaseRepository;
+import server.mapper.LegalCaseTypeMapper;
+import server.repository.LegalCaseTypeRepository;
 
 import java.util.List;
 
@@ -28,14 +28,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TypeOfLegalCaseService {
-    TypeOfLegalCaseRepository typeOfLegalCaseRepository;
-    TypeOfLegalCaseMapper typeOfLegalCaseMapper;
+    LegalCaseTypeRepository typeOfLegalCaseRepository;
+    LegalCaseTypeMapper typeOfLegalCaseMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<TypeOfLegalCaseResponse> getAll() {
+    public List<LegalCaseTypeResponse> getAll() {
         return typeOfLegalCaseRepository
                 .findAll()
-                .stream().map(typeOfLegalCaseMapper::toTypeOfLegalCaseResponse)
+                .stream().map(typeOfLegalCaseMapper::toLegalCaseTypeResponse)
                 .toList();
     }
 
@@ -45,7 +45,7 @@ public class TypeOfLegalCaseService {
     @Transactional
     public void create(LegalCaseTypeRequest request) {
         LegalCaseType typeOfLegalCase = LegalCaseType.builder().build();
-        typeOfLegalCaseMapper.toTypeOfLegalCase(request, typeOfLegalCase);
+        typeOfLegalCaseMapper.toLegalCaseType(request, typeOfLegalCase);
         if (typeOfLegalCaseRepository.existsByCodeName(typeOfLegalCase.getCodeName())) {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_CODE_EXISTED);
         }
@@ -82,7 +82,7 @@ public class TypeOfLegalCaseService {
             throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NAME_EXISTED);
         }
 
-        typeOfLegalCaseMapper.toTypeOfLegalCase(request, existing);
+        typeOfLegalCaseMapper.toLegalCaseType(request, existing);
         typeOfLegalCaseRepository.save(existing);
     }
 
@@ -98,17 +98,17 @@ public class TypeOfLegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public PageResponse<TypeOfLegalCaseResponse> search(LegalCaseTypeSearchRequest request, int page, int size, String sortBy) {
+    public PageResponse<LegalCaseTypeResponse> search(LegalCaseTypeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
-        Page<TypeOfLegalCaseResponse> resultPage = typeOfLegalCaseRepository.search(
+        Page<LegalCaseTypeResponse> resultPage = typeOfLegalCaseRepository.search(
                 request.getTypeOfLegalCaseId(),
                 request.getTypeOfLegalCaseName(),
                 request.getCodeName(),
                 pageable
-        ).map(typeOfLegalCaseMapper::toTypeOfLegalCaseResponse);
+        ).map(typeOfLegalCaseMapper::toLegalCaseTypeResponse);
 
-        return PageResponse.<TypeOfLegalCaseResponse>builder()
+        return PageResponse.<LegalCaseTypeResponse>builder()
                 .number(resultPage.getNumber())
                 .size(resultPage.getSize())
                 .numberOfElement(resultPage.getNumberOfElements())

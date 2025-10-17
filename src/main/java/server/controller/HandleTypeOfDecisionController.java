@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import server.dto.request.handleDecisionType.HandleDecisionTypeRequest;
 import server.dto.response.ApiResponse;
-import server.dto.response.handleTypeOfDecision.HandleTypeOfDecisionResponse;
+import server.dto.response.handleDecisionType.HandleDecisionTypeResponse;
 import server.entity.HandleDecisionTypeId;
 import server.entity.DecisionType;
 import server.entity.enums.LegalCaseStatus;
@@ -71,8 +71,8 @@ public class HandleTypeOfDecisionController {
     }
 
     @GetMapping("/by-type-of-decision/{typeOfDecisionId}")
-    public ApiResponse<List<HandleTypeOfDecisionResponse>> getByTypeOfDecision(@PathVariable String typeOfDecisionId){
-        return ApiResponse.<List<HandleTypeOfDecisionResponse>>builder()
+    public ApiResponse<List<HandleDecisionTypeResponse>> getByTypeOfDecision(@PathVariable String typeOfDecisionId){
+        return ApiResponse.<List<HandleDecisionTypeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")

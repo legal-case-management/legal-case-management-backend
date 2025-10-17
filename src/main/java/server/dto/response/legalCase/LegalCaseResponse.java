@@ -26,10 +26,6 @@ public class LegalCaseResponse {
     LocalDate acceptanceDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate expiredDate;
-    String plaintiff;
-    String plaintiffAddress;
-    String defendant;
-    String defendantAddress;
     String note;
     LegalRelationshipResponse legalRelationship;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -37,7 +33,7 @@ public class LegalCaseResponse {
     Assignment assignment;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime assignmentDate;
-    LegalCaseStatus statusOfLegalCase;
+    LegalCaseStatus legalCaseStatus;
     BatchResponse batch;
     JudgeResponse judge;
     MediatorResponse mediator;

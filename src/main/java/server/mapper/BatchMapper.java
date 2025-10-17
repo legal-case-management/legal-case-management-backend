@@ -16,5 +16,5 @@ import server.entity.Batch;
 public interface BatchMapper {
     Batch toBatch(BatchRequest request);
     BatchResponse toBatchResponse(Batch batch);
-    void updateBatchFromRequest(BatchRequest request, @MappingTarget Batch batch);
+    void toBatch(BatchRequest request, @MappingTarget Batch batch);
 }

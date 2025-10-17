@@ -10,7 +10,7 @@ import server.dto.request.legalCaseType.LegalCaseTypeRequest;
 import server.dto.request.legalCaseType.LegalCaseTypeSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
-import server.dto.response.typeOfLegalCase.TypeOfLegalCaseResponse;
+import server.dto.response.legalCaseType.LegalCaseTypeResponse;
 import server.service.TypeOfLegalCaseService;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class TypeOfLegalCaseController {
     TypeOfLegalCaseService typeOfLegalCaseService;
 
     @GetMapping("/all")
-    public ApiResponse<List<TypeOfLegalCaseResponse>> getAll() {
-        return ApiResponse.<List<TypeOfLegalCaseResponse>>builder()
+    public ApiResponse<List<LegalCaseTypeResponse>> getAll() {
+        return ApiResponse.<List<LegalCaseTypeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
@@ -64,13 +64,13 @@ public class TypeOfLegalCaseController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<PageResponse<TypeOfLegalCaseResponse>> search(
+    public ApiResponse<PageResponse<LegalCaseTypeResponse>> search(
             @RequestBody @Valid LegalCaseTypeSearchRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "typeOfLegalCaseId") String sortBy
     ) {
-        return ApiResponse.<PageResponse<TypeOfLegalCaseResponse>>builder()
+        return ApiResponse.<PageResponse<LegalCaseTypeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")

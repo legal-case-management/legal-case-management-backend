@@ -36,7 +36,7 @@ public class LegalCaseService {
     LegalCaseRepository legalCaseRepository;
     LegalRelationshipRepository legalRelationshipRepository;
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
-    TypeOfLegalCaseRepository typeOfLegalCaseRepository;
+    LegalCaseTypeRepository typeOfLegalCaseRepository;
 
     JudgeRepository judgeRepository;
     BatchRepository batchRepository;
