@@ -45,7 +45,7 @@ public class BatchService {
 
         Integer judgeNumberOfId = batchRepository.getMaxId(String.format("%4d", batch.getStorageDate().getYear()))
                 .orElse(0);
-        String batchId = String.format("%4d%s%02d", batch.getStorageDate().getYear(), "D", judgeNumberOfId + 1);
+        String batchId = String.format("%4d%s%03d", batch.getStorageDate().getYear(), "D", judgeNumberOfId + 1);
         if (batchRepository.existsById(batchId)) {
             throw new AppException(ErrorCode.BATCH_EXISTED);
         }

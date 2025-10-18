@@ -13,12 +13,13 @@ public interface DecisionRepository extends JpaRepository<Decision, String> {
     List<Decision> findAllByLegalCase(LegalCase legalCase);
 
     @Query("""
-                SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 7, 4) AS int))
-                FROM LegalCase lc
-                WHERE SUBSTRING(lc.legalCaseId, 1, 10) = :legalCaseId
-                AND SUBSTRING(lc.legalCaseId, 11, 2)  = 'QD'
+            SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 13, 2) AS int))
+            FROM LegalCase lc
+            WHERE SUBSTRING(lc.legalCaseId, 1, 10) = :legalCaseId
+            AND SUBSTRING(lc.legalCaseId, 11, 2) = 'QD'
             """)
     Optional<Integer> getMaxId(
             @Param("legalCaseId") String legalCaseId
     );
+
 }

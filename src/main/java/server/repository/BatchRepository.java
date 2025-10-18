@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface BatchRepository extends JpaRepository<Batch, String> {
     @Query("""
-              SELECT MAX(CAST(SUBSTRING(b.batchId, 6, 2) AS int))
+              SELECT MAX(CAST(SUBSTRING(b.batchId, 6, 3) AS int))
               FROM Batch b
               WHERE SUBSTRING(b.batchId, 1, 4) = :year
               AND SUBSTRING(b.batchId, 5, 1) = 'D'
