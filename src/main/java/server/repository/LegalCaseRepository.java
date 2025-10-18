@@ -16,36 +16,44 @@ import java.util.Optional;
 
 public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     long countLegalCaseByBatch(Batch batch);
-    
+
     @Query("""
-            SELECT lc FROM LegalCase lc
-            LEFT JOIN lc.judge j
-            LEFT JOIN lc.legalRelationship lr
-            WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber LIKE %:acceptanceNumber%)
-            AND (cast(:startAcceptanceDate as date) IS NULL OR lc.acceptanceDate >= :startAcceptanceDate)
-            AND (cast(:endAcceptanceDate as date) IS NULL OR lc.acceptanceDate <= :endAcceptanceDate)
-            AND (:legalRelationshipId IS NULL OR lr.legalRelationshipId = :legalRelationshipId)
-            AND (:legalCaseTypeId IS NULL OR lr.legalCaseType.legalCaseTypeId = :legalCaseTypeId)
-            AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId)
-            AND (:legalCaseStatus IS NULL OR lc.legalCaseStatus = :legalCaseStatus)
-            AND (:judgeId IS NULL OR (j IS NOT NULL AND j.officerId = :judgeId))
-            AND (:batchId IS NULL OR (lc.batch IS NOT NULL AND lc.batch.batchId = :batchId))
-            AND (cast(:startStorageDate as timestamp) IS NULL OR lc.storageDate >= :startStorageDate)
-            AND (cast(:endStorageDate as timestamp) IS NULL OR lc.storageDate <= :endStorageDate)
-            """
-    )
+        SELECT DISTINCT lc FROM LegalCase lc
+        LEFT JOIN lc.judge j
+        LEFT JOIN lc.legalRelationship lr
+        LEFT JOIN lc.litigants l
+        WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber LIKE %:acceptanceNumber%)
+        AND (cast(:startAcceptanceDate as date) IS NULL OR lc.acceptanceDate >= :startAcceptanceDate)
+        AND (cast(:endAcceptanceDate as date) IS NULL OR lc.acceptanceDate <= :endAcceptanceDate)
+        AND (:legalRelationshipId IS NULL OR lr.legalRelationshipId = :legalRelationshipId)
+        AND (:legalCaseTypeId IS NULL OR lr.legalCaseType.legalCaseTypeId = :legalCaseTypeId)
+        AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId)
+        AND (:litigantName IS NULL OR l.name LIKE %:litigantName%)
+        AND (:litigantYearOfBirth IS NULL OR l.yearOfBirth = :litigantYearOfBirth)
+        AND (:litigantAddress IS NULL OR l.address LIKE %:litigantAddress%)
+        AND (:legalCaseStatus IS NULL OR lc.legalCaseStatus = :legalCaseStatus)
+        AND (:judgeId IS NULL OR (j IS NOT NULL AND j.officerId = :judgeId))
+        AND (:batchId IS NULL OR (lc.batch IS NOT NULL AND lc.batch.batchId = :batchId))
+        AND (cast(:startStorageDate as timestamp) IS NULL OR lc.storageDate >= :startStorageDate)
+        AND (cast(:endStorageDate as timestamp) IS NULL OR lc.storageDate <= :endStorageDate)
+
+        ORDER BY lc.storageDate DESC
+    """)
     Page<LegalCase> search(
-            String acceptanceNumber,
-            LocalDate startAcceptanceDate,
-            LocalDate endAcceptanceDate,
-            String legalRelationshipId,
-            String legalCaseTypeId,
-            String legalRelationshipGroupId,
-            LegalCaseStatus legalCaseStatus,
-            String judgeId,
-            String batchId,
-            LocalDateTime startStorageDate,
-            LocalDateTime endStorageDate,
+            @Param("acceptanceNumber") String acceptanceNumber,
+            @Param("startAcceptanceDate") LocalDate startAcceptanceDate,
+            @Param("endAcceptanceDate") LocalDate endAcceptanceDate,
+            @Param("legalRelationshipId") String legalRelationshipId,
+            @Param("legalCaseTypeId") String legalCaseTypeId,
+            @Param("legalRelationshipGroupId") String legalRelationshipGroupId,
+            @Param("litigantName") String litigantName,
+            @Param("litigantYearOfBirth") String litigantYearOfBirth,
+            @Param("litigantAddress") String litigantAddress,
+            @Param("legalCaseStatus") LegalCaseStatus legalCaseStatus,
+            @Param("judgeId") String judgeId,
+            @Param("batchId") String batchId,
+            @Param("startStorageDate") LocalDateTime startStorageDate,
+            @Param("endStorageDate") LocalDateTime endStorageDate,
             Pageable pageable
     );
 
@@ -61,11 +69,11 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     );
 
     @Query("""
-                    SELECT lc FROM LegalCase lc
-                    WHERE lc.legalCaseId IN :legalCaseIds
-                      AND lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT'
-                      AND lc.judge IS NULL
-            """)
+           SELECT lc FROM LegalCase lc
+           WHERE lc.legalCaseId IN :legalCaseIds
+           AND lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT'
+           AND lc.judge IS NULL
+           """)
     List<LegalCase> getAssignAssignment(Iterable<String> legalCaseIds);
 
 

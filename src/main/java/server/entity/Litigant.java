@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 @SuperBuilder
 public class Litigant {
-    LegalCase legalCase;
     LitigantType litigantType;
     int numericalOrder;
     String name;

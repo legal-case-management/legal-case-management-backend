@@ -25,7 +25,7 @@ public class NotificationController {
     public ApiResponse<PageResponse<NotificationResponse>> getMyNotifications(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createAt") String sortBy
+            @RequestParam(defaultValue = "createdAt") String sortBy
     ) {
         return ApiResponse.<PageResponse<NotificationResponse>>builder()
                 .success(true)

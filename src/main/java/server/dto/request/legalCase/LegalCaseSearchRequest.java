@@ -24,6 +24,11 @@ public class LegalCaseSearchRequest {
     String legalCaseTypeId;
     String legalRelationshipId;
     String legalRelationshipGroupId;
+
+    String litigantName;
+    String litigantYearOfBirth;
+    String litigantAddress;
+
     LegalCaseStatus legalCaseStatus;
     String judgeId;
     String batchId;
