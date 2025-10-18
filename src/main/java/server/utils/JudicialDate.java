@@ -3,7 +3,7 @@ package server.utils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class DateUtil {
+public class JudicialDate {
     public static LocalDate getMilestoneDate() {
         LocalDate today = LocalDate.now();
         LocalDate milestone = LocalDate.of(today.getYear(), 10, 1);
@@ -22,5 +22,26 @@ public class DateUtil {
             milestone = milestone.minusYears(1);
         }
         return milestone;
+    }
+
+    public static int getCurrentYear() {
+        LocalDate today = LocalDate.now();
+        LocalDate milestone = LocalDate.of(today.getYear(), 10, 1);
+
+        if (today.isBefore(milestone)) {
+            return today.getYear();
+        } else {
+            return today.getYear() + 1;
+        }
+    }
+
+    public static int getCurrentYear(LocalDate date) {
+        LocalDate milestone = LocalDate.of(date.getYear(), 10, 1);
+
+        if (date.isBefore(milestone)) {
+            return date.getYear();
+        } else {
+            return date.getYear() + 1;
+        }
     }
 }

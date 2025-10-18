@@ -12,6 +12,7 @@ import server.entity.enums.LegalCaseStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,6 +29,7 @@ public class LegalCaseResponse {
     LocalDate expiredDate;
     String note;
     LegalRelationshipResponse legalRelationship;
+    List<LitigantResponse> litigants;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime storageDate;
     Assignment assignment;

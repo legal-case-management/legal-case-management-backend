@@ -375,7 +375,7 @@ public class AuthenticationService {
         String accountId = context.getAuthentication().getName();
         return accountMapper.toAccountResponse(
                 accountRepository
-                        .findAccountByAccountId(accountId)
+                        .findById(accountId)
                         .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED))
         );
     }

@@ -1,8 +1,7 @@
-package server.dto.request.litigant;
+package server.dto.request.legalCase;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.LegalCase;
 import server.entity.enums.LitigantType;
 
 @Getter

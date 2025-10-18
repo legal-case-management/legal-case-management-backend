@@ -23,7 +23,7 @@ import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalCaseMapper;
 import server.repository.*;
-import server.utils.DateUtil;
+import server.utils.JudicialDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -234,7 +234,7 @@ public class LegalCaseService {
         }
 
         // Lấy danh sách thẩm phán
-        List<JudgeResponse> judges = judgeRepository.getAssignAssignment(DateUtil.getMilestoneDateTime());
+        List<JudgeResponse> judges = judgeRepository.getAssignAssignment(JudicialDate.getMilestoneDateTime());
         if (judges.isEmpty()) {
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
         }
@@ -412,7 +412,7 @@ public class LegalCaseService {
     public PageResponse<LegalCaseResponse> getPending(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
         Page<LegalCaseResponse> resultPage = legalCaseRepository.getPending(
-                DateUtil.getMilestoneDate(),
+                JudicialDate.getMilestoneDate(),
                 pageable
         ).map(legalCaseMapper::toLegalCaseResponse);
 

@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import server.utils.DateUtil;
+import server.utils.JudicialDate;
 
 import java.util.List;
 
@@ -49,12 +49,12 @@ public class JudgeService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> getAll() {
-        return judgeRepository.getAll(DateUtil.getMilestoneDateTime());
+        return judgeRepository.getAll(JudicialDate.getMilestoneDateTime());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<JudgeResponse> listAssignment() {
-        return judgeRepository.getAssignAssignment(DateUtil.getMilestoneDateTime());
+        return judgeRepository.getAssignAssignment(JudicialDate.getMilestoneDateTime());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -64,7 +64,7 @@ public class JudgeService {
                 request.getOfficerId(),
                 request.getFullName(),
                 request.getOfficerStatus(),
-                DateUtil.getMilestoneDateTime(),
+                JudicialDate.getMilestoneDateTime(),
                 pageable
         );
 

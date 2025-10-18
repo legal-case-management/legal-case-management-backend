@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     long countLegalCaseByBatch(Batch batch);
     
-    @Query(value = """
+    @Query("""
             SELECT lc FROM LegalCase lc
             LEFT JOIN lc.judge j
             LEFT JOIN lc.legalRelationship lr

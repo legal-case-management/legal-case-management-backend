@@ -2,7 +2,6 @@ package server.dto.request.legalCase;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.dto.request.litigant.LitigantRequest;
 
 import java.time.LocalDate;
 import java.util.List;

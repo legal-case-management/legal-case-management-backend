@@ -37,7 +37,7 @@ public class LegalCase {
 
     @ElementCollection
     @CollectionTable(
-            name = "legal_case_litigant",
+            name = "legal_case_litigants",
             joinColumns = @JoinColumn(name = "legal_case_id")
     )
     List<Litigant> litigants;
