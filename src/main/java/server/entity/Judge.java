@@ -27,7 +27,7 @@ public class Judge extends Officer{
             joinColumns = @JoinColumn(name = "judge_id"),
             inverseJoinColumns = @JoinColumn(name = "legal_relationship_group_id")
     )
-    Set<LegalRelationshipGroup> restrictedGroups;
+    List<LegalRelationshipGroup> restrictedGroups;
 
     @OneToMany(mappedBy = "judge")
     List<LegalCase> legalCases;

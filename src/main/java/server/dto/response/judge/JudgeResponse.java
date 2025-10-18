@@ -7,7 +7,7 @@ import server.dto.response.officer.OfficerResponse;
 import server.entity.LegalRelationshipGroup;
 import server.entity.enums.OfficerStatus;
 
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,7 +21,7 @@ public class JudgeResponse extends OfficerResponse {
     long numberOfTemporarySuspension;
     long numberOfOverdue;
     long numberOfCanceledAndEdited;
-    Set<LegalRelationshipGroup> restrictedGroups;
+    List<LegalRelationshipGroup> restrictedGroups;
 
     public JudgeResponse(
             String officerId,
