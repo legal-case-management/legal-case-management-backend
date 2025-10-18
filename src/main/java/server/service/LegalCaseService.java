@@ -124,13 +124,13 @@ public class LegalCaseService {
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
 
         Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxId(
-                String.format("%04d", legalCase.getAcceptanceDate().getYear()),
+                String.format("%04d", JudicialDate.getCurrentYear(legalCase.getAcceptanceDate())),
                 legalRelationship.getLegalCaseType().getCodeName()
         ).orElse(0);
 
         String legalCaseId = String.format(
                 "%04d%s%04d",
-                legalCase.getAcceptanceDate().getYear(),
+                JudicialDate.getCurrentYear(legalCase.getAcceptanceDate()),
                 legalRelationship.getLegalCaseType().getCodeName(),
                 legalCaseMaxNumberOfId + 1
         );

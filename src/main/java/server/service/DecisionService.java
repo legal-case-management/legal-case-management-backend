@@ -74,9 +74,9 @@ public class DecisionService {
 
 
         String maxId = decisionRepository.getMaxId(
-                String.format("%s-", legalCase.getLegalCaseId())
+                String.format("%sQD", legalCase.getLegalCaseId())
         ).orElse(0).toString();
-        String decisionId = String.format("%s-%02d", legalCase.getLegalCaseId(), Integer.parseInt(maxId) + 1);
+        String decisionId = String.format("%sQD%02d", legalCase.getLegalCaseId(), Integer.parseInt(maxId) + 1);
         if (decisionRepository.existsById(decisionId))
             throw new AppException(ErrorCode.DECISION_EXISTED);
 

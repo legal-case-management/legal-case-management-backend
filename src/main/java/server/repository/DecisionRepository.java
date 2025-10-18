@@ -16,7 +16,7 @@ public interface DecisionRepository extends JpaRepository<Decision, String> {
                 SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 7, 4) AS int))
                 FROM LegalCase lc
                 WHERE SUBSTRING(lc.legalCaseId, 1, 10) = :legalCaseId
-                AND SUBSTRING(lc.legalCaseId, 11, 2)  = '-'
+                AND SUBSTRING(lc.legalCaseId, 11, 2)  = 'QD'
             """)
     Optional<Integer> getMaxId(
             @Param("legalCaseId") String legalCaseId
