@@ -107,10 +107,15 @@ public class BatchService {
                 .build();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<BatchResponse> getAll() {
         return batchRepository.findAll()
-                .stream().map(batchMapper::toBatchResponse).toList();
+                .stream()
+                .map(batch -> Batch.builder()
+                                .batchId(batch.getBatchId())
+                                .batchName(batch.getBatchName())
+                                .build())
+                .map(batchMapper::toBatchResponse)
+                .toList();
     }
 
 }

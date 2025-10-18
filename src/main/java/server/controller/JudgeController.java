@@ -1,9 +1,6 @@
 package server.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.response.ApiResponse;
@@ -31,7 +28,7 @@ public class JudgeController {
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
-                .message("Successful")
+                .message("Thành công")
                 .data(judgeService.getAll())
                 .build();
     }

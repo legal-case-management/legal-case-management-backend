@@ -43,6 +43,16 @@ public class DecisionTypeController {
                 .build();
     }
 
+    @GetMapping("/by-legal-case-type/{legalCaseTypeId}")
+    public ApiResponse<List<DecisionTypeResponse>> getByLegalCaseType(@PathVariable String legalCaseTypeId) {
+        return ApiResponse.<List<DecisionTypeResponse>>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(decisionTypeService.getByLegalCaseType(legalCaseTypeId))
+                .build();
+    }
+
     @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid DecisionTypeRequest request) {
         decisionTypeService.create(request);

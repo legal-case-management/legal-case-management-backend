@@ -135,7 +135,6 @@ public class LegalCaseController {
 
     @GetMapping("/pending")
     public ApiResponse<PageResponse<LegalCaseResponse>> getPendingLegalCases(
-            @RequestBody @Valid AssignmentListRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "legalCaseId") String sortBy

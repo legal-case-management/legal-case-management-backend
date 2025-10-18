@@ -5,8 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import server.entity.DecisionType;
+import server.entity.LegalCase;
+import server.entity.LegalCaseType;
 import server.entity.enums.CourtIssued;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface DecisionTypeRepository extends JpaRepository<DecisionType, String> {
@@ -35,4 +38,6 @@ public interface DecisionTypeRepository extends JpaRepository<DecisionType, Stri
             WHERE SUBSTRING(dt.decisionTypeId, 1, 2) = :legalCaseTypeCodeName
             """)
     Optional<Integer> getMaxId(String legalCaseTypeCodeName);
+
+    List<DecisionType> getByLegalCaseType(LegalCaseType legalCaseType);
 }

@@ -46,8 +46,7 @@ public class JudgeService {
     @NonFinal
     String DEFAULT_PASSWORD;
 
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'JUDGE')")
     public List<JudgeResponse> getAll() {
         return judgeRepository.getAll(JudicialDate.getMilestoneDateTime());
     }

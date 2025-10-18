@@ -136,4 +136,13 @@ public class DecisionTypeService {
                 .build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public List<DecisionTypeResponse> getByLegalCaseType(String legalCaseTypeId) {
+        LegalCaseType legalCaseType = legalCaseTypeRepository.findById(legalCaseTypeId)
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
+        return decisionTypeRepository
+                .getByLegalCaseType(legalCaseType)
+                .stream().map(decisionTypeMapper::toDecisionTypeResponse)
+                .toList();
+    }
 }
