@@ -14,5 +14,5 @@ public class HandleDecisionTypeRequest {
     String decisionTypeId;
     LegalCaseStatus preStatus;
     LegalCaseStatus postStatus;
-    int extensionPeriod;
+    Integer extensionPeriod;
 }

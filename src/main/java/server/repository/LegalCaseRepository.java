@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
-    long countLegalCaseByBatch(Batch batch);
+    Long countLegalCaseByBatch(Batch batch);
 
     @Query("""
         SELECT DISTINCT lc FROM LegalCase lc

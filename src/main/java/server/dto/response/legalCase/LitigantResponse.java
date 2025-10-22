@@ -13,7 +13,7 @@ import server.entity.enums.LitigantType;
 @ToString
 public class LitigantResponse {
     LitigantType litigantType;
-    int numericalOrder;
+    Integer numericalOrder;
     String name;
     String yearOfBirth;
     String address;

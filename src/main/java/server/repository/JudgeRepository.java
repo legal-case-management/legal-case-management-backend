@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import server.dto.response.judge.JudgeResponse;
 import server.entity.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
+import server.entity.LegalRelationshipGroup;
 import server.entity.enums.OfficerStatus;
 
 import java.time.LocalDateTime;
@@ -56,32 +57,26 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     Optional<Integer> getMaxId();
 
     @Query("""
-            SELECT new server.dto.response.judge.JudgeResponse(
-                j.officerId,
-                j.lastName,
-                j.firstName,
-                j.fullName,
-                j.officerStatus,
-                j.account.email,
-                j.maxNumberOfLegalCase,
-                SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
-            )
-            FROM Judge j
-            LEFT JOIN j.legalCases lc
-            LEFT JOIN lc.batch b
-                  WHERE  b.storageDate >= :milestoneDate
-            GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
-                     j.maxNumberOfLegalCase, j.officerStatus, j.account.email
-            ORDER BY j.officerId
-            """)
-    List<JudgeResponse> getAll(@Param("milestoneDate") LocalDateTime milestoneDate);
+        SELECT
+            j.officerId,
+            null,
+            null,
+            j.fullName,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        FROM Judge j
+        ORDER BY j.officerId
+    """)
+    List<Object[]> getAllRaw(@Param("milestoneDate") LocalDateTime milestoneDate);
 
     @Query("""
-            SELECT new server.dto.response.judge.JudgeResponse(
+            SELECT
                 j.officerId,
                 j.lastName,
                 j.firstName,
@@ -94,11 +89,10 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
                 SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
                 SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
-            )
             FROM Judge j
             LEFT JOIN j.legalCases lc
             LEFT JOIN lc.batch b
-            WHERE j.officerStatus = 'WORKING' AND b.storageDate >= :milestoneDate
+            WHERE j.officerStatus = 'WORKING' AND :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups AND b.storageDate >= :milestoneDate
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
                      j.maxNumberOfLegalCase, j.officerStatus, j.account.email
             HAVING j.maxNumberOfLegalCase < 0
@@ -110,5 +104,5 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END) ASC,
                 j.firstName ASC
             """)
-    List<JudgeResponse> getAssignAssignment(@Param("milestoneDate") LocalDateTime milestoneDate);
+    List<Object[]> getAssignAssignmentRaw(@Param("milestoneDate") LocalDateTime milestoneDate, LegalRelationshipGroup legalRelationshipGroup);
 }

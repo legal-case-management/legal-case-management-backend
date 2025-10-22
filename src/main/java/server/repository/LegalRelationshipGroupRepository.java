@@ -27,4 +27,11 @@ public interface LegalRelationshipGroupRepository extends JpaRepository<LegalRel
             String legalRelationshipGroupName,
             Pageable pageable
     );
+
+    @Query("""
+            SELECT j.restrictedGroups
+            FROM Judge j
+            WHERE j.officerId = :officerId
+            """)
+    List<LegalRelationshipGroup> getRestrictedGroupsByJudgeId(String officerId);
 }

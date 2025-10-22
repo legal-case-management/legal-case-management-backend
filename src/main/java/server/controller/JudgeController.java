@@ -48,13 +48,13 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("/list-assignment")
-    public ApiResponse<List<JudgeResponse>> listAssignment() {
+    @GetMapping("/list-assignment/{legalRelationshipGroupId}")
+    public ApiResponse<List<JudgeResponse>> listAssignment(@PathVariable String legalRelationshipGroupId) {
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(judgeService.listAssignment())
+                .data(judgeService.listAssignment(legalRelationshipGroupId))
                 .build();
     }
 

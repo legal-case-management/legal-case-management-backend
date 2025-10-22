@@ -24,7 +24,7 @@ public class Litigant {
     @Column(name = "litigant_type", nullable = false)
     LitigantType litigantType;
     @Column(name = "numerical_order", nullable = false)
-    int numericalOrder;
+    Integer numericalOrder;
     @Column(nullable = false)
     String name;
     @Column(name = "year_of_birth")

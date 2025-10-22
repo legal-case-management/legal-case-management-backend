@@ -31,6 +31,6 @@ public class HandleDecisionType {
     @Column(name = "post_status")
     LegalCaseStatus postStatus;
     @Column(name = "extension_period")
-    int extensionPeriod;
+    Integer extensionPeriod;
 }
 

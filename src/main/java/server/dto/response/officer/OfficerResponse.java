@@ -8,7 +8,7 @@ import server.entity.enums.OfficerStatus;
 @Getter
 @Setter
 @NoArgsConstructor
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class OfficerResponse {

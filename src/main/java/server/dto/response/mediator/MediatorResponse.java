@@ -14,9 +14,9 @@ import server.entity.enums.OfficerStatus;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 public class MediatorResponse extends OfficerResponse {
-    long numberOfLegalCases;
+    Long numberOfLegalCases;
 
-    public MediatorResponse(String officerId, String lastName, String firstName, String fullName, OfficerStatus statusOfJudge, String email, long numberOfLegalCases) {
+    public MediatorResponse(String officerId, String lastName, String firstName, String fullName, OfficerStatus statusOfJudge, String email, Long numberOfLegalCases) {
         super(officerId, lastName, firstName, fullName, statusOfJudge, email);
         this.numberOfLegalCases = numberOfLegalCases;
     }

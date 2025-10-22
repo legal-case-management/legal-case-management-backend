@@ -41,8 +41,9 @@ public class LegalCaseService {
     JudgeRepository judgeRepository;
     BatchRepository batchRepository;
     MediatorRepository mediatorRepository;
-
     LegalCaseMapper legalCaseMapper;
+
+    JudgeService judgeService;
 
 
     public List<LegalCaseResponse> getAll() {
@@ -237,7 +238,7 @@ public class LegalCaseService {
         }
 
         // Lấy danh sách thẩm phán
-        List<JudgeResponse> judges = judgeRepository.getAssignAssignment(JudicialDate.getMilestoneDateTime());
+        List<JudgeResponse> judges = judgeService.listAssignment(request.getLegalRelationshipGroupId());
         if (judges.isEmpty()) {
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
         }
@@ -253,8 +254,8 @@ public class LegalCaseService {
 
         while (!legalCases.isEmpty()) {
             JudgeResponse judge = judges.get(judgeIndex);
-            long currentCases = judge.getNumberOfLegalCase();
-            long maxCases = judge.getMaxNumberOfLegalCase();
+            Long currentCases = judge.getNumberOfLegalCase();
+            Long maxCases = judge.getMaxNumberOfLegalCase();
 
             if (maxCases == -1 || currentCases < maxCases) {
                 int caseIndex = random.nextInt(legalCases.size());

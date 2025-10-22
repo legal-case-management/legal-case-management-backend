@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import server.repository.LegalRelationshipGroupRepository;
 import server.utils.JudicialDate;
 
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JudgeService {
     JudgeRepository judgeRepository;
+    LegalRelationshipGroupRepository legalRelationshipGroupRepository;
 
     JudgeMapper judgeMapper;
 
@@ -48,16 +50,30 @@ public class JudgeService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'JUDGE')")
     public List<JudgeResponse> getAll() {
-        return judgeRepository.getAll(JudicialDate.getMilestoneDateTime());
+        return judgeRepository.getAllRaw(JudicialDate.getMilestoneDateTime())
+                .stream()
+                .map(judgeMapper::toJudgeResponse)
+                .toList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<JudgeResponse> listAssignment() {
-        return judgeRepository.getAssignAssignment(JudicialDate.getMilestoneDateTime());
+    public List<JudgeResponse> listAssignment(String legalRelationshipGroupId) {
+        LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository
+                .findById(legalRelationshipGroupId)
+                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
+
+        return judgeRepository.getAssignAssignmentRaw(JudicialDate.getMilestoneDateTime(), legalRelationshipGroup)
+                .stream()
+                .map(judgeMapper::toJudgeResponse)
+                .peek(judgeResponse -> judgeResponse.setRestrictedGroups(
+                        legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId())
+                        )
+                )
+                .toList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public PageResponse<JudgeResponse> search(JudgeSearchRequest request, int page, int size, String sortBy ) {
+    public PageResponse<JudgeResponse> search(JudgeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         Page<JudgeResponse> resultPage = judgeRepository.search(
                 request.getOfficerId(),
@@ -89,7 +105,6 @@ public class JudgeService {
     public void create(JudgeRequest request) {
         Judge judge = judgeMapper.toJudge(request);
 
-
         Integer judgeNumberOfId = judgeRepository.getMaxId()
                 .orElse(0);
         String judgeId = String.format("%s%02d", "TP", judgeNumberOfId + 1);
@@ -100,6 +115,11 @@ public class JudgeService {
         judge.setOfficerId(judgeId);
 
         judge.setOfficerStatus(OfficerStatus.WORKING);
+
+        List<LegalRelationshipGroup> restrictedGroups = legalRelationshipGroupRepository
+                .findAllById(request.getRestrictedGroupIds());
+        judge.setRestrictedGroups(restrictedGroups);
+
         Judge judgeSaved = judgeRepository.save(judge);
 
         Account account = Account.builder()
@@ -121,6 +141,10 @@ public class JudgeService {
         Judge judgeSaved = judgeRepository
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
+
+        List<LegalRelationshipGroup> restrictedGroups = legalRelationshipGroupRepository
+                .findAllById(request.getRestrictedGroupIds());
+        judgeSaved.setRestrictedGroups(restrictedGroups);
 
         judgeMapper.toJudge(request, judgeSaved);
         judgeRepository.save(judgeSaved);

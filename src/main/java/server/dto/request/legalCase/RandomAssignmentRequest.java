@@ -14,4 +14,5 @@ import java.util.List;
 @ToString
 public class RandomAssignmentRequest {
     List<String> legalCaseIds;
+    String legalRelationshipGroupId;
 }
