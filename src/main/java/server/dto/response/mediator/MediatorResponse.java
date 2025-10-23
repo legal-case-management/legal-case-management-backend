@@ -1,6 +1,7 @@
 package server.dto.response.mediator;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -13,11 +14,8 @@ import server.entity.enums.OfficerStatus;
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediatorResponse extends OfficerResponse {
-    Long numberOfLegalCases;
-
-    public MediatorResponse(String officerId, String lastName, String firstName, String fullName, OfficerStatus statusOfJudge, String email, Long numberOfLegalCases) {
-        super(officerId, lastName, firstName, fullName, statusOfJudge, email);
-        this.numberOfLegalCases = numberOfLegalCases;
-    }
+    Long numberOfLegalCase;
+    Long numberOfInProcess;
 }

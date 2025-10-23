@@ -20,6 +20,7 @@ import server.entity.LegalCaseType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalCaseTypeMapper;
+import server.mapper.PageMapper;
 import server.repository.LegalCaseTypeRepository;
 
 import java.util.List;
@@ -29,7 +30,9 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class LegalCaseTypeService {
     LegalCaseTypeRepository legalCaseTypeRepository;
+
     LegalCaseTypeMapper legalCaseTypeMapper;
+    PageMapper pageMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     public List<LegalCaseTypeResponse> getAll() {
@@ -108,17 +111,6 @@ public class LegalCaseTypeService {
                 pageable
         ).map(legalCaseTypeMapper::toLegalCaseTypeResponse);
 
-        return PageResponse.<LegalCaseTypeResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
     }
 }

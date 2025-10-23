@@ -24,6 +24,9 @@ public class LegalRelationshipGroup {
     @Column(nullable = false)
     String description;
 
-    @OneToMany(mappedBy = "legalRelationshipGroup")
+    @OneToMany(mappedBy = "legalRelationshipGroup", fetch = FetchType.LAZY)
     List<LegalRelationship> legalRelationships;
+
+    @ManyToMany
+    List<Judge> judges;
 }

@@ -24,6 +24,7 @@ import server.entity.enums.AccountStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.AccountMapper;
+import server.mapper.PageMapper;
 import server.repository.AccountRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -74,6 +75,7 @@ public class AuthenticationService {
     AccountRepository accountRepository;
 
     AccountMapper accountMapper;
+    PageMapper pageMapper;
 
     PasswordEncoder passwordEncoder;
 
@@ -399,18 +401,7 @@ public class AuthenticationService {
                 pageable
         ).map(accountMapper::toAccountResponse);
 
-        return PageResponse.<AccountResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")

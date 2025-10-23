@@ -21,6 +21,7 @@ import server.entity.LegalCaseType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalRelationshipMapper;
+import server.mapper.PageMapper;
 import server.repository.LegalRelationshipGroupRepository;
 import server.repository.LegalRelationshipRepository;
 import server.repository.LegalCaseTypeRepository;
@@ -36,6 +37,8 @@ public class LegalRelationshipService {
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
 
     LegalRelationshipMapper legalRelationshipMapper;
+    PageMapper pageMapper;
+
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<LegalRelationshipResponse> getAll() {
@@ -124,17 +127,6 @@ public class LegalRelationshipService {
         ).map(legalRelationshipMapper::toLegalRelationshipResponse);
 
 
-        return PageResponse.<LegalRelationshipResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
     }
 }

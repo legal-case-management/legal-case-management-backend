@@ -11,16 +11,14 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import server.dto.response.PageResponse;
-import server.dto.response.legalCase.LegalCaseResponse;
 import server.dto.response.notification.NotificationResponse;
 import server.entity.Account;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.NotificationMapper;
+import server.mapper.PageMapper;
 import server.repository.AccountRepository;
 import server.repository.NotificationRepository;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +28,7 @@ public class NotificationService {
     AccountRepository accountRepository;
 
     NotificationMapper notificationMapper;
+    PageMapper pageMapper;
 
     public PageResponse<NotificationResponse> getMyNotifications(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
@@ -43,17 +42,6 @@ public class NotificationService {
                 .getNotificationByAccount(account, pageable)
                 .map(notificationMapper::toNotificationResponse);
 
-        return PageResponse.<NotificationResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
     }
 }

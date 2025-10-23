@@ -42,12 +42,11 @@ public interface JudgeMapper {
             "canceledOrEditedCases"
     };
 
-    JudgeResponse toJudgeResponse(Judge judge);
     Judge toJudge(JudgeRequest request);
     void toJudge(JudgeRequest request, @MappingTarget Judge judge);
 
     default JudgeResponse toJudgeResponse(Object[] values) {
-        if (values == null || values.length != JUDGE_RESPONSE_KEYS.length) {
+        if (values == null || JUDGE_RESPONSE_KEYS.length != values.length) {
             throw new IllegalArgumentException("Number of values does not match JudgeResponse keys.");
         }
 
@@ -57,6 +56,13 @@ public interface JudgeMapper {
         }
 
         return GSON.fromJson(GSON.toJson(map), JudgeResponse.class);
+    }
+
+    default JudgeResponse toJudgeResponseBasic(Judge judge){
+        return JudgeResponse.builder()
+                .officerId(judge.getOfficerId())
+                .fullName(judge.getFullName())
+                .build();
     }
 }
 

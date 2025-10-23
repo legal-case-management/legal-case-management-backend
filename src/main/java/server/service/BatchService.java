@@ -20,8 +20,10 @@ import server.entity.Batch;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.BatchMapper;
+import server.mapper.PageMapper;
 import server.repository.BatchRepository;
 import server.repository.LegalCaseRepository;
+import server.utils.JudicialDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,6 +36,7 @@ public class BatchService {
     LegalCaseRepository legalCaseRepository;
 
     BatchMapper batchMapper;
+    PageMapper pageMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Synchronized
@@ -43,9 +46,9 @@ public class BatchService {
         batchMapper.toBatch(request, batch);
         batch.setStorageDate(LocalDateTime.now());
 
-        Integer judgeNumberOfId = batchRepository.getMaxId(String.format("%4d", batch.getStorageDate().getYear()))
+        Integer judgeNumberOfId = batchRepository.getMaxId(String.format("%4d", JudicialDate.getCurrentYear(batch.getStorageDate())))
                 .orElse(0);
-        String batchId = String.format("%4d%s%03d", batch.getStorageDate().getYear(), "D", judgeNumberOfId + 1);
+        String batchId = String.format("%4d%s%03d", JudicialDate.getCurrentYear(batch.getStorageDate()), "D", judgeNumberOfId + 1);
         if (batchRepository.existsById(batchId)) {
             throw new AppException(ErrorCode.BATCH_EXISTED);
         }
@@ -93,29 +96,13 @@ public class BatchService {
                 pageable
         ).map(batchMapper::toBatchResponse);
 
-        return PageResponse.<BatchResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
     }
 
     public List<BatchResponse> getAll() {
         return batchRepository.findAll()
                 .stream()
-                .map(batch -> Batch.builder()
-                                .batchId(batch.getBatchId())
-                                .batchName(batch.getBatchName())
-                                .build())
-                .map(batchMapper::toBatchResponse)
+                .map(batchMapper::toBatchResponseBasic)
                 .toList();
     }
-
 }

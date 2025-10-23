@@ -22,6 +22,7 @@ import server.entity.enums.LegalCaseStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalCaseMapper;
+import server.mapper.PageMapper;
 import server.repository.*;
 import server.utils.JudicialDate;
 
@@ -41,7 +42,9 @@ public class LegalCaseService {
     JudgeRepository judgeRepository;
     BatchRepository batchRepository;
     MediatorRepository mediatorRepository;
+
     LegalCaseMapper legalCaseMapper;
+    PageMapper pageMapper;
 
     JudgeService judgeService;
 
@@ -73,18 +76,7 @@ public class LegalCaseService {
                 pageable
         ).map(legalCaseMapper::toLegalCaseResponse);
 
-        return PageResponse.<LegalCaseResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

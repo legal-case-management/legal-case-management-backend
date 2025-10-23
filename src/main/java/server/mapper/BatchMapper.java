@@ -17,4 +17,11 @@ public interface BatchMapper {
     Batch toBatch(BatchRequest request);
     BatchResponse toBatchResponse(Batch batch);
     void toBatch(BatchRequest request, @MappingTarget Batch batch);
+
+    default BatchResponse toBatchResponseBasic(Batch batch){
+        return BatchResponse.builder()
+                .batchId(batch.getBatchId())
+                .batchName(batch.getBatchName())
+                .build();
+    }
 }

@@ -26,7 +26,9 @@ import server.entity.enums.OfficerStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.MediatorMapper;
+import server.mapper.PageMapper;
 import server.repository.MediatorRepository;
+import server.utils.JudicialDate;
 
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class MediatorService {
     MediatorRepository mediatorRepository;
 
     MediatorMapper mediatorMapper;
+    PageMapper pageMapper;
 
     AuthenticationService authenticationService;
 
@@ -48,7 +51,9 @@ public class MediatorService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<MediatorResponse> getAll() {
-        return mediatorRepository.getAll();
+        return mediatorRepository.findAll().stream()
+                .map(mediatorMapper::toMediatorResponseBasic)
+                .toList();
     }
 
 
@@ -114,21 +119,12 @@ public class MediatorService {
                 request.getOfficerId(),
                 request.getFullName(),
                 request.getOfficerStatus(),
+                JudicialDate.getMilestoneDateTime(),
                 pageable
-        );
+        ).map(mediatorMapper::toMediatorResponse);
 
-        return PageResponse.<MediatorResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
+
     }
 
 }

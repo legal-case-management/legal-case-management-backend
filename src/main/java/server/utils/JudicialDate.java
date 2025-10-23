@@ -44,4 +44,14 @@ public class JudicialDate {
             return date.getYear() + 1;
         }
     }
+
+    public static int getCurrentYear(LocalDateTime date) {
+        LocalDateTime milestone = LocalDateTime.of(date.getYear(), 10, 1, 0, 0, 0);
+
+        if (date.isBefore(milestone)) {
+            return date.getYear();
+        } else {
+            return date.getYear() + 1;
+        }
+    }
 }

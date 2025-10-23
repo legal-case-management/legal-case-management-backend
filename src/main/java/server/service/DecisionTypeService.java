@@ -21,6 +21,7 @@ import server.entity.LegalCaseType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.DecisionTypeMapper;
+import server.mapper.PageMapper;
 import server.repository.DecisionTypeRepository;
 import server.repository.LegalCaseTypeRepository;
 
@@ -34,6 +35,8 @@ public class DecisionTypeService {
     LegalCaseTypeRepository legalCaseTypeRepository;
 
     DecisionTypeMapper decisionTypeMapper;
+    PageMapper pageMapper;
+
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     public List<DecisionTypeResponse> getAll() {
@@ -122,18 +125,7 @@ public class DecisionTypeService {
                 pageable
         ).map(decisionTypeMapper::toDecisionTypeResponse);
 
-        return PageResponse.<DecisionTypeResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")

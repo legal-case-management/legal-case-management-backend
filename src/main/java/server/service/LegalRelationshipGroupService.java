@@ -20,6 +20,7 @@ import server.entity.LegalRelationshipGroup;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.LegalRelationshipGroupMapper;
+import server.mapper.PageMapper;
 import server.repository.LegalRelationshipGroupRepository;
 
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
 public class LegalRelationshipGroupService {
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
     LegalRelationshipGroupMapper legalRelationshipGroupMapper;
+    PageMapper pageMapper;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Async
@@ -90,17 +92,6 @@ public class LegalRelationshipGroupService {
                 pageable
         ).map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse);
 
-        return PageResponse.<LegalRelationshipGroupResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
     }
 }

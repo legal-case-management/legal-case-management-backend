@@ -20,6 +20,8 @@ import server.entity.enums.OfficerStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.JudgeMapper;
+import server.mapper.LegalRelationshipGroupMapper;
+import server.mapper.PageMapper;
 import server.repository.JudgeRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,8 @@ public class JudgeService {
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
 
     JudgeMapper judgeMapper;
+    LegalRelationshipGroupMapper legalRelationshipGroupMapper;
+    PageMapper pageMapper;
 
     AuthenticationService authenticationService;
 
@@ -50,9 +54,9 @@ public class JudgeService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'JUDGE')")
     public List<JudgeResponse> getAll() {
-        return judgeRepository.getAllRaw(JudicialDate.getMilestoneDateTime())
+        return judgeRepository.findAll()
                 .stream()
-                .map(judgeMapper::toJudgeResponse)
+                .map(judgeMapper::toJudgeResponseBasic)
                 .toList();
     }
 
@@ -66,7 +70,9 @@ public class JudgeService {
                 .stream()
                 .map(judgeMapper::toJudgeResponse)
                 .peek(judgeResponse -> judgeResponse.setRestrictedGroups(
-                        legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId())
+                        legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId()).stream()
+                                .map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
+                                .toList()
                         )
                 )
                 .toList();
@@ -76,25 +82,23 @@ public class JudgeService {
     public PageResponse<JudgeResponse> search(JudgeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         Page<JudgeResponse> resultPage = judgeRepository.search(
-                request.getOfficerId(),
-                request.getFullName(),
-                request.getOfficerStatus(),
-                JudicialDate.getMilestoneDateTime(),
-                pageable
-        );
+                        request.getOfficerId(),
+                        request.getFullName(),
+                        request.getOfficerStatus(),
+                        JudicialDate.getMilestoneDateTime(),
+                        pageable
+                ).map(judgeMapper::toJudgeResponse)
+                .map(judgeResponse -> {
+                    judgeResponse.setRestrictedGroups(
+                            legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId())
+                                    .stream()
+                                    .map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
+                                    .toList()
+                    );
+                    return judgeResponse;
+                });
 
-        return PageResponse.<JudgeResponse>builder()
-                .number(resultPage.getNumber())
-                .size(resultPage.getSize())
-                .numberOfElement(resultPage.getNumberOfElements())
-                .totalElements(resultPage.getTotalElements())
-                .totalPages(resultPage.getTotalPages())
-                .hasNext(resultPage.hasNext())
-                .hasPrevious(resultPage.hasPrevious())
-                .isFirst(resultPage.isFirst())
-                .isLast(resultPage.isLast())
-                .content(resultPage.getContent())
-                .build();
+        return pageMapper.map(resultPage);
     }
 
 
