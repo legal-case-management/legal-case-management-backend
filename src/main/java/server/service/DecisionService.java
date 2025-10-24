@@ -57,10 +57,12 @@ public class DecisionService {
                 if (handle.getPreStatus().equals(legalCase.getLegalCaseStatus())) {
                     legalCase.setLegalCaseStatus(handle.getPostStatus());
 
-                    if (handle.getExtensionPeriod() > 0) {
+                    if (handle.getExtensionPeriod() != null && handle.getExtensionPeriod() > 0) {
                         legalCase.setExpiredDate(LocalDate.now().plusMonths(
                                 handle.getExtensionPeriod()
                         ));
+                    }else if(handle.isTemporarilyPostponed()) {
+                        legalCase.setExpiredDate(null);
                     }
 
                     updated = true;
