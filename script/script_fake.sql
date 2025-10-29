@@ -11,7 +11,7 @@ VALUES ('TP01', 'Nguyễn Văn', 'A', 'WORKING');
 INSERT INTO judges(officer_id, max_number_of_legal_case)
 VALUES ('TP01', 20);
 INSERT INTO accounts (account_id, username, password, role, email, officer_id, account_status)
-VALUES ('TP01', 'TP01', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'JUDGE', 'nguyenvana@gmail.com', 'TP01', 'ACTIVE');
+VALUES ('TP01', 'TP01', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'ADMIN', 'nguyenvana@gmail.com', 'TP01', 'ACTIVE');
 
 INSERT INTO officers (officer_id, last_name, first_name, officer_status)
 VALUES ('TP02', 'Trần Thị', 'B', 'WORKING');
@@ -32,7 +32,7 @@ VALUES ('TP04', 'Phạm Văn', 'D', 'WORKING');
 INSERT INTO judges(officer_id, max_number_of_legal_case)
 VALUES ('TP04', 18);
 INSERT INTO accounts (account_id, username, password, role, email, officer_id, account_status)
-VALUES ('TP04', 'TP04', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'JUDGE', 'phamvand@gmail.com', 'TP04', 'ACTIVE');
+VALUES ('TP04', 'TP04', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'MANAGER', 'phamvand@gmail.com', 'TP04', 'ACTIVE');
 
 INSERT INTO officers (officer_id, last_name, first_name, officer_status)
 VALUES ('TP05', 'Đỗ Thị', 'E', 'ON_LEAVE');
@@ -74,7 +74,7 @@ VALUES ('TP10', 'Nguyễn Văn', 'K', 'WORKING');
 INSERT INTO judges(officer_id, max_number_of_legal_case)
 VALUES ('TP10', 16);
 INSERT INTO accounts (account_id, username, password, role, email, officer_id, account_status)
-VALUES ('TP10', 'TP10', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'JUDGE', 'nguyenvank@gmail.com', 'TP10', 'ACTIVE');
+VALUES ('TP10', 'TP10', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'MANAGER', 'nguyenvank@gmail.com', 'TP10', 'ACTIVE');
 
 INSERT INTO officers (officer_id, last_name, first_name, officer_status)
 VALUES ('TP11', 'Phan Thị', 'L', 'NOT_WORKING');
@@ -168,11 +168,9 @@ INSERT INTO mediators (officer_id) VALUES ('HG07');
 INSERT INTO accounts (account_id, username, password, role, email, officer_id, account_status)
 VALUES ('HG07', 'HG07', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'MEDIATOR', 'tranvanz@gmail.com', 'HG07', 'ACTIVE');
 
-/* Manager */
+/* Admin */
 INSERT INTO  accounts (account_id, username, password, role, email, officer_id, account_status)
-VALUES ('QL01', 'QL01', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'MANAGER', 'nguyenvanaa@gmail.com', NULL, 'ACTIVE');
-INSERT INTO  accounts (account_id, username, password, role, email, officer_id, account_status)
-VALUES ('QL02', 'QL02', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'MANAGER', 'nguyenvanbb@gmail.com', NULL, 'ACTIVE');
+VALUES ('AD02', 'admin02', '$2a$10$JDwQJ0mKRjLd35GnXhZ92ebB6mcZWh2Wb99x4h8FSs1SyuG3lDIOe', 'ADMIN', 'nguyenvanaa@gmail.com', NULL, 'ACTIVE');
 
 /* type of legal case */
 INSERT INTO legal_case_types (legal_case_type_id, legal_case_type_name, code_name)

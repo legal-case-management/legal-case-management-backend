@@ -155,4 +155,14 @@ public class LegalCaseController {
                 .message("Chuyển đợt nhập án thành công")
                 .build();
     }
+
+    @PostMapping("remove-assignment/{id}")
+    public ApiResponse<Void> removeAssignment(@PathVariable String id) {
+        legalCaseService.removeAssignment(id);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Xóa phân công án thành công")
+                .build();
+    }
 }

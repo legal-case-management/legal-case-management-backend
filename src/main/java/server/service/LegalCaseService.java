@@ -226,9 +226,8 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void randomAssignment(RandomAssignmentRequest request) {
-        if (request == null) {
+        if (request == null)
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
-        }
 
         if(request.getLegalRelationshipGroupId() != null){
             LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
@@ -396,11 +395,27 @@ public class LegalCaseService {
         return pageMapper.map(resultPage);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public void removeAssignment(String legalCaseId) {
+        LegalCase legalCase = legalCaseRepository.findById(legalCaseId)
+                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
+
+        if(legalCase.getJudge() == null)
+            throw new AppException(ErrorCode.LEGAL_CASE_NOT_ASSIGNED);
+
+        legalCase.setAssignment(null);
+        legalCase.setAssignmentDate(null);
+        legalCase.setExpiredDate(null);
+        legalCase.setLegalCaseStatus(LegalCaseStatus.WAITING_FOR_ASSIGNMENT);
+        legalCase.setJudge(null);
+        legalCaseRepository.save(legalCase);
+    }
+
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")
     public void updateCaseStatuses() {
         int waiting = legalCaseRepository.updateWaitingForAssignment();
         int overdue = legalCaseRepository.updateOverdue();
-        System.out.println("✅ Cập nhật trạng thái vụ án lúc 0h00: "
+        System.out.println("Cập nhật trạng thái vụ án lúc 0h00: "
                 + waiting + " WAITING_FOR_ASSIGNMENT, "
                 + overdue + " OVERDUE");
     }
