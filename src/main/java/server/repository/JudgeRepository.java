@@ -107,7 +107,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                     SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
                 FROM Judge j
                 LEFT JOIN j.legalCases lc
-                       ON lc.batch.storageDate >= :milestoneDate
+                       ON lc.batch.storageDate >= :milestoneDateTime
                 LEFT JOIN lc.batch b
                 WHERE j.officerStatus = 'WORKING'
                       AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
