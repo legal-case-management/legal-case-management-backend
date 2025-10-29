@@ -130,7 +130,6 @@ public class NotificationService {
                     litigantsInfo
             );
 
-            // Lưu thông báo
             Notification notification = Notification.builder()
                     .notificationType(NotificationType.UPCOMING_DEADLINE)
                     .title(title)
@@ -144,8 +143,6 @@ public class NotificationService {
             notificationRepository.save(notification);
         }
 
-        System.out.println("✅ Đã gửi thông báo sắp hết hạn (" + daysBeforeExpire + " ngày) lúc 0h00");
+        System.out.println("Đã gửi thông báo sắp hết hạn (" + daysBeforeExpire + " ngày) lúc 0h00");
     }
-
-
 }

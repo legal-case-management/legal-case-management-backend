@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.dto.other.JudgeAssignmentInfo;
 import server.dto.request.legalCase.*;
 import server.dto.response.PageResponse;
 import server.dto.response.judge.JudgeResponse;
@@ -22,6 +23,7 @@ import server.entity.enums.Assignment;
 import server.entity.enums.LegalCaseStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
+import server.mapper.JudgeMapper;
 import server.mapper.LegalCaseMapper;
 import server.mapper.PageMapper;
 import server.repository.*;
@@ -46,6 +48,7 @@ public class LegalCaseService {
 
     LegalCaseMapper legalCaseMapper;
     PageMapper pageMapper;
+    JudgeMapper judgeMapper;
 
     JudgeService judgeService;
 
@@ -228,9 +231,9 @@ public class LegalCaseService {
     public void randomAssignment(RandomAssignmentRequest request) {
         if (request == null)
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
-
+        LegalRelationshipGroup legalRelationshipGroup = null;
         if(request.getLegalRelationshipGroupId() != null){
-            LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
+            legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
                     .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
             if(legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
@@ -238,7 +241,14 @@ public class LegalCaseService {
         }
 
         // Lấy danh sách thẩm phán
-        List<JudgeResponse> judges = judgeService.listAssignment(request.getLegalRelationshipGroupId());
+        List<JudgeAssignmentInfo> judges = judgeRepository.getAssignAssignmentRaw(
+                JudicialDate.getMilestoneDateTime(),
+                JudicialDate.getMilestoneDate(),
+                legalRelationshipGroup
+        ).stream()
+                .map(judgeMapper::toJudgeAssignmentInfo)
+                .toList();
+
         if (judges.isEmpty()) {
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
         }
@@ -253,7 +263,7 @@ public class LegalCaseService {
         int judgeIndex = 0;
 
         while (!legalCases.isEmpty()) {
-            JudgeResponse judge = judges.get(judgeIndex);
+            JudgeAssignmentInfo judge = judges.get(judgeIndex);
             Long currentCases = judge.getNumberOfLegalCase();
             Long maxCases = judge.getMaxNumberOfLegalCase();
 
