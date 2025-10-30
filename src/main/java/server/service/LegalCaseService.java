@@ -231,83 +231,105 @@ public class LegalCaseService {
     public void randomAssignment(RandomAssignmentRequest request) {
         if (request == null)
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
+
         LegalRelationshipGroup legalRelationshipGroup = null;
-        if(request.getLegalRelationshipGroupId() != null){
+        if (request.getLegalRelationshipGroupId() != null) {
             legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
                     .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-            if(legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
+            if (legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
                 throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
         }
 
         // Lấy danh sách thẩm phán
-        List<JudgeAssignmentInfo> judges = judgeRepository.getAssignAssignmentRaw(
-                JudicialDate.getMilestoneDateTime(),
-                JudicialDate.getMilestoneDate(),
-                legalRelationshipGroup
-        ).stream()
+        List<JudgeAssignmentInfo> judges = new ArrayList<>(judgeRepository.getAssignAssignmentRaw(
+                        JudicialDate.getMilestoneDateTime(),
+                        JudicialDate.getMilestoneDate(),
+                        legalRelationshipGroup
+                ).stream()
                 .map(judgeMapper::toJudgeAssignmentInfo)
-                .toList();
+                .toList());
 
-        if (judges.isEmpty()) {
+        if (judges.isEmpty())
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
-        }
 
-        // Lấy danh sách vụ án
-        List<LegalCase> legalCases = legalCaseRepository.getAssignAssignment(request.getLegalCaseIds(), request.getLegalRelationshipGroupId());
-        if (legalCases.isEmpty()) {
+        // Lấy danh sách vụ án cần phân công
+        List<LegalCase> legalCases = legalCaseRepository.getAssignAssignment(
+                request.getLegalCaseIds(),
+                legalRelationshipGroup
+        );
+
+        if (legalCases.isEmpty())
             throw new AppException(ErrorCode.NO_LEGAL_CASES_FOUND);
-        }
+
+        boolean isGroupLand = legalRelationshipGroup != null
+                && legalRelationshipGroup.getLegalRelationshipGroupId().equals("N04");
 
         Random random = new Random();
-        int judgeIndex = 0;
 
+        // --- PHÂN CÔNG ÁN ---
         while (!legalCases.isEmpty()) {
-            JudgeAssignmentInfo judge = judges.get(judgeIndex);
-            Long currentCases = judge.getNumberOfLegalCase();
-            Long maxCases = judge.getMaxNumberOfLegalCase();
 
-            if (maxCases == -1 || currentCases < maxCases) {
-                int caseIndex = random.nextInt(legalCases.size());
-                LegalCase legalCase = legalCases.get(caseIndex);
+            // Nếu là nhóm đất (N04): phân bổ công bằng theo numberOfLegalCaseGroupLand
+            if (isGroupLand) {
+                // Sắp xếp danh sách thẩm phán theo số án đất hiện tại (tăng dần)
+                judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberOfLegalCaseGroupLand));
 
-                legalCase.setAssignment(Assignment.RANDOM);
+                // Lấy thẩm phán có số án đất ít nhất
+                JudgeAssignmentInfo judge = judges.getFirst();
 
-                LegalCaseType legalCaseType = legalCaseTypeRepository.getByLegalRelationships(legalCase.getLegalRelationship())
-                        .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
+                LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
+                assignLegalCaseToJudge(legalCase, judge, legalRelationshipGroup);
 
-                legalCase.setExpiredDate(
-                        legalCaseType.getCodeName().equals("HS")
-                                ? legalCase.getAcceptanceDate().plusMonths(2)
-                                : legalCase.getAcceptanceDate().plusMonths(4)
-                );
+                // Cập nhật lại thống kê cho thẩm phán
+                judge.setNumberOfLegalCaseGroupLand(judge.getNumberOfLegalCaseGroupLand() + 1);
 
-                legalCase.setAssignmentDate(LocalDateTime.now());
-                legalCase.setLegalCaseStatus(LegalCaseStatus.IN_PROCESS);
-                legalCase.setJudge(
-                        Judge.builder()
-                                .officerId(judge.getOfficerId())
-                                .build()
-                );
+            } else {
+                // Các nhóm khác: ưu tiên thẩm phán có tổng số án trong năm ít nhất
+                judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberOfLegalCase));
 
-                legalCaseRepository.save(legalCase);
-                if (maxCases != -1) {
-                    judge.setNumberOfLegalCase(currentCases + 1);
+                JudgeAssignmentInfo judge = null;
+                for (JudgeAssignmentInfo j : judges) {
+                    Long maxCases = j.getMaxNumberOfLegalCase();
+                    if (maxCases == -1 || j.getNumberOfLegalCase() < maxCases) {
+                        judge = j;
+                        break;
+                    }
                 }
 
-                legalCases.remove(caseIndex);
-            }
+                // Không còn thẩm phán nào có thể nhận thêm án
+                if (judge == null)
+                    break;
 
-            judgeIndex = (judgeIndex + 1) % judges.size();
+                LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
+                assignLegalCaseToJudge(legalCase, judge, legalRelationshipGroup);
 
-            boolean anyJudgeAvailable = judges.stream()
-                    .anyMatch(j -> j.getMaxNumberOfLegalCase() == -1 ||
-                            j.getNumberOfLegalCase() < j.getMaxNumberOfLegalCase());
-
-            if (!anyJudgeAvailable) {
-                break;
+                // Cập nhật lại thống kê tổng án trong năm
+                judge.setNumberOfLegalCase(judge.getNumberOfLegalCase() + 1);
             }
         }
+    }
+
+    private void assignLegalCaseToJudge(LegalCase legalCase, JudgeAssignmentInfo judge, LegalRelationshipGroup group) {
+        legalCase.setAssignment(Assignment.RANDOM);
+
+        LegalCaseType legalCaseType = legalCaseTypeRepository.getByLegalRelationships(legalCase.getLegalRelationship())
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
+
+        legalCase.setExpiredDate(
+                legalCaseType.getCodeName().equals("HS")
+                        ? legalCase.getAcceptanceDate().plusMonths(2)
+                        : legalCase.getAcceptanceDate().plusMonths(4)
+        );
+
+        legalCase.setAssignmentDate(LocalDateTime.now());
+        legalCase.setLegalCaseStatus(LegalCaseStatus.IN_PROCESS);
+        legalCase.setJudge(Judge.builder()
+                .officerId(judge.getOfficerId())
+                .build()
+        );
+
+        legalCaseRepository.save(legalCase);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
