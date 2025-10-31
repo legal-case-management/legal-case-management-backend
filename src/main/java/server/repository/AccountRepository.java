@@ -24,7 +24,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
             WHERE (:username IS NULL OR a.username = :username)
               AND (:email IS NULL OR a.email = :email)
               AND (:role IS NULL OR a.role = :role)
-              AND (:statusOfAccount IS NULL OR a.accountStatus = :accountStatus)
+              AND (:accountStatus IS NULL OR a.accountStatus = :accountStatus)
               AND (:fullName IS NULL OR o.fullName LIKE %:fullName%)
             """)
     Page<Account> search(
