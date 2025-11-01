@@ -60,7 +60,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     );
 
     @Query("""
-                SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 7, 4) AS int))
+                SELECT MAX(CAST(SUBSTRING(lc.legalCaseId, 7, 5) AS int))
                 FROM LegalCase lc
                 WHERE SUBSTRING(lc.legalCaseId, 1, 4) = :year
                   AND SUBSTRING(lc.legalCaseId, 5, 2) = :typeCode
