@@ -2237,6 +2237,7 @@ INSERT INTO legal_cases(legal_case_id, acceptance_date, acceptance_number, assig
 INSERT INTO legal_case_litigants(legal_case_id, litigant_type, ordinal, name, year_of_birth, address) VALUES ('2026DS0007','PLAINTIFF',1,'Đặng Thị Thu',1976,'Bà Rịa - Vũng Tàu');
 INSERT INTO legal_case_litigants(legal_case_id, litigant_type, ordinal, name, year_of_birth, address) VALUES ('2026DS0007','DEFENDANT',1,'Nguyễn Văn Bình',1982,'Bà Rịa - Vũng Tàu');
 
-INSERT INTO legal_cases(legal_case_id, acceptance_date, acceptance_number, assignment, assignment_date, expired_date, legal_case_status, note, storage_date, batch_id, judge_id, legal_relationship_id, mediator_id) VALUES ('2026KT0006','2025-10-24','44','ASSIGN','2025-10-24','2026-06-24','IN_PROCESS','Vụ kinh doanh thương mại 0006: tranh chấp hợp đồng dịch vụ','2025-10-24','2026D005','TP08','KT006',NULL);
+INSERT INTO legal_cases(legal_case_id, acceptance_date, acceptance_number, assignment, assignment_date, expired_date, legal_case_status, note, storage_date, batch_id, judge_id, legal_relationship_id, mediator_id)
+VALUES ('2026KT0006','2025-10-24','44','ASSIGN','2025-10-24','2026-06-24','IN_PROCESS','Vụ kinh doanh thương mại 0006: tranh chấp hợp đồng dịch vụ','2025-10-24','2026D005','TP08','KT006',NULL);
 INSERT INTO legal_case_litigants(legal_case_id, litigant_type, ordinal, name, year_of_birth, address) VALUES ('2026KT0006','PLAINTIFF',1,'Công ty TNHH Dịch Vụ Z', NULL,'Đà Nẵng');
 INSERT INTO legal_case_litigants(legal_case_id, litigant_type, ordinal, name, year_of_birth, address) VALUES ('2026KT0006','DEFENDANT',1,'Công ty TNHH Sản Xuất W', NULL,'Đà Nẵng');
