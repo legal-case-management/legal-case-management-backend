@@ -94,7 +94,6 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             """)
     Page<LegalCase> getAssignmentListHasMediator(Pageable pageable);
 
-
     @Query("""
             SELECT lc FROM LegalCase lc
             LEFT JOIN lc.legalRelationship lr
