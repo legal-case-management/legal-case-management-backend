@@ -142,13 +142,14 @@ public class JudgeService {
     @Synchronized
     @Transactional
     public void update(String id, JudgeRequest request) {
-        Judge judgeSaved = judgeRepository
-                .findById(id)
+        Judge judgeSaved = judgeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
-        List<LegalRelationshipGroup> restrictedGroups = legalRelationshipGroupRepository
-                .findAllById(request.getRestrictedGroupIds());
-        judgeSaved.setRestrictedGroups(restrictedGroups);
+        if(request.getRestrictedGroupIds() != null){
+            List<LegalRelationshipGroup> restrictedGroups = legalRelationshipGroupRepository
+                    .findAllById(request.getRestrictedGroupIds());
+            judgeSaved.setRestrictedGroups(restrictedGroups);
+        }
 
         judgeMapper.toJudge(request, judgeSaved);
         judgeRepository.save(judgeSaved);
