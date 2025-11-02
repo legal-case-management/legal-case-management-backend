@@ -296,26 +296,20 @@ public class LegalCaseService {
                 judge.setNumberOfLegalCaseGroupLand(judge.getNumberOfLegalCaseGroupLand() + 1);
 
             } else {
-                // Các nhóm khác: ưu tiên thẩm phán có tổng số án trong năm ít nhất
+                // luôn sắp xếp lại theo tổng án hiện tại (đảm bảo người ít án nhất lên trước)
                 judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberOfLegalCase));
 
-                JudgeAssignmentInfo judge = null;
-                for (JudgeAssignmentInfo j : judges) {
-                    Long maxCases = j.getMaxNumberOfLegalCase();
-                    if (maxCases == -1 || j.getNumberOfLegalCase() < maxCases) {
-                        judge = j;
-                        break;
-                    }
-                }
+                // lấy thẩm phán ít án nhất
+                JudgeAssignmentInfo judge = judges.getFirst();
 
-                // Không còn thẩm phán nào có thể nhận thêm án
-                if (judge == null)
+                Long maxCases = judge.getMaxNumberOfLegalCase();
+                if (maxCases != -1 && judge.getNumberOfLegalCase() >= maxCases)
                     break;
 
-                LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
-                assignLegalCaseToJudge(legalCase, judge, legalRelationshipGroup);
+                // lấy vụ án bất kỳ (hoặc theo thứ tự)
+                LegalCase legalCase = legalCases.removeFirst();
 
-                // Cập nhật lại thống kê tổng án trong năm
+                assignLegalCaseToJudge(legalCase, judge, legalRelationshipGroup);
                 judge.setNumberOfLegalCase(judge.getNumberOfLegalCase() + 1);
             }
         }
