@@ -98,7 +98,11 @@ public enum ErrorCode {
     CAN_NOT_HANDLE_TYPE_OF_DECISION(400, HttpStatus.BAD_REQUEST, "Không thể thực hiện loại quyết định, thông báo này với trạng thái hiện tại của vụ án"),
 
     /* Random assignment */
-    RANDOM_ASSIGNMENT_NOT_ALLOWED(400, HttpStatus.BAD_REQUEST, "Nhóm quan hệ pháp luật không được phép phân công ngẫu nhiên")
+    RANDOM_ASSIGNMENT_NOT_ALLOWED(400, HttpStatus.BAD_REQUEST, "Nhóm quan hệ pháp luật không được phép phân công ngẫu nhiên"),
+
+    /* Notification */
+
+    NOTIFICATION_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Thông báo không tồn tại"),
     ;
 
     int status;

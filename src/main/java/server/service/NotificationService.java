@@ -30,10 +30,7 @@ import server.repository.NotificationRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,6 +57,23 @@ public class NotificationService {
                 .map(notificationMapper::toNotificationResponse);
 
         return pageMapper.map(resultPage);
+    }
+
+    public NotificationResponse getMyNotification(String id) {
+        SecurityContext context = SecurityContextHolder.getContext();
+        String accountId = context.getAuthentication().getName();
+
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        Notification notification = notificationRepository
+                .findByNotificationIdAndAccount(id, account)
+                .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_NOT_EXISTED));
+
+        notification.setRead(true);
+        notificationRepository.save(notification);
+
+        return notificationMapper.toNotificationResponse(notification);
     }
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")

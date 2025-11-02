@@ -4,10 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
 import server.dto.response.notification.NotificationResponse;
@@ -32,6 +29,16 @@ public class NotificationController {
                 .status(200)
                 .message("Thành công")
                 .data(notificationService.getMyNotifications(page, size, sortBy))
+                .build();
+    }
+
+    @GetMapping("/my-notifications/{id}")
+    public ApiResponse<NotificationResponse> getMyNotification(@PathVariable String id) {
+        return ApiResponse.<NotificationResponse>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(notificationService.getMyNotification(id))
                 .build();
     }
 }

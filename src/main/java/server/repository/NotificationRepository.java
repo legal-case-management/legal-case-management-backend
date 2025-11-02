@@ -8,6 +8,8 @@ import server.entity.Account;
 import server.entity.LegalCase;
 import server.entity.Notification;
 
+import java.util.Optional;
+
 public interface NotificationRepository extends JpaRepository<Notification, String> {
     @Query("""
             SELECT n FROM Notification n
@@ -15,5 +17,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
             """)
     Page<Notification> getNotificationByAccount(Account account, Pageable pageable);
 
-    boolean existsByLegalCaseAndAccountAndTitle(LegalCase legalCase, Account account, String title);
+    Optional<Notification> findByNotificationIdAndAccount(String notificationId, Account account);
 }
