@@ -234,13 +234,13 @@ public class LegalCaseService {
 
         LegalRelationshipGroup legalRelationshipGroup = null;
         if (request.getLegalRelationshipGroupId() != null) {
-            if (legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
-                throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
-
             legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
                     .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
+            if (legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
+                throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
         }
+
 
         // Lấy danh sách thẩm phán
         List<JudgeAssignmentInfo> judges = new ArrayList<>(
