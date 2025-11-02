@@ -43,12 +43,7 @@ public interface JudgeMapper {
             "numberOfCanceledAndEdited"
     };
 
-    String[] JUDGE_ASSIGN_RESPONSE_KEYS = {
-            "officerId",
-            "maxNumberOfLegalCase",
-            "numberOfLegalCase",
-            "numberOfLegalCaseGroupLand",
-    };
+
 
     Judge toJudge(JudgeRequest request);
     void toJudge(JudgeRequest request, @MappingTarget Judge judge);
@@ -67,13 +62,13 @@ public interface JudgeMapper {
     }
 
     default JudgeAssignmentInfo toJudgeAssignmentInfo(Object[] values) {
-        if (values == null || JUDGE_ASSIGN_RESPONSE_KEYS.length != values.length) {
+        if (values == null || JUDGE_RESPONSE_KEYS.length != values.length) {
             throw new IllegalArgumentException("Number of values does not match JudgeAssignmentInfo keys.");
         }
 
         Map<String, Object> map = new HashMap<>();
-        for (int i = 0; i < JUDGE_ASSIGN_RESPONSE_KEYS.length; i++) {
-            map.put(JUDGE_ASSIGN_RESPONSE_KEYS[i], values[i]);
+        for (int i = 0; i < JUDGE_RESPONSE_KEYS.length; i++) {
+            map.put(JUDGE_RESPONSE_KEYS[i], values[i]);
         }
 
         return GSON.fromJson(GSON.toJson(map), JudgeAssignmentInfo.class);

@@ -56,18 +56,21 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             """)
     Optional<Integer> getMaxId();
 
+
     @Query("""
             SELECT
                 j.officerId,
+                j.lastName,
+                j.firstName,
+                j.fullName,
+                j.officerStatus,
+                j.account.email,
                 j.maxNumberOfLegalCase,
-                SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END) AS totalCases,
-                SUM(
-                    CASE
-                        WHEN lc.legalRelationship.legalRelationshipGroup.legalRelationshipGroupId = 'N04'
-                             AND lc.acceptanceDate >= :milestoneDate
-                        THEN 1 ELSE 0
-                    END
-                )
+                SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
             FROM Judge j
             LEFT JOIN j.legalCases lc
                    ON lc.batch.storageDate >= :milestoneDateTime
@@ -87,43 +90,24 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             """)
     List<Object[]> getAssignAssignmentRaw(
             @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
-            @Param("milestoneDate") LocalDate milestoneDate,
             @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup
     );
 
     @Query("""
-                SELECT
-                    j.officerId,
-                    j.lastName,
-                    j.firstName,
-                    j.fullName,
-                    j.officerStatus,
-                    j.account.email,
-                    j.maxNumberOfLegalCase,
-                    SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
-                    SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
-                FROM Judge j
-                LEFT JOIN j.legalCases lc
-                       ON lc.batch.storageDate >= :milestoneDateTime
-                LEFT JOIN lc.batch b
-                WHERE j.officerStatus = 'WORKING'
-                      AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
-                GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
-                         j.maxNumberOfLegalCase, j.officerStatus, j.account.email
-                HAVING j.maxNumberOfLegalCase < 0
-                       OR SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END) < j.maxNumberOfLegalCase
-                ORDER BY
-                    SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END) ASC,
-                    SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END) DESC,
-                    SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END) ASC,
-                    SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END) ASC,
-                    j.firstName ASC
-            """)
-    List<Object[]> getAssignAssignmentRaw(
+        SELECT
+            COUNT(lc)
+        FROM Judge j
+        LEFT JOIN j.legalCases lc
+               ON lc.batch.storageDate >= :milestoneDateTime
+        WHERE j.officerStatus = 'WORKING'
+              AND j.officerId = :officerId
+              AND lc.legalRelationship.legalRelationshipGroup.legalRelationshipGroupId = 'N04'
+              AND lc.acceptanceDate >= :milestoneDate
+    """)
+    Long getNumberOfLandCasesByJudge(
+            @Param("officerId") String officerId,
             @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
-            @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup
+            @Param("milestoneDate") LocalDate milestoneDate
     );
+
 }

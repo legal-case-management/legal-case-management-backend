@@ -2243,6 +2243,6 @@ INSERT INTO legal_case_litigants(legal_case_id, litigant_type, ordinal, name, ye
 INSERT INTO legal_case_litigants(legal_case_id, litigant_type, ordinal, name, year_of_birth, address) VALUES ('2026KT0006','DEFENDANT',1,'Công ty TNHH Sản Xuất W', NULL,'Đà Nẵng');
 
 INSERT INTO notifications(notification_id, content, created_at, is_read, notification_type, title, account_id, legal_case_id)
-VALUES ('2026TB000001', 'Thong bao 1', '2025-10-25 08:00:00', false, 'UPCOMING_DEADLINE', 'Cập nhật vụ án 2026HS0004', 'TP01', '2026DS00001');
+VALUES ('2026TB000001', 'Thong bao 1', '2025-10-25 08:00:00', false, 'UPCOMING_DEADLINE', 'Cập nhật vụ án 2026HS0004', 'TP01', '2026DS0001');
 INSERT INTO notifications(notification_id, content, created_at, is_read, notification_type, title, account_id, legal_case_id)
-VALUES ('2026T000002', 'Thong bao 2', '2025-10-25 08:00:00', false, 'UPCOMING_DEADLINE', 'Cập nhật vụ án 2026HS0004', 'TP01', '2026DS00002');
+VALUES ('2026T000002', 'Thong bao 2', '2025-10-25 08:00:00', false, 'UPCOMING_DEADLINE', 'Cập nhật vụ án 2026HS0004', 'TP01', '2026DS0002');

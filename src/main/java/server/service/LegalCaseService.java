@@ -234,21 +234,32 @@ public class LegalCaseService {
 
         LegalRelationshipGroup legalRelationshipGroup = null;
         if (request.getLegalRelationshipGroupId() != null) {
+            if (legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
+                throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
+
             legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
                     .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-            if (legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
-                throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
         }
 
         // Lấy danh sách thẩm phán
-        List<JudgeAssignmentInfo> judges = new ArrayList<>(judgeRepository.getAssignAssignmentRaw(
-                        JudicialDate.getMilestoneDateTime(),
-                        JudicialDate.getMilestoneDate(),
-                        legalRelationshipGroup
-                ).stream()
-                .map(judgeMapper::toJudgeAssignmentInfo)
-                .toList());
+        List<JudgeAssignmentInfo> judges = new ArrayList<>(
+                judgeRepository.getAssignAssignmentRaw(
+                                JudicialDate.getMilestoneDateTime(),
+                                legalRelationshipGroup
+                        ).stream()
+                        .map(judgeMapper::toJudgeAssignmentInfo)
+                        .peek(judge -> {
+                            Long numberOfLandCases = judgeRepository.getNumberOfLandCasesByJudge(
+                                    judge.getOfficerId(),
+                                    JudicialDate.getMilestoneDateTime(),
+                                    JudicialDate.getMilestoneDate()
+                            );
+                            judge.setNumberOfLegalCaseGroupLand(numberOfLandCases != null ? numberOfLandCases : 0);
+                        })
+                        .toList()
+        );
+
 
         if (judges.isEmpty())
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);

@@ -20,6 +20,7 @@ import server.dto.response.authentication.AccountResponse;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.dto.response.authentication.VerifyOtpResponse;
 import server.entity.Account;
+import server.entity.LegalRelationshipGroup;
 import server.entity.enums.AccountStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
@@ -39,6 +40,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import server.repository.JudgeRepository;
+import server.utils.JudicialDate;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -80,6 +83,7 @@ public class AuthenticationService {
     PasswordEncoder passwordEncoder;
 
     JavaMailSender mailSender;
+    JudgeRepository judgeRepository;
 
     public AuthenticationResponse login(LoginRequest request) {
         /* 1. Find account in database*/
