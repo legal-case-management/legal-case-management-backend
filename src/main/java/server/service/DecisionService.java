@@ -70,19 +70,14 @@ public class DecisionService {
                 }
             }
 
-            if (!updated) {
+            if (!updated)
                 throw new AppException(ErrorCode.CAN_NOT_HANDLE_TYPE_OF_DECISION);
-            }
         }
 
-
-        String maxId = decisionRepository.getMaxId(
-                String.format("%sQD", legalCase.getLegalCaseId())
-        ).orElse(0).toString();
-        String decisionId = String.format("%sQD%02d", legalCase.getLegalCaseId(), Integer.parseInt(maxId) + 1);
+        Integer maxId = decisionRepository.getMaxId(legalCase.getLegalCaseId()).orElse(0);
+        String decisionId = String.format("%sQD%02d", legalCase.getLegalCaseId(), maxId + 1);
         if (decisionRepository.existsById(decisionId))
             throw new AppException(ErrorCode.DECISION_EXISTED);
-
 
         decision.setDecisionId(decisionId);
         decision.setDecisionType(typeOfDecision);
