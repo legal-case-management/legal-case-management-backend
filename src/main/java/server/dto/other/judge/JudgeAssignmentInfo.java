@@ -1,10 +1,9 @@
-package server.dto.other;
+package server.dto.other.judge;
 
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import server.entity.enums.OfficerStatus;
 
 @Getter
 @Setter
@@ -14,16 +13,7 @@ import server.entity.enums.OfficerStatus;
 @AllArgsConstructor
 public class JudgeAssignmentInfo {
     String officerId;
-    String lastName;
-    String firstName;
-    String fullName;
-    OfficerStatus officerStatus;
-    String email;
     Long maxNumberOfLegalCase;
     Long numberOfLegalCase;
-    Long numberOfInProcess;
-    Long numberOfTemporarySuspension;
-    Long numberOfOverdue;
-    Long numberOfCanceledAndEdited;
     Long numberOfLegalCaseGroupLand;
 }

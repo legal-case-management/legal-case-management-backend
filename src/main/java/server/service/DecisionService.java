@@ -43,7 +43,7 @@ public class DecisionService {
         Decision decision = Decision.builder().build();
         decisionMapper.toDecision(request, decision);
 
-        DecisionType typeOfDecision = decisionTypeRepository.findById(request.getTypeOfDecisionId())
+        DecisionType typeOfDecision = decisionTypeRepository.findById(request.getDecisionTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
         LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())

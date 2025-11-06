@@ -16,6 +16,6 @@ public class DecisionRequest {
     String number;
     LocalDate releaseDate;
     String note;
-    String typeOfDecisionId;
+    String decisionTypeId;
     String legalCaseId;
 }

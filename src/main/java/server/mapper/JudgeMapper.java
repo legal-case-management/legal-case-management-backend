@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import server.dto.other.JudgeAssignmentInfo;
+import server.dto.other.judge.JudgeAssignmentInfo;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.response.judge.JudgeResponse;
 import server.entity.Judge;
@@ -42,8 +42,6 @@ public interface JudgeMapper {
             "numberOfOverdue",
             "numberOfCanceledAndEdited"
     };
-
-
 
     Judge toJudge(JudgeRequest request);
     void toJudge(JudgeRequest request, @MappingTarget Judge judge);

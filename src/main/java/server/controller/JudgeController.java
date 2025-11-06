@@ -1,7 +1,6 @@
 package server.controller;
 
 import jakarta.validation.Valid;
-import server.dto.other.JudgeAssignmentInfo;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.response.ApiResponse;
