@@ -134,7 +134,7 @@ public class DecisionTypeService {
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
         return decisionTypeRepository
                 .getByLegalCaseType(legalCaseType)
-                .stream().map(decisionTypeMapper::toDecisionTypeResponse)
+                .stream().map(decisionTypeMapper::toDecisionTypeResponseBasic)
                 .toList();
     }
 }

@@ -117,6 +117,4 @@ public class DecisionService {
                 .stream().map(decisionMapper::toDecisionResponse)
                 .toList();
     }
-
-
 }

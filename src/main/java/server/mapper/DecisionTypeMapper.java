@@ -16,4 +16,10 @@ import server.entity.DecisionType;
 public interface DecisionTypeMapper {
     DecisionTypeResponse toDecisionTypeResponse(DecisionType decisionType);
     void toDecisionType(DecisionTypeRequest request, @MappingTarget DecisionType decisionType);
+    default DecisionTypeResponse toDecisionTypeResponseBasic(DecisionType decisionType){
+        return DecisionTypeResponse.builder()
+                .decisionTypeId(decisionType.getDecisionTypeId())
+                .decisionTypeName(decisionType.getDecisionTypeName())
+                .build();
+    }
 }
