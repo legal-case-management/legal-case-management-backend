@@ -1,6 +1,7 @@
 package server.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cascade;
 import server.entity.enums.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -65,7 +66,7 @@ public class LegalCase {
     @JoinColumn(name = "mediator_id")
     Mediator mediator;
 
-    @OneToMany(mappedBy = "legalCase")
+    @OneToMany(mappedBy = "legalCase", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Decision> decisions;
 
     @ManyToOne(fetch = FetchType.EAGER)
