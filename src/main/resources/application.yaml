@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: legal-case-management-backend
+  profiles:
+    active: local
+  config:
+    import: optional:file:.env.${spring.profiles.active}[.properties]
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: ${HIBERNATE_DDL}
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: ${HIBERNATE_DIALECT}
+
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USER}
+    password: ${MAIL_PASS}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        debug: false
+  data:
+    redis:
+      url: ${REDIS_URL}
+      timeout: ${REDIS_TIMEOUT:2000}
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_MAX_ACTIVE:8}
+          max-idle: ${REDIS_POOL_MAX_IDLE:8}
+          min-idle: ${REDIS_POOL_MIN_IDLE:0}
+# JWT
+jwt:
+  signerKey: ${JWT_SIGNER_KEY}
+  valid-duration: ${JWT_VALID_DURATION}
+  reset-password-duration: ${JWT_RESET_DURATION}
+  refreshable-duration: ${JWT_REFRESH_DURATION}
+
+# Authentication
+auth:
+  default-password: ${AUTH_DEFAULT_PASSWORD}
+
+# Server (chỉ chạy HTTP, không SSL)
+server:
+  address: 0.0.0.0
+  port: ${SERVER_PORT}
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: TRACE
