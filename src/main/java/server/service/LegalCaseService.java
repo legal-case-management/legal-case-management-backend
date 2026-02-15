@@ -258,7 +258,6 @@ public class LegalCaseService {
                         .toList()
         );
 
-
         if (judges.isEmpty())
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
 
