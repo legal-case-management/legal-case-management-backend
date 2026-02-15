@@ -28,7 +28,7 @@ public class Litigant {
     @Column(nullable = false)
     String name;
     @Column(name = "year_of_birth")
-    int yearOfBirth;
+    Integer yearOfBirth;
     String address;
 }
 

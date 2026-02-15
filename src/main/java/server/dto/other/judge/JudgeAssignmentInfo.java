@@ -16,7 +16,7 @@ public class JudgeAssignmentInfo {
     /*
     * The maximum number of legal cases that can be assigned to the judge in a year.
     * */
-    long maxNumberOfLegalCase;
+    Long maxNumberOfLegalCase;
     /*
     * The sum of legal cases currently assigned to the judge in this year.
     * */

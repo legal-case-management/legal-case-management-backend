@@ -15,6 +15,6 @@ public class LitigantRequest {
     LitigantType litigantType;
     int ordinal;
     String name;
-    int yearOfBirth;
+    Integer yearOfBirth;
     String address;
 }

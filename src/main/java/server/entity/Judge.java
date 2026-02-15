@@ -19,7 +19,7 @@ import java.util.Set;
 @SuperBuilder
 public class Judge extends Officer{
     @Column(name = "max_number_of_legal_case")
-    long maxNumberOfLegalCase;
+    Long maxNumberOfLegalCase;
 
     @ManyToMany
     @JoinTable(

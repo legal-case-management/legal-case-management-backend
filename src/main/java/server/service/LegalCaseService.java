@@ -288,7 +288,7 @@ public class LegalCaseService {
                 JudgeAssignmentInfo judge = judges.getFirst();
 
                 LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
-                assignLegalCaseToJudge(legalCase, judge, legalRelationshipGroup);
+                assignLegalCaseToJudge(legalCase, judge);
 
                 // Cập nhật lại thống kê cho thẩm phán
                 judge.setNumberOfLegalCaseGroupLand(judge.getNumberOfLegalCaseGroupLand() + 1);
@@ -300,20 +300,20 @@ public class LegalCaseService {
                 // lấy thẩm phán ít án nhất
                 JudgeAssignmentInfo judge = judges.getFirst();
 
-                long maxCases = judge.getMaxNumberOfLegalCase();
-                if (maxCases != -1 && judge.getNumberOfLegalCase() >= maxCases)
+                Long maxCases = judge.getMaxNumberOfLegalCase();
+                if (maxCases != null && judge.getNumberOfLegalCase() >= maxCases)
                     break;
 
                 // lấy vụ án bất kỳ (hoặc theo thứ tự)
                 LegalCase legalCase = legalCases.removeFirst();
 
-                assignLegalCaseToJudge(legalCase, judge, legalRelationshipGroup);
+                assignLegalCaseToJudge(legalCase, judge);
                 judge.setNumberOfLegalCase(judge.getNumberOfLegalCase() + 1);
             }
         }
     }
 
-    private void assignLegalCaseToJudge(LegalCase legalCase, JudgeAssignmentInfo judge, LegalRelationshipGroup group) {
+    private void assignLegalCaseToJudge(LegalCase legalCase, JudgeAssignmentInfo judge) {
         legalCase.setAssignment(Assignment.RANDOM);
 
         LegalCaseType legalCaseType = legalCaseTypeRepository.getByLegalRelationships(legalCase.getLegalRelationship())

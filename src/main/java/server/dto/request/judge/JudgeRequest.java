@@ -14,6 +14,6 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 public class JudgeRequest extends OfficerRequest {
-    long maxNumberOfLegalCase;
+    Long maxNumberOfLegalCase;
     Set<String> restrictedGroupIds;
 }
