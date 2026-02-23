@@ -16,8 +16,7 @@ public enum LegalCaseStatus {
     WAITING_FOR_ASSIGNMENT("Chờ được phân công"),
     IN_PROCESS("Đang giải quyết"),
     SOLVED("Đã được giải quyết"),
-    UNDEFINED("Chưa xác định"),
-    ALL("Tất cả trạng thái")
+    UNDEFINED("Chưa xác định")
     ;
     String name;
 }

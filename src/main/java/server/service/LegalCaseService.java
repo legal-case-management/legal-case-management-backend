@@ -190,8 +190,6 @@ public class LegalCaseService {
             Judge existingJudge = judgeRepository.findById(request.getJudgeId())
                     .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
             legalCaseSaved.setJudge(existingJudge);
-        } else {
-            legalCaseSaved.setJudge(null);
         }
 
         if (request.getMediatorId() != null) {
