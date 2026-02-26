@@ -44,7 +44,7 @@ public class HandleDecisionTypeController {
     }
 
     @GetMapping("/by-type-of-decision/{typeOfDecisionId}")
-    public ApiResponse<List<HandleDecisionTypeResponse>> getByTypeOfDecision(@PathVariable String typeOfDecisionId){
+    public ApiResponse<List<HandleDecisionTypeResponse>> getByTypeOfDecision(@PathVariable String typeOfDecisionId) {
         return ApiResponse.<List<HandleDecisionTypeResponse>>builder()
                 .success(true)
                 .status(200)
@@ -52,4 +52,39 @@ public class HandleDecisionTypeController {
                 .data(handleDecisionTypeService.getByDecisionType(typeOfDecisionId))
                 .build();
     }
+
+    @PatchMapping("/block/{decisionTypeId}/{preLegalCaseStatus}")
+    public ApiResponse<Void> block(
+            @PathVariable String decisionTypeId,
+            @PathVariable LegalCaseStatus preLegalCaseStatus
+    ) {
+        HandleDecisionTypeId id = HandleDecisionTypeId.builder()
+                .decisionType(DecisionType.builder().decisionTypeId(decisionTypeId).build())
+                .preStatus(preLegalCaseStatus)
+                .build();
+        handleDecisionTypeService.blockHandleDecisionType(id);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .build();
+    }
+
+    @PatchMapping("/active/{decisionTypeId}/{preLegalCaseStatus}")
+    public ApiResponse<Void> active(
+            @PathVariable String decisionTypeId,
+            @PathVariable LegalCaseStatus preLegalCaseStatus
+    ) {
+        HandleDecisionTypeId id = HandleDecisionTypeId.builder()
+                .decisionType(DecisionType.builder().decisionTypeId(decisionTypeId).build())
+                .preStatus(preLegalCaseStatus)
+                .build();
+        handleDecisionTypeService.activeHandleDecisionType(id);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .build();
+    }
+
 }

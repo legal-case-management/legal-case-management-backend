@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.handleDecisionType.HandleDecisionTypeRequest;
 import server.dto.response.handleDecisionType.HandleDecisionTypeResponse;
+import server.entity.Account;
 import server.entity.DecisionType;
 import server.entity.HandleDecisionType;
 import server.entity.HandleDecisionType.HandleDecisionTypeId;
@@ -51,5 +52,23 @@ public class HandleDecisionTypeService {
                 .findAllByDecisionType(decisionType)
                 .stream().map(handleDecisionTypeMapper::toHandleDecisionTypeResponse)
                 .toList();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public void blockHandleDecisionType(HandleDecisionTypeId id) {
+        HandleDecisionType handleDecisionType = handleDecisionTypeRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_NOT_EXISTED));
+
+        handleDecisionType.setActive(false);
+        handleDecisionTypeRepository.save(handleDecisionType);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public void activeHandleDecisionType(HandleDecisionTypeId id) {
+        HandleDecisionType handleDecisionType = handleDecisionTypeRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_NOT_EXISTED));
+
+        handleDecisionType.setActive(true);
+        handleDecisionTypeRepository.save(handleDecisionType);
     }
 }

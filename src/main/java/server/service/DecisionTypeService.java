@@ -17,12 +17,15 @@ import server.dto.request.decisionType.DecisionTypeSearchRequest;
 import server.dto.response.PageResponse;
 import server.dto.response.decisionType.DecisionTypeResponse;
 import server.entity.DecisionType;
+import server.entity.HandleDecisionType;
 import server.entity.LegalCaseType;
+import server.entity.enums.LegalCaseStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.DecisionTypeMapper;
 import server.mapper.PageMapper;
 import server.repository.DecisionTypeRepository;
+import server.repository.HandleDecisionTypeRepository;
 import server.repository.LegalCaseTypeRepository;
 
 import java.util.List;
@@ -33,6 +36,7 @@ import java.util.List;
 public class DecisionTypeService {
     DecisionTypeRepository decisionTypeRepository;
     LegalCaseTypeRepository legalCaseTypeRepository;
+    HandleDecisionTypeRepository handleDecisionTypeRepository;
 
     DecisionTypeMapper decisionTypeMapper;
     PageMapper pageMapper;
@@ -78,7 +82,18 @@ public class DecisionTypeService {
         decisionType.setDecisionTypeId(decisionTypeId);
         decisionType.setLegalCaseType(legalCaseType);
 
-        decisionTypeRepository.save(decisionType);
+        DecisionType decisionTypeSaved = decisionTypeRepository.save(decisionType);
+
+        for (LegalCaseStatus status : LegalCaseStatus.values()) {
+            HandleDecisionType handleDecisionType = HandleDecisionType.builder()
+                    .decisionType(decisionTypeSaved)
+                    .preStatus(status)
+                    .postStatus(status)
+                    .isActive(false)
+                    .extensionPeriod(0)
+                    .build();
+            handleDecisionTypeRepository.save(handleDecisionType);
+        }
     }
 
 

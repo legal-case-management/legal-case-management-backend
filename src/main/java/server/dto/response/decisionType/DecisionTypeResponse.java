@@ -1,5 +1,6 @@
 package server.dto.response.decisionType;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.legalCaseType.LegalCaseTypeResponse;
@@ -17,5 +18,6 @@ public class DecisionTypeResponse {
     String decisionTypeName;
     LegalCaseTypeResponse legalCaseType;
     CourtIssued courtIssued;
+    @JsonProperty("isTheEndDecision")
     boolean isTheEndDecision;
 }

@@ -12,8 +12,6 @@ import server.entity.enums.LegalCaseStatus;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HandleDecisionTypeRequest {
-    String decisionTypeId;
-    LegalCaseStatus preStatus;
     LegalCaseStatus postStatus;
     @JsonProperty("isActive")
     boolean isActive;
