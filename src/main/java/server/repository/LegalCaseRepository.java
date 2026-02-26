@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import server.entity.Batch;
 import server.entity.LegalCase;
-import server.entity.LegalRelationship;
 import server.entity.LegalRelationshipGroup;
 import server.entity.enums.LegalCaseStatus;
 
@@ -71,18 +70,17 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     );
 
     @Query("""
-        SELECT lc FROM LegalCase lc
-        WHERE lc.legalCaseId IN :legalCaseIds
-          AND lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT'
-          AND lc.judge IS NULL
-          AND (
-              (:legalRelationshipGroup IS NULL AND lc.mediator IS NOT NULL)
-              OR lc.legalRelationship.legalRelationshipGroup = :legalRelationshipGroup
-          )
-        """)
+    SELECT lc FROM LegalCase lc
+    WHERE lc.legalCaseId IN :legalCaseIds
+      AND lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT'
+      AND lc.judge IS NULL
+      AND ((:isMediator = true AND lc.mediator IS NOT NULL)
+          OR (:isMediator = false AND lc.legalRelationship.legalRelationshipGroup = :legalRelationshipGroup))
+    """)
     List<LegalCase> getAssignAssignment(
-            Iterable<String> legalCaseIds,
-            LegalRelationshipGroup legalRelationshipGroup
+            @Param("legalCaseIds") Iterable<String> legalCaseIds,
+            @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup,
+            @Param("isMediator") boolean isMediator
     );
 
     @Query("""

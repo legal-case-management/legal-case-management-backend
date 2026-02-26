@@ -17,30 +17,39 @@ import java.util.Optional;
 
 public interface JudgeRepository extends JpaRepository<Judge, String> {
     @Query("""
-            SELECT
-                j.officerId,
-                j.lastName,
-                j.firstName,
-                j.fullName,
-                j.officerStatus,
-                j.account.email,
-                j.maxNumberOfLegalCase,
-                SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
-                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
-            FROM Judge j
-            LEFT JOIN j.legalCases lc
-                ON lc.batch.storageDate >= :milestoneDateTime
-            LEFT JOIN lc.batch b
-                ON b.storageDate >= :milestoneDateTime
-            WHERE (:officerId IS NULL OR j.officerId LIKE %:officerId%)
-                  AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
-                  AND (:officerStatus IS NULL OR j.officerStatus = :officerStatus)
-            GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
-                     j.maxNumberOfLegalCase, j.officerStatus, j.account.email
-            """)
+        SELECT
+            j.officerId,
+            j.lastName,
+            j.firstName,
+            j.fullName,
+            j.officerStatus,
+            j.account.email,
+            j.maxWithMediator,
+            j.maxWithoutMediator,
+            SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END),
+            SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END),
+            COUNT(lc),
+            SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
+            SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+            SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
+            SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
+
+        FROM Judge j
+        LEFT JOIN j.legalCases lc
+            ON lc.batch.storageDate >= :milestoneDateTime
+        WHERE (:officerId IS NULL OR j.officerId LIKE %:officerId%)
+          AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
+          AND (:officerStatus IS NULL OR j.officerStatus = :officerStatus)
+        GROUP BY
+            j.officerId,
+            j.lastName,
+            j.firstName,
+            j.fullName,
+            j.officerStatus,
+            j.account.email,
+            j.maxWithMediator,
+            j.maxWithoutMediator
+        """)
     Page<Object[]> search(
             @Param("officerId") String officerId,
             @Param("fullName") String fullName,
@@ -65,8 +74,11 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.fullName,
                 j.officerStatus,
                 j.account.email,
-                j.maxNumberOfLegalCase,
-                SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
+                j.maxWithMediator,
+                j.maxWithoutMediator,
+                SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END),
+                COUNT(lc),
                 SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
                 SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
                 SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
@@ -78,9 +90,9 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             WHERE j.officerStatus = 'WORKING'
                   AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
-                     j.maxNumberOfLegalCase, j.officerStatus, j.account.email
-            HAVING j.maxNumberOfLegalCase < 0
-                   OR SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END) < j.maxNumberOfLegalCase
+                     j.maxWithMediator, j.maxWithoutMediator, j.officerStatus, j.account.email
+            HAVING (:isMediator = false AND (j.maxWithoutMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END) < j.maxWithoutMediator))
+                   OR (:isMediator = true AND (j.maxWithMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END) < j.maxWithMediator))
             ORDER BY
                 SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END) ASC,
                 SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END) DESC,
@@ -90,7 +102,8 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             """)
     List<Object[]> getAssignAssignmentRaw(
             @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
-            @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup
+            @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup,
+            @Param("isMediator") boolean isMediator
     );
 
     @Query("""

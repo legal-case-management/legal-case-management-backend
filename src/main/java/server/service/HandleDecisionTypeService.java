@@ -12,7 +12,7 @@ import server.dto.request.handleDecisionType.HandleDecisionTypeRequest;
 import server.dto.response.handleDecisionType.HandleDecisionTypeResponse;
 import server.entity.DecisionType;
 import server.entity.HandleDecisionType;
-import server.entity.HandleDecisionTypeId;
+import server.entity.HandleDecisionType.HandleDecisionTypeId;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.HandleDecisionTypeMapper;
@@ -34,32 +34,6 @@ public class HandleDecisionTypeService {
     @Async
     @Synchronized
     @Transactional
-    public void create(HandleDecisionTypeRequest request) {
-        HandleDecisionType handleDecisionType = HandleDecisionType.builder().build();
-        handleDecisionTypeMapper.toHandleDecisionType(request, handleDecisionType);
-
-        DecisionType decisionType = decisionTypeRepository.findById(request.getDecisionTypeId())
-                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
-
-        HandleDecisionTypeId id = HandleDecisionTypeId.builder()
-                .decisionType(decisionType)
-                .preStatus(request.getPreStatus())
-                .build();
-
-        if (handleDecisionTypeRepository.existsById(id)) {
-            throw new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_EXISTED);
-        }
-
-        handleDecisionType.setDecisionType(decisionType);
-        handleDecisionType.setPreStatus(request.getPreStatus());
-
-        handleDecisionTypeRepository.save(handleDecisionType);
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    @Async
-    @Synchronized
-    @Transactional
     public void update(HandleDecisionTypeId id, HandleDecisionTypeRequest request) {
         HandleDecisionType handleDecisionType = handleDecisionTypeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_NOT_EXISTED));
@@ -67,15 +41,6 @@ public class HandleDecisionTypeService {
         handleDecisionTypeRepository.save(handleDecisionType);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    @Async
-    @Synchronized
-    @Transactional
-    public void delete(HandleDecisionTypeId id) {
-        HandleDecisionType handleDecisionType = handleDecisionTypeRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.HANDLE_TYPE_OF_DECISION_NOT_EXISTED));
-        handleDecisionTypeRepository.delete(handleDecisionType);
-    }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     public List<HandleDecisionTypeResponse> getByDecisionType(String decisionTypeId) {

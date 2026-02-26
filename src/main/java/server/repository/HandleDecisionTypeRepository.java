@@ -3,7 +3,8 @@ package server.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import server.entity.DecisionType;
 import server.entity.HandleDecisionType;
-import server.entity.HandleDecisionTypeId;
+import server.entity.HandleDecisionType.HandleDecisionTypeId;
+
 
 import java.util.List;
 

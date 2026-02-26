@@ -14,6 +14,7 @@ import server.entity.Decision;
 import server.entity.HandleDecisionType;
 import server.entity.LegalCase;
 import server.entity.DecisionType;
+import server.entity.enums.LegalCaseStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.DecisionMapper;
@@ -58,10 +59,8 @@ public class DecisionService {
                     legalCase.setLegalCaseStatus(handle.getPostStatus());
 
                     if (handle.getExtensionPeriod() > 0) {
-                        legalCase.setExpiredDate(LocalDate.now().plusMonths(
-                                handle.getExtensionPeriod()
-                        ));
-                    }else if(handle.isTemporarilyPostponed()) {
+                        legalCase.setExpiredDate(decision.getReleaseDate().plusMonths(handle.getExtensionPeriod()));
+                    }else if(handle.getPreStatus().equals(LegalCaseStatus.TEMPORARY_SUSPENSION)) {
                         legalCase.setExpiredDate(null);
                     }
 

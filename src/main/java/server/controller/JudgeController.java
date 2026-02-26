@@ -1,8 +1,10 @@
 package server.controller;
 
 import jakarta.validation.Valid;
+import org.hibernate.annotations.Parameter;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
+import server.dto.request.legalCase.AssignmentListRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
 import server.dto.response.judge.JudgeResponse;
@@ -48,13 +50,13 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("/list-assignment/{legalRelationshipGroupId}")
-    public ApiResponse<List<JudgeResponse>> listAssignment(@PathVariable String legalRelationshipGroupId) {
+    @GetMapping("/list-assignment")
+    public ApiResponse<List<JudgeResponse>> listAssignment(@RequestBody @Valid AssignmentListRequest request) {
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(judgeService.listAssignment(legalRelationshipGroupId))
+                .data(judgeService.listAssignment(request.getLegalRelationshipGroupId(), request.isMediator()))
                 .build();
     }
 

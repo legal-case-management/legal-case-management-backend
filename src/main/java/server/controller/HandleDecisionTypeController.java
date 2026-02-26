@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import server.dto.request.handleDecisionType.HandleDecisionTypeRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.handleDecisionType.HandleDecisionTypeResponse;
-import server.entity.HandleDecisionTypeId;
 import server.entity.DecisionType;
+import server.entity.HandleDecisionType.HandleDecisionTypeId;
 import server.entity.enums.LegalCaseStatus;
 import server.service.HandleDecisionTypeService;
 
@@ -23,16 +23,6 @@ import java.util.List;
 @Slf4j
 public class HandleDecisionTypeController {
     HandleDecisionTypeService handleDecisionTypeService;
-
-    @PostMapping
-    public ApiResponse<Void> create(@RequestBody @Valid HandleDecisionTypeRequest request) {
-        handleDecisionTypeService.create(request);
-        return ApiResponse.<Void>builder()
-                .success(true)
-                .status(200)
-                .message("Thêm loại xử lý loại quyết định, thông báo thành công")
-                .build();
-    }
 
     @PutMapping("/{decisionTypeId}/{preLegalCaseStatus}")
     public ApiResponse<Void> update(
@@ -50,23 +40,6 @@ public class HandleDecisionTypeController {
                 .success(true)
                 .status(200)
                 .message("Cập nhật xử lý loại quyết định, thông báo thành công")
-                .build();
-    }
-
-    @DeleteMapping("/{decisionTypeId}/{preLegalCaseStatus}")
-    public ApiResponse<Void> delete(
-            @PathVariable String decisionTypeId,
-            @PathVariable LegalCaseStatus preLegalCaseStatus
-    ) {
-        HandleDecisionTypeId id = HandleDecisionTypeId.builder()
-                .decisionType(DecisionType.builder().decisionTypeId(decisionTypeId).build())
-                .preStatus(preLegalCaseStatus)
-                .build();
-        handleDecisionTypeService.delete(id);
-        return ApiResponse.<Void>builder()
-                .success(true)
-                .status(200)
-                .message("Xóa loại xử lý loại quyết định, thông báo thành công")
                 .build();
     }
 

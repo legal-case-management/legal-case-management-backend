@@ -229,20 +229,20 @@ public class LegalCaseService {
         if (request == null)
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
 
-        LegalRelationshipGroup legalRelationshipGroup = null;
-        if (request.getLegalRelationshipGroupId() != null) {
-            legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
-                    .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
+        LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
+                .orElse(null);
 
-            if (legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
-                throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
-        }
+        if (!request.isMediator() && legalRelationshipGroup == null) {
+            throw new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED);
+        } else if (!request.isMediator() && legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
+            throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
 
         // Lấy danh sách thẩm phán
         List<JudgeAssignmentInfo> judges = new ArrayList<>(
                 judgeRepository.getAssignAssignmentRaw(
                                 JudicialDate.getMilestoneDateTime(),
-                                legalRelationshipGroup
+                                legalRelationshipGroup,
+                                request.isMediator()
                         ).stream()
                         .map(judgeMapper::toJudgeAssignmentInfo)
                         .peek(judge -> {
@@ -251,7 +251,7 @@ public class LegalCaseService {
                                     JudicialDate.getMilestoneDateTime(),
                                     JudicialDate.getMilestoneDate()
                             );
-                            judge.setNumberOfLegalCaseGroupLand(numberOfLandCases);
+                            judge.setNumberGroupLand(numberOfLandCases);
                         })
                         .toList()
         );
@@ -262,7 +262,8 @@ public class LegalCaseService {
         // Lấy danh sách vụ án cần phân công
         List<LegalCase> legalCases = legalCaseRepository.getAssignAssignment(
                 request.getLegalCaseIds(),
-                legalRelationshipGroup
+                legalRelationshipGroup,
+                request.isMediator()
         );
 
         if (legalCases.isEmpty())
@@ -275,11 +276,25 @@ public class LegalCaseService {
 
         // --- PHÂN CÔNG ÁN ---
         while (!legalCases.isEmpty()) {
+            if(request.isMediator()){
+                // luôn sắp xếp lại theo tổng án hiện tại (đảm bảo người ít án nhất lên trước)
+                judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getMaxWithMediator));
 
-            // Nếu là nhóm đất (N04): phân bổ công bằng theo numberOfLegalCaseGroupLand
-            if (isGroupLand) {
+                // lấy thẩm phán ít án nhất
+                JudgeAssignmentInfo judge = judges.getFirst();
+
+                Long maxCases = judge.getMaxWithMediator();
+                if (maxCases != null && judge.getNumberWithMediator() >= maxCases)
+                    break;
+
+                // lấy vụ án bất kỳ (hoặc theo thứ tự)
+                LegalCase legalCase = legalCases.removeFirst();
+
+                assignLegalCaseToJudge(legalCase, judge);
+                judge.setNumberWithMediator(judge.getNumberWithMediator() + 1);
+            }else if (isGroupLand) {
                 // Sắp xếp danh sách thẩm phán theo số án đất hiện tại (tăng dần)
-                judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberOfLegalCaseGroupLand));
+                judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberGroupLand));
 
                 // Lấy thẩm phán có số án đất ít nhất
                 JudgeAssignmentInfo judge = judges.getFirst();
@@ -288,24 +303,24 @@ public class LegalCaseService {
                 assignLegalCaseToJudge(legalCase, judge);
 
                 // Cập nhật lại thống kê cho thẩm phán
-                judge.setNumberOfLegalCaseGroupLand(judge.getNumberOfLegalCaseGroupLand() + 1);
+                judge.setNumberGroupLand(judge.getNumberGroupLand() + 1);
 
             } else {
                 // luôn sắp xếp lại theo tổng án hiện tại (đảm bảo người ít án nhất lên trước)
-                judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberOfLegalCase));
+                judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberWithoutMediator));
 
                 // lấy thẩm phán ít án nhất
                 JudgeAssignmentInfo judge = judges.getFirst();
 
-                Long maxCases = judge.getMaxNumberOfLegalCase();
-                if (maxCases != null && judge.getNumberOfLegalCase() >= maxCases)
+                Long maxCases = judge.getMaxWithoutMediator();
+                if (maxCases != null && judge.getNumberWithoutMediator() >= maxCases)
                     break;
 
                 // lấy vụ án bất kỳ (hoặc theo thứ tự)
                 LegalCase legalCase = legalCases.removeFirst();
 
                 assignLegalCaseToJudge(legalCase, judge);
-                judge.setNumberOfLegalCase(judge.getNumberOfLegalCase() + 1);
+                judge.setNumberWithoutMediator(judge.getNumberWithoutMediator() + 1);
             }
         }
     }

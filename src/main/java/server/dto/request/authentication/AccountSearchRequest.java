@@ -1,10 +1,10 @@
 package server.dto.request.authentication;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.entity.enums.Role;
-import server.entity.enums.AccountStatus;
 
 @Getter
 @Setter
@@ -17,6 +17,7 @@ public class AccountSearchRequest {
     String username;
     String email;
     Role role;
-    AccountStatus accountStatus;
     String fullName;
+    @JsonProperty("isActive")
+    boolean isActive;
 }

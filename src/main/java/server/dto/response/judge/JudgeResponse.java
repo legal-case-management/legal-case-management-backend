@@ -16,11 +16,14 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class JudgeResponse extends OfficerResponse {
-    Long maxNumberOfLegalCase;
-    long numberOfLegalCase;
-    long numberOfInProcess;
-    long numberOfTemporarySuspension;
-    long numberOfOverdue;
-    long numberOfCanceledAndEdited;
+    Long maxWithMediator;
+    Long maxWithoutMediator;
+    long numberWithMediator;
+    long numberWithoutMediator;
+    long numberLegalCase;
+    long numberInProcess;
+    long numberTemporarySuspension;
+    long numberOverdue;
+    long numberCanceledAndEdited;
     List<LegalRelationshipGroupResponse> restrictedGroups;
 }

@@ -1,5 +1,6 @@
 package server.dto.response.handleDecisionType;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.decisionType.DecisionTypeResponse;
@@ -15,6 +16,7 @@ public class HandleDecisionTypeResponse {
     DecisionTypeResponse decisionType;
     LegalCaseStatus preStatus;
     LegalCaseStatus postStatus;
-    boolean isTemporarilyPostponed;
+    @JsonProperty("isActive")
+    boolean isActive;
     int extensionPeriod;
 }

@@ -35,12 +35,15 @@ public interface JudgeMapper {
             "fullName",
             "officerStatus",
             "email",
-            "maxNumberOfLegalCase",
-            "numberOfLegalCase",
-            "numberOfInProcess",
-            "numberOfTemporarySuspension",
-            "numberOfOverdue",
-            "numberOfCanceledAndEdited"
+            "maxWithMediator",
+            "maxWithoutMediator",
+            "numberWithMediator",
+            "numberWithoutMediator",
+            "numberLegalCase",
+            "numberInProcess",
+            "numberTemporarySuspension",
+            "numberOverdue",
+            "numberCanceledAndEdited"
     };
 
     Judge toJudge(JudgeRequest request);

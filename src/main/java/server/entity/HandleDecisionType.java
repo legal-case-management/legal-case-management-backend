@@ -15,7 +15,7 @@ import server.entity.enums.LegalCaseStatus;
 @ToString
 @Builder
 @EqualsAndHashCode
-@IdClass(HandleDecisionTypeId.class)
+@IdClass(HandleDecisionType.HandleDecisionTypeId.class)
 public class HandleDecisionType {
     @Id
     @ManyToOne
@@ -30,9 +30,21 @@ public class HandleDecisionType {
     @Enumerated(EnumType.STRING)
     @Column(name = "post_status")
     LegalCaseStatus postStatus;
-    @Column(name = "is_temporarily_postponed", nullable = false)
-    boolean isTemporarilyPostponed;
     @Column(name = "extension_period")
     int extensionPeriod;
+    @Column(name = "is_active", nullable = false)
+    boolean isActive;
+
+    @EqualsAndHashCode
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @Getter
+    @Setter
+    public static class HandleDecisionTypeId{
+        DecisionType decisionType;
+        LegalCaseStatus preStatus;
+    }
 }
 

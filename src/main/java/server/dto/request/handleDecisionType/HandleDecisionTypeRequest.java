@@ -15,7 +15,7 @@ public class HandleDecisionTypeRequest {
     String decisionTypeId;
     LegalCaseStatus preStatus;
     LegalCaseStatus postStatus;
-    @JsonProperty("isTemporarilyPostponed")
-    boolean isTemporarilyPostponed;
+    @JsonProperty("isActive")
+    boolean isActive;
     int extensionPeriod;
 }
