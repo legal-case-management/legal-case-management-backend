@@ -16,7 +16,7 @@ public class HandleDecisionTypeResponse {
     DecisionTypeResponse decisionType;
     LegalCaseStatus preStatus;
     LegalCaseStatus postStatus;
-    @JsonProperty("isActive")
-    boolean isActive;
+    @JsonProperty("active")
+    boolean active;
     int extensionPeriod;
 }

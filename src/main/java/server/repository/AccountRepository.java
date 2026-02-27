@@ -23,14 +23,14 @@ public interface AccountRepository extends JpaRepository<Account, String> {
             WHERE (:username IS NULL OR a.username = :username)
               AND (:email IS NULL OR a.email = :email)
               AND (:role IS NULL OR a.role = :role)
-              AND (:accountStatus IS NULL OR a.isActive = :isActive)
+              AND (:accountStatus IS NULL OR a.active = :active)
               AND (:fullName IS NULL OR o.fullName LIKE %:fullName%)
             """)
     Page<Account> search(
             String username,
             String email,
             Role role,
-            boolean isActive,
+            boolean active,
             String fullName,
             Pageable pageable
     );

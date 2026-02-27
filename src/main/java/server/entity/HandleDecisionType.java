@@ -32,8 +32,8 @@ public class HandleDecisionType {
     LegalCaseStatus postStatus;
     @Column(name = "extension_period")
     int extensionPeriod;
-    @Column(name = "is_active", nullable = false)
-    boolean isActive;
+    @Column(name = "active", nullable = false)
+    boolean active;
 
     @EqualsAndHashCode
     @NoArgsConstructor

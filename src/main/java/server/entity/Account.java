@@ -27,8 +27,8 @@ public class Account {
     @Enumerated(EnumType.STRING)
     Role role;
 
-    @Column(name = "is_active", nullable = false)
-    boolean isActive;
+    @Column(name = "active", nullable = false)
+    boolean active;
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "officer_id")

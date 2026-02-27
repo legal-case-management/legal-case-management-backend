@@ -18,6 +18,6 @@ public class DecisionTypeResponse {
     String decisionTypeName;
     LegalCaseTypeResponse legalCaseType;
     CourtIssued courtIssued;
-    @JsonProperty("isTheEndDecision")
-    boolean isTheEndDecision;
+    @JsonProperty("theEndDecision")
+    boolean theEndDecision;
 }

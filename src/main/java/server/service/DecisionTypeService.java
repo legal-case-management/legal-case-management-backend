@@ -89,7 +89,7 @@ public class DecisionTypeService {
                     .decisionType(decisionTypeSaved)
                     .preStatus(status)
                     .postStatus(status)
-                    .isActive(false)
+                    .active(false)
                     .extensionPeriod(0)
                     .build();
             handleDecisionTypeRepository.save(handleDecisionType);

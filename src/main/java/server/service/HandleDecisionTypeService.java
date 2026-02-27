@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -48,9 +49,15 @@ public class HandleDecisionTypeService {
         DecisionType decisionType = decisionTypeRepository.findById(decisionTypeId)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
 
+        System.out.println("hello2");
+        List<HandleDecisionType> a = handleDecisionTypeRepository
+                .findAllByDecisionType(decisionType, Sort.by(Sort.Direction.ASC, "preStatus"));
+        a.forEach(e -> System.out.println(e.isActive()));
+
         return handleDecisionTypeRepository
-                .findAllByDecisionType(decisionType)
-                .stream().map(handleDecisionTypeMapper::toHandleDecisionTypeResponse)
+                .findAllByDecisionType(decisionType,  Sort.by(Sort.Direction.ASC, "preStatus"))
+                .stream()
+                .map(handleDecisionTypeMapper::toHandleDecisionTypeResponse)
                 .toList();
     }
 

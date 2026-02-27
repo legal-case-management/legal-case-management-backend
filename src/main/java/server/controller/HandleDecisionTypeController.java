@@ -45,6 +45,9 @@ public class HandleDecisionTypeController {
 
     @GetMapping("/by-type-of-decision/{typeOfDecisionId}")
     public ApiResponse<List<HandleDecisionTypeResponse>> getByTypeOfDecision(@PathVariable String typeOfDecisionId) {
+        List<HandleDecisionTypeResponse> handleDecisionTypeResponses = handleDecisionTypeService.getByDecisionType(typeOfDecisionId);
+        System.out.println("Hello");
+        handleDecisionTypeResponses.forEach(e -> System.out.println(e.isActive()));
         return ApiResponse.<List<HandleDecisionTypeResponse>>builder()
                 .success(true)
                 .status(200)

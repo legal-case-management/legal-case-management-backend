@@ -13,7 +13,7 @@ import server.entity.enums.LegalCaseStatus;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HandleDecisionTypeRequest {
     LegalCaseStatus postStatus;
-    @JsonProperty("isActive")
-    boolean isActive;
+    @JsonProperty("active")
+    boolean active;
     int extensionPeriod;
 }

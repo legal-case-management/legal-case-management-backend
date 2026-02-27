@@ -16,6 +16,6 @@ public class AccountRequest {
     String password;
     String email;
     Role role;
-    @JsonProperty("isActive")
-    boolean isActive;
+    @JsonProperty("active")
+    boolean active;
 }

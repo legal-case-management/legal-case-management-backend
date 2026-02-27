@@ -17,6 +17,6 @@ public class DecisionTypeSearchRequest {
     String decisionTypeName;
     String legalCaseTypeId;
     CourtIssued courtIssued;
-    @JsonProperty("isTheEndDecision")
-    boolean isTheEndDecision;
+    @JsonProperty("theEndDecision")
+    boolean theEndDecision;
 }
