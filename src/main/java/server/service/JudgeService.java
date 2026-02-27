@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import server.repository.LegalCaseRepository;
 import server.repository.LegalRelationshipGroupRepository;
 import server.utils.JudicialDate;
 
@@ -38,6 +39,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JudgeService {
     JudgeRepository judgeRepository;
+    LegalCaseRepository legalCaseRepository;
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
 
     JudgeMapper judgeMapper;
@@ -163,6 +165,10 @@ public class JudgeService {
         Judge judgeSaved = judgeRepository
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
+        long legalCases = legalCaseRepository.countLegalCasesByJudge(judgeSaved);
+        if (legalCases > 0) {
+            throw new AppException(ErrorCode.JUDGE_ASSIGNED_TO_LEGAL_CASE);
+        }
         judgeRepository.delete(judgeSaved);
     }
 }

@@ -60,7 +60,7 @@ public class JudgeController {
                 .build();
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid JudgeRequest request) {
         judgeService.create(request);
         return ApiResponse.<Void>builder()

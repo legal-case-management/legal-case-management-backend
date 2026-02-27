@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import server.entity.Batch;
+import server.entity.Judge;
 import server.entity.LegalCase;
 import server.entity.LegalRelationshipGroup;
 import server.entity.enums.LegalCaseStatus;
@@ -148,4 +149,6 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             @Param("now") LocalDate now,
             @Param("futureDate") LocalDate futureDate
     );
+
+    long countLegalCasesByJudge(Judge judge);
 }

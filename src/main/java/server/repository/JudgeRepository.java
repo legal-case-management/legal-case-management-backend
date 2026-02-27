@@ -122,5 +122,4 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
             @Param("milestoneDate") LocalDate milestoneDate
     );
-
 }
