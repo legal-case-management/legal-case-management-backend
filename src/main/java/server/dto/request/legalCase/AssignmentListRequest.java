@@ -13,7 +13,7 @@ import server.entity.LegalRelationshipGroup;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 public class AssignmentListRequest {
-    @JsonProperty("isMediator")
-    boolean isMediator;
+    @JsonProperty("mediator")
+    boolean mediator;
     String legalRelationshipGroupId;
 }

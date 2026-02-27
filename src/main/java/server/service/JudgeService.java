@@ -63,12 +63,16 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<JudgeResponse> listAssignment(String legalRelationshipGroupId, boolean isMediator) {
-        LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository
-                .findById(legalRelationshipGroupId)
-                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
+    public List<JudgeResponse> listAssignment(String legalRelationshipGroupId, boolean mediator) {
+        LegalRelationshipGroup legalRelationshipGroup = null;
 
-        return judgeRepository.getAssignAssignmentRaw(JudicialDate.getMilestoneDateTime(), legalRelationshipGroup, isMediator)
+        if (legalRelationshipGroupId != null) {
+            legalRelationshipGroup = legalRelationshipGroupRepository
+                    .findById(legalRelationshipGroupId)
+                    .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
+        }
+
+        return judgeRepository.getAssignAssignmentRaw(JudicialDate.getMilestoneDateTime(), legalRelationshipGroup, mediator)
                 .stream()
                 .map(judgeMapper::toJudgeResponse)
                 .peek(judgeResponse -> judgeResponse.setRestrictedGroups(

@@ -50,7 +50,7 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("/list-assignment")
+    @PostMapping("/list-assignment")
     public ApiResponse<List<JudgeResponse>> listAssignment(@RequestBody @Valid AssignmentListRequest request) {
         return ApiResponse.<List<JudgeResponse>>builder()
                 .success(true)
