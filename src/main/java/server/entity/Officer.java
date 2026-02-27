@@ -29,6 +29,6 @@ public abstract class Officer {
     @Column(name = "officer_status", nullable = false)
     OfficerStatus officerStatus;
 
-    @OneToOne(mappedBy = "officer")
+    @OneToOne(mappedBy = "officer", cascade = CascadeType.ALL, orphanRemoval = true)
     Account account;
 }

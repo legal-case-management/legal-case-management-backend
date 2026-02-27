@@ -205,14 +205,18 @@ public class AuthenticationService {
     @Synchronized
     @Transactional
     public void updateAccount(String id, AccountRequest request) {
-        if (accountRepository.existsByUsername(request.getUsername()))
-            throw new AppException(ErrorCode.USERNAME_EXISTED);
-
-        if (accountRepository.existsByEmail(request.getEmail()))
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
-
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        if (!account.getUsername().equals(request.getUsername())
+                && accountRepository.existsByUsername(request.getUsername()))
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
+
+        if (!account.getEmail().equals(request.getEmail())
+                && accountRepository.existsByEmail(request.getEmail()))
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+
+
 
         accountMapper.toAccount(request, account);
         accountRepository.save(account);
@@ -397,7 +401,6 @@ public class AuthenticationService {
                 request.getUsername(),
                 request.getEmail(),
                 request.getRole(),
-                request.isActive(),
                 request.getFullName(),
                 pageable
         ).map(accountMapper::toAccountResponse);

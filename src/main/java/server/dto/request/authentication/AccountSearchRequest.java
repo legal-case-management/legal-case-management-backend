@@ -18,6 +18,4 @@ public class AccountSearchRequest {
     String email;
     Role role;
     String fullName;
-    @JsonProperty("isActive")
-    boolean isActive;
 }
