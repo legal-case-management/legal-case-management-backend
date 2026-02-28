@@ -75,7 +75,7 @@ public class LegalRelationshipGroupService {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<LegalRelationshipGroupResponse> getAll() {
         return legalRelationshipGroupRepository
-                .findAll()
+                .findAll(Sort.by("legalRelationshipGroupId"))
                 .stream().map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
                 .toList();
     }

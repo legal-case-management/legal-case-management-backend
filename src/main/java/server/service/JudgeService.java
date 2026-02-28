@@ -54,7 +54,6 @@ public class JudgeService {
     @NonFinal
     String DEFAULT_PASSWORD;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'JUDGE')")
     public List<JudgeResponse> getAll() {
         return judgeRepository.findAll(Sort.by("officerId"))
                 .stream()

@@ -363,6 +363,7 @@ public class LegalCaseService {
         Judge judge = judgeRepository.findById(request.getJudgeId())
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
+
         legalCase.setAssignment(Assignment.ASSIGN);
         legalCase.setAssignmentDate(LocalDateTime.now());
 

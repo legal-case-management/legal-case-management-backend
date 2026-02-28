@@ -39,4 +39,5 @@ public class LegalCaseResponse {
     BatchResponse batch;
     JudgeResponse judge;
     MediatorResponse mediator;
+    List<String> decisionInfos;
 }

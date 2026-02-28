@@ -105,7 +105,7 @@ public class DecisionService {
         decisionRepository.delete(decision);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+
     public List<DecisionResponse> getByLegalCase(String legalCaseId) {
         LegalCase legalCase = legalCaseRepository.findById(legalCaseId)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
