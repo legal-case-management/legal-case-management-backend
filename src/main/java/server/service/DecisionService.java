@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -110,7 +111,7 @@ public class DecisionService {
         LegalCase legalCase = legalCaseRepository.findById(legalCaseId)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
         return decisionRepository
-                .findAllByLegalCase(legalCase)
+                .findAllByLegalCase(legalCase, Sort.by("releaseDate").descending())
                 .stream().map(decisionMapper::toDecisionResponse)
                 .toList();
     }

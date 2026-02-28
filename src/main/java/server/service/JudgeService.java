@@ -30,7 +30,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import server.repository.LegalCaseRepository;
 import server.repository.LegalRelationshipGroupRepository;
-import server.utils.JudicialDate;
+import server.utils.DateUtils;
 
 import java.util.List;
 
@@ -71,7 +71,7 @@ public class JudgeService {
                     .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
         }
 
-        return judgeRepository.getAssignAssignmentRaw(JudicialDate.getMilestoneDateTime(), legalRelationshipGroup, mediator)
+        return judgeRepository.getAssignAssignmentRaw(DateUtils.getMilestoneDateTime(), legalRelationshipGroup, mediator)
                 .stream()
                 .map(judgeMapper::toJudgeResponse)
                 .peek(judgeResponse -> judgeResponse.setRestrictedGroups(
@@ -90,7 +90,7 @@ public class JudgeService {
                         request.getOfficerId(),
                         request.getFullName(),
                         request.getOfficerStatus(),
-                        JudicialDate.getMilestoneDateTime(),
+                        DateUtils.getMilestoneDateTime(),
                         pageable
                 ).map(judgeMapper::toJudgeResponse)
                 .map(judgeResponse -> {

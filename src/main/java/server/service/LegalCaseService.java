@@ -22,11 +22,12 @@ import server.entity.enums.Assignment;
 import server.entity.enums.LegalCaseStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
+import server.mapper.DecisionMapper;
 import server.mapper.JudgeMapper;
 import server.mapper.LegalCaseMapper;
 import server.mapper.PageMapper;
 import server.repository.*;
-import server.utils.JudicialDate;
+import server.utils.DateUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ public class LegalCaseService {
     LegalRelationshipRepository legalRelationshipRepository;
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
     LegalCaseTypeRepository legalCaseTypeRepository;
+    DecisionRepository decisionRepository;
 
     JudgeRepository judgeRepository;
     BatchRepository batchRepository;
@@ -48,8 +50,7 @@ public class LegalCaseService {
     LegalCaseMapper legalCaseMapper;
     PageMapper pageMapper;
     JudgeMapper judgeMapper;
-
-    JudgeService judgeService;
+    DecisionMapper decisionMapper;
 
 
     public List<LegalCaseResponse> getAll() {
@@ -77,7 +78,17 @@ public class LegalCaseService {
                 request.getStartStorageDate(),
                 request.getEndStorageDate(),
                 pageable
-        ).map(legalCaseMapper::toLegalCaseResponse);
+        ).map(legalCase -> {
+            LegalCaseResponse legalCaseResponse = legalCaseMapper.toLegalCaseResponse(legalCase);
+            List<Decision> decisions = decisionRepository.findAllByLegalCase(legalCase, Sort.by("releaseDate").descending());
+            legalCaseResponse.setDecisionInfos(
+                    decisions
+                            .stream()
+                            .map(decisionMapper::toDecisionInfo)
+                            .toList()
+            );
+            return legalCaseResponse;
+        });
 
         return pageMapper.map(resultPage);
     }
@@ -120,13 +131,13 @@ public class LegalCaseService {
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_NOT_EXISTED));
 
         Integer legalCaseMaxNumberOfId = legalCaseRepository.getMaxId(
-                String.format("%04d", JudicialDate.getCurrentYear(legalCase.getAcceptanceDate())),
+                String.format("%04d", DateUtils.getCurrentYear(legalCase.getAcceptanceDate())),
                 legalRelationship.getLegalCaseType().getCodeName()
         ).orElse(0);
 
         String legalCaseId = String.format(
                 "%04d%s%05d",
-                JudicialDate.getCurrentYear(legalCase.getAcceptanceDate()),
+                DateUtils.getCurrentYear(legalCase.getAcceptanceDate()),
                 legalRelationship.getLegalCaseType().getCodeName(),
                 legalCaseMaxNumberOfId + 1
         );
@@ -240,7 +251,7 @@ public class LegalCaseService {
         // Lấy danh sách thẩm phán
         List<JudgeAssignmentInfo> judges = new ArrayList<>(
                 judgeRepository.getAssignAssignmentRaw(
-                                JudicialDate.getMilestoneDateTime(),
+                                DateUtils.getMilestoneDateTime(),
                                 legalRelationshipGroup,
                                 request.isMediator()
                         ).stream()
@@ -248,8 +259,8 @@ public class LegalCaseService {
                         .peek(judge -> {
                             long numberOfLandCases = judgeRepository.getNumberOfLandCasesByJudge(
                                     judge.getOfficerId(),
-                                    JudicialDate.getMilestoneDateTime(),
-                                    JudicialDate.getMilestoneDate()
+                                    DateUtils.getMilestoneDateTime(),
+                                    DateUtils.getMilestoneDate()
                             );
                             judge.setNumberGroupLand(numberOfLandCases);
                         })
@@ -276,7 +287,7 @@ public class LegalCaseService {
 
         // --- PHÂN CÔNG ÁN ---
         while (!legalCases.isEmpty()) {
-            if(request.isMediator()){
+            if (request.isMediator()) {
                 // luôn sắp xếp lại theo tổng án hiện tại (đảm bảo người ít án nhất lên trước)
                 judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getMaxWithMediator));
 
@@ -292,7 +303,7 @@ public class LegalCaseService {
 
                 assignLegalCaseToJudge(legalCase, judge);
                 judge.setNumberWithMediator(judge.getNumberWithMediator() + 1);
-            }else if (isGroupLand) {
+            } else if (isGroupLand) {
                 // Sắp xếp danh sách thẩm phán theo số án đất hiện tại (tăng dần)
                 judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberGroupLand));
 
@@ -362,6 +373,17 @@ public class LegalCaseService {
 
         Judge judge = judgeRepository.findById(request.getJudgeId())
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
+
+        boolean isAvailable = judgeRepository.isAvailableAssignment(
+                DateUtils.getMilestoneDateTime(),
+                legalCase.getLegalRelationship().getLegalRelationshipGroup(),
+                legalCase.getMediator() != null,
+                judge.getOfficerId()
+        );
+
+        if (!isAvailable) {
+            throw new AppException(ErrorCode.JUDGE_NOT_AVAILABLE);
+        }
 
 
         legalCase.setAssignment(Assignment.ASSIGN);
@@ -436,7 +458,7 @@ public class LegalCaseService {
     public PageResponse<LegalCaseResponse> getPending(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
         Page<LegalCaseResponse> resultPage = legalCaseRepository.getPending(
-                JudicialDate.getMilestoneDate(),
+                DateUtils.getMilestoneDate(),
                 pageable
         ).map(legalCaseMapper::toLegalCaseResponse);
 

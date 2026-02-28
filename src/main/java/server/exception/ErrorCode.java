@@ -56,6 +56,7 @@ public enum ErrorCode {
     JUDGE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Thẩm phán không tồn tại"),
     JUDGE_EXISTED(404, HttpStatus.BAD_REQUEST, "Thẩm phán đã tồn tại"),
     JUDGE_ASSIGNED_TO_LEGAL_CASE(400, HttpStatus.BAD_REQUEST, "Thẩm phán đã được phân công cho vụ án"),
+    JUDGE_NOT_AVAILABLE(400, HttpStatus.BAD_REQUEST, "Thẩm phán không đủ điều kiện để được phân công"),
 
     /* Mediator */
     MEDIATOR_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Hòa giải viên không tồn tại"),

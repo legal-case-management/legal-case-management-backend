@@ -26,7 +26,7 @@ import server.mapper.PageMapper;
 import server.repository.AccountRepository;
 import server.repository.LegalCaseRepository;
 import server.repository.NotificationRepository;
-import server.utils.JudicialDate;
+import server.utils.DateUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -145,10 +145,10 @@ public class NotificationService {
                     litigantsInfo
             );
 
-            Integer maxNumberOfId = notificationRepository.getMaxId(String.format("%04d", JudicialDate.getCurrentYear())).orElse(0);
+            Integer maxNumberOfId = notificationRepository.getMaxId(String.format("%04d", DateUtils.getCurrentYear())).orElse(0);
             String notificationId = String.format(
                     "%04dTB%06d",
-                    JudicialDate.getCurrentYear(),
+                    DateUtils.getCurrentYear(),
                     maxNumberOfId + 1
             );
             Notification notification = Notification.builder()

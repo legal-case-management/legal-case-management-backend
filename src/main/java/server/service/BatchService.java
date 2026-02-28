@@ -23,7 +23,7 @@ import server.mapper.BatchMapper;
 import server.mapper.PageMapper;
 import server.repository.BatchRepository;
 import server.repository.LegalCaseRepository;
-import server.utils.JudicialDate;
+import server.utils.DateUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,9 +46,9 @@ public class BatchService {
         batchMapper.toBatch(request, batch);
         batch.setStorageDate(LocalDateTime.now());
 
-        Integer judgeNumberOfId = batchRepository.getMaxId(String.format("%4d", JudicialDate.getCurrentYear(batch.getStorageDate())))
+        Integer judgeNumberOfId = batchRepository.getMaxId(String.format("%4d", DateUtils.getCurrentYear(batch.getStorageDate())))
                 .orElse(0);
-        String batchId = String.format("%4d%s%03d", JudicialDate.getCurrentYear(batch.getStorageDate()), "D", judgeNumberOfId + 1);
+        String batchId = String.format("%4d%s%03d", DateUtils.getCurrentYear(batch.getStorageDate()), "D", judgeNumberOfId + 1);
         if (batchRepository.existsById(batchId)) {
             throw new AppException(ErrorCode.BATCH_EXISTED);
         }

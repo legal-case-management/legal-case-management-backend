@@ -107,6 +107,27 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     );
 
     @Query("""
+            SELECT COUNT(j) > 0
+            FROM Judge j
+            LEFT JOIN j.legalCases lc
+                   ON lc.batch.storageDate >= :milestoneDateTime
+            LEFT JOIN lc.batch b
+            WHERE j.officerId = :officerId
+                  AND j.officerStatus = 'WORKING'
+                  AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
+            GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
+                     j.maxWithMediator, j.maxWithoutMediator, j.officerStatus, j.account.email
+            HAVING (:mediator = false AND (j.maxWithoutMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END) < j.maxWithoutMediator))
+                   OR (:mediator = true AND (j.maxWithMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END) < j.maxWithMediator))
+            """)
+    boolean isAvailableAssignment(
+                @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
+                @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup,
+                @Param("mediator") boolean mediator,
+                @Param("officerId") String officerId
+    );
+
+    @Query("""
         SELECT
             COUNT(lc)
         FROM Judge j

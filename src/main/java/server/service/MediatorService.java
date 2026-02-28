@@ -28,7 +28,7 @@ import server.exception.ErrorCode;
 import server.mapper.MediatorMapper;
 import server.mapper.PageMapper;
 import server.repository.MediatorRepository;
-import server.utils.JudicialDate;
+import server.utils.DateUtils;
 
 import java.util.List;
 
@@ -119,7 +119,7 @@ public class MediatorService {
                 request.getOfficerId(),
                 request.getFullName(),
                 request.getOfficerStatus(),
-                JudicialDate.getMilestoneDateTime(),
+                DateUtils.getMilestoneDateTime(),
                 pageable
         ).map(mediatorMapper::toMediatorResponse);
 

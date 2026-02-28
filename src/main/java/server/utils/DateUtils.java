@@ -1,9 +1,15 @@
 package server.utils;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-public class JudicialDate {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class DateUtils {
+    static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     public static LocalDate getMilestoneDate() {
         LocalDate today = LocalDate.now();
         LocalDate milestone = LocalDate.of(today.getYear(), 10, 1);
@@ -53,5 +59,9 @@ public class JudicialDate {
         } else {
             return date.getYear() + 1;
         }
+    }
+
+    public static String formatLocalDate(LocalDate localDate) {
+        return localDate.format(formatter);
     }
 }
