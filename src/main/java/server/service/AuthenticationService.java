@@ -249,16 +249,14 @@ public class AuthenticationService {
 
     private String generateToken(Account account, boolean isForgotPassword) throws JOSEException {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
-
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
                 .jwtID(UUID.randomUUID().toString())
                 .subject(account.getAccountId())
-                .issuer("QuanLyAn_ToaAnKhuVuc9_DongThap")
+                .issuer("legal-case-management")
                 .issueTime(new Date())
                 .expirationTime(isForgotPassword ?
-                        new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli())
-                        : new Date(Instant.now().plus(RESET_PASSWORD_DURATION, ChronoUnit.SECONDS).toEpochMilli())
-                        )
+                        new Date(Instant.now().plus(RESET_PASSWORD_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                        : new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
                 .claim("username", account.getUsername())
                 .claim("displayName", account.getOfficer() != null
                         ? account.getOfficer().getFullName()
