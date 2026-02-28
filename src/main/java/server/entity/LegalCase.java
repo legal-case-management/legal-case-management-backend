@@ -70,6 +70,6 @@ public class LegalCase {
     List<Decision> decisions;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "batch_id")
+    @JoinColumn(name = "batch_id", nullable = false)
     Batch batch;
 }

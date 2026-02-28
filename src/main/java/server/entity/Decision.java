@@ -19,7 +19,7 @@ public class Decision {
     @Id
     @Column(name = "decision_id", nullable = false)
     String decisionId;
-    @Column(name = "number")
+    @Column(name = "number", nullable = false)
     String number;
     @Column(name = "release_date", nullable = false)
     LocalDate releaseDate;

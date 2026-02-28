@@ -21,10 +21,12 @@ public class Account {
     String accountId;
     @Column(unique = true, nullable = false)
     String username;
+    @Column(nullable = false)
     String password;
     @Column(unique = true, nullable = false)
     String email;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     Role role;
 
     @Column(name = "active", nullable = false)

@@ -28,9 +28,9 @@ public class HandleDecisionType {
     @EqualsAndHashCode.Include
     LegalCaseStatus preStatus;
     @Enumerated(EnumType.STRING)
-    @Column(name = "post_status")
+    @Column(name = "post_status", nullable = false)
     LegalCaseStatus postStatus;
-    @Column(name = "extension_period")
+    @Column(name = "extension_period", nullable = false)
     int extensionPeriod;
     @Column(name = "active", nullable = false)
     boolean active;
