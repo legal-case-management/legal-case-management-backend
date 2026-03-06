@@ -120,24 +120,24 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     @Modifying
     @Transactional
     @Query("""
-                UPDATE LegalCase lc
-                SET lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT',
-                    lc.assignment = NULL,
-                    lc.assignmentDate = NULL,
-                    lc.expiredDate = NULL
-                WHERE lc.judge IS NULL
-            """)
+        UPDATE LegalCase lc
+        SET lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT',
+            lc.assignment = NULL,
+            lc.assignmentDate = NULL,
+            lc.expiredDate = NULL
+        WHERE lc.judge IS NULL
+        """)
     int updateWaitingForAssignment();
 
     @Modifying
     @Transactional
     @Query("""
-                UPDATE LegalCase lc
-                SET lc.legalCaseStatus = 'OVERDUE'
-                WHERE lc.judge IS NOT NULL
-                    AND lc.legalCaseStatus = 'IN_PROCESS'
-                    AND lc.expiredDate < CURRENT_TIMESTAMP
-            """)
+        UPDATE LegalCase lc
+        SET lc.legalCaseStatus = 'OVERDUE'
+        WHERE lc.judge IS NOT NULL
+            AND lc.legalCaseStatus = 'IN_PROCESS'
+            AND lc.expiredDate < CURRENT_TIMESTAMP
+        """)
     int updateOverdue();
 
     @Query("""
