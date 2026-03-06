@@ -197,12 +197,6 @@ public class LegalCaseService {
             legalCaseSaved.setLegalRelationship(legalRelationship);
         }
 
-        if (request.getJudgeId() != null) {
-            Judge existingJudge = judgeRepository.findById(request.getJudgeId())
-                    .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
-            legalCaseSaved.setJudge(existingJudge);
-        }
-
         if (request.getMediatorId() != null) {
             Mediator existingMediator = mediatorRepository.findById(request.getMediatorId())
                     .orElseThrow(() -> new AppException(ErrorCode.MEDIATOR_NOT_EXISTED));
@@ -485,8 +479,5 @@ public class LegalCaseService {
     public void updateCaseStatuses() {
         int waiting = legalCaseRepository.updateWaitingForAssignment();
         int overdue = legalCaseRepository.updateOverdue();
-        System.out.println("Cập nhật trạng thái vụ án lúc 0h00: "
-                + waiting + " WAITING_FOR_ASSIGNMENT, "
-                + overdue + " OVERDUE");
     }
 }
