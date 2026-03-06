@@ -21,14 +21,12 @@ public interface DecisionTypeRepository extends JpaRepository<DecisionType, Stri
             AND (:decisionTypeName IS NULL OR dt.decisionTypeName LIKE %:decisionTypeName%)
             AND (:legalCaseTypeId IS NULL OR dt.legalCaseType.legalCaseTypeId = :legalCaseTypeId)
             AND (:courtIssued IS NULL OR dt.courtIssued = :courtIssued)
-            AND (:theEndDecision IS NULL OR dt.theEndDecision = :theEndDecision)
             """)
     Page<DecisionType> search(
             String decisionTypeId,
             String decisionTypeName,
             String legalCaseTypeId,
             CourtIssued courtIssued,
-            boolean theEndDecision,
             Pageable pageable
     );
 

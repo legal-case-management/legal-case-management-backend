@@ -136,7 +136,6 @@ public class DecisionTypeService {
                 request.getDecisionTypeName(),
                 request.getLegalCaseTypeId(),
                 request.getCourtIssued(),
-                request.isTheEndDecision(),
                 pageable
         ).map(decisionTypeMapper::toDecisionTypeResponse);
 
