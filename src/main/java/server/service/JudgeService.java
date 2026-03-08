@@ -8,8 +8,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.response.PageResponse;
@@ -75,9 +77,9 @@ public class JudgeService {
                 .stream()
                 .map(judgeMapper::toJudgeResponse)
                 .peek(judgeResponse -> judgeResponse.setRestrictedGroups(
-                        legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId()).stream()
-                                .map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
-                                .toList()
+                                legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId()).stream()
+                                        .map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
+                                        .toList()
                         )
                 )
                 .toList();
@@ -150,7 +152,7 @@ public class JudgeService {
         Judge judgeSaved = judgeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
-        if(request.getRestrictedGroupIds() != null){
+        if (request.getRestrictedGroupIds() != null) {
             List<LegalRelationshipGroup> restrictedGroups = legalRelationshipGroupRepository
                     .findAllById(request.getRestrictedGroupIds());
             judgeSaved.setRestrictedGroups(restrictedGroups);
@@ -173,5 +175,16 @@ public class JudgeService {
             throw new AppException(ErrorCode.JUDGE_ASSIGNED_TO_LEGAL_CASE);
         }
         judgeRepository.delete(judgeSaved);
+    }
+
+    @Scheduled(cron = "0 */5 * * * *")
+    public void keepServerAwake() {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://legal-case-management-backend-sggy.onrender.com/judge/all";
+            restTemplate.getForObject(url, String.class);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
