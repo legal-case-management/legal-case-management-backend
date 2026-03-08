@@ -44,6 +44,7 @@ public class SecurityConfig {
             "auth/refresh-token",
             "auth/forgot-password",
             "auth/verify-otp",
+            "auth/ping"
     };
 
     @Value("${jwt.signerKey}")

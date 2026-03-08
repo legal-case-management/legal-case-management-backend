@@ -176,15 +176,4 @@ public class JudgeService {
         }
         judgeRepository.delete(judgeSaved);
     }
-
-    @Scheduled(cron = "0 */5 * * * *")
-    public void keepServerAwake() {
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = "https://legal-case-management-backend-sggy.onrender.com/judge/all";
-            restTemplate.getForObject(url, String.class);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
 }

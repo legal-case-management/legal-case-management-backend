@@ -10,10 +10,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import server.dto.request.authentication.*;
 import server.dto.response.PageResponse;
 import server.dto.response.authentication.AccountResponse;
@@ -423,5 +425,16 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
         account.setActive(true);
         accountRepository.save(account);
+    }
+
+    @Scheduled(cron = "0 */5 * * * *")
+    public void keepServerAwake() {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://legal-case-management-backend-sggy.onrender.com/auth/ping";
+            restTemplate.getForObject(url, String.class);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
