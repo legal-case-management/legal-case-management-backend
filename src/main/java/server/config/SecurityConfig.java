@@ -1,5 +1,8 @@
 package server.config;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import server.dto.response.ApiResponse;
@@ -33,20 +36,25 @@ import org.apache.catalina.connector.Connector;
 
 import javax.crypto.spec.SecretKeySpec;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINTS = {
+    String[] PUBLIC_POST_ENDPOINTS = {
             "auth/introspect",
             "auth/login",
             "auth/logout",
             "auth/refresh-token",
             "auth/forgot-password",
-            "auth/verify-otp",
+            "auth/verify-otp"
+    };
+
+    String[] PUBLIC_GET_ENDPOINTS = {
             "auth/ping"
     };
 
+    @NonFinal
     @Value("${jwt.signerKey}")
     private String signerKey;
 
@@ -56,7 +64,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                                .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                                .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->
