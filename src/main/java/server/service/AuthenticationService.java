@@ -427,7 +427,7 @@ public class AuthenticationService {
         accountRepository.save(account);
     }
 
-    @Scheduled(cron = "0 */10 * * * *")
+    @Scheduled(cron = "0 */6 * * * *")
     public void keepServerAwake() {
         try {
             RestTemplate restTemplate = new RestTemplate();
