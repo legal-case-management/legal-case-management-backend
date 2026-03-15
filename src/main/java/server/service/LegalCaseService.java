@@ -283,7 +283,7 @@ public class LegalCaseService {
         while (!legalCases.isEmpty()) {
             if (request.isMediator()) {
                 // luôn sắp xếp lại theo tổng án hiện tại (đảm bảo người ít án nhất lên trước)
-                judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getMaxWithMediator));
+                judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberWithMediator));
 
                 // lấy thẩm phán ít án nhất
                 JudgeAssignmentInfo judge = judges.getFirst();
@@ -292,8 +292,8 @@ public class LegalCaseService {
                 if (maxCases != null && judge.getNumberWithMediator() >= maxCases)
                     break;
 
-                // lấy vụ án bất kỳ (hoặc theo thứ tự)
-                LegalCase legalCase = legalCases.removeFirst();
+                // lấy vụ án bất kỳ
+                LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
 
                 assignLegalCaseToJudge(legalCase, judge);
                 judge.setNumberWithMediator(judge.getNumberWithMediator() + 1);
@@ -303,6 +303,10 @@ public class LegalCaseService {
 
                 // Lấy thẩm phán có số án đất ít nhất
                 JudgeAssignmentInfo judge = judges.getFirst();
+
+                Long maxCases = judge.getMaxWithoutMediator();
+                if (maxCases != null && judge.getNumberWithoutMediator() >= maxCases)
+                    break;
 
                 LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
                 assignLegalCaseToJudge(legalCase, judge);
@@ -321,8 +325,8 @@ public class LegalCaseService {
                 if (maxCases != null && judge.getNumberWithoutMediator() >= maxCases)
                     break;
 
-                // lấy vụ án bất kỳ (hoặc theo thứ tự)
-                LegalCase legalCase = legalCases.removeFirst();
+                // lấy vụ án bất kỳ
+                LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
 
                 assignLegalCaseToJudge(legalCase, judge);
                 judge.setNumberWithoutMediator(judge.getNumberWithoutMediator() + 1);
@@ -344,7 +348,8 @@ public class LegalCaseService {
 
         legalCase.setAssignmentDate(LocalDateTime.now());
         legalCase.setLegalCaseStatus(LegalCaseStatus.IN_PROCESS);
-        legalCase.setJudge(Judge.builder()
+        legalCase.setJudge(
+                Judge.builder()
                 .officerId(judge.getOfficerId())
                 .build()
         );
