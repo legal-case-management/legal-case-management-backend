@@ -253,7 +253,6 @@ public class LegalCaseService {
                         .peek(judge -> {
                             long numberOfLandCases = judgeRepository.getNumberOfLandCasesByJudge(
                                     judge.getOfficerId(),
-                                    DateUtils.getMilestoneDateTime(),
                                     DateUtils.getMilestoneDate()
                             );
                             judge.setNumberGroupLand(numberOfLandCases);
@@ -310,12 +309,9 @@ public class LegalCaseService {
 
                 LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
                 assignLegalCaseToJudge(legalCase, judge);
-
-                // Cập nhật lại thống kê cho thẩm phán
                 judge.setNumberGroupLand(judge.getNumberGroupLand() + 1);
-
             } else {
-                // luôn sắp xếp lại theo tổng án hiện tại (đảm bảo người ít án nhất lên trước)
+                // luôn sắp xếp lại theo tổng án hiện tại
                 judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberWithoutMediator));
 
                 // lấy thẩm phán ít án nhất

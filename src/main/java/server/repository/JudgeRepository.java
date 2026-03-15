@@ -132,15 +132,12 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             COUNT(lc)
         FROM Judge j
         LEFT JOIN j.legalCases lc
-               ON lc.batch.storageDate >= :milestoneDateTime
-        WHERE j.officerStatus = 'WORKING'
-              AND j.officerId = :officerId
+        WHERE j.officerId = :officerId
               AND lc.legalRelationship.legalRelationshipGroup.legalRelationshipGroupId = 'N04'
               AND lc.acceptanceDate >= :milestoneDate
     """)
     long getNumberOfLandCasesByJudge(
             @Param("officerId") String officerId,
-            @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
             @Param("milestoneDate") LocalDate milestoneDate
     );
 }
