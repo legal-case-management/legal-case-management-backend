@@ -56,7 +56,7 @@ public class JudgeController {
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(judgeService.listAssignment(request.getLegalRelationshipGroupId(), request.isMediator()))
+                .data(judgeService.listAssignment(request))
                 .build();
     }
 

@@ -91,8 +91,8 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                   AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
                      j.maxWithMediator, j.maxWithoutMediator, j.officerStatus, j.account.email
-            HAVING (:mediator = false AND (j.maxWithoutMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END) < j.maxWithoutMediator))
-                   OR (:mediator = true AND (j.maxWithMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END) < j.maxWithMediator))
+            HAVING (:legalRelationshipGroup IS NOT NULL AND (j.maxWithoutMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END) < j.maxWithoutMediator))
+                   OR (:legalRelationshipGroup IS NULL AND (j.maxWithMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END) < j.maxWithMediator))
             ORDER BY
                 SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END) ASC,
                 SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END) DESC,
@@ -102,8 +102,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             """)
     List<Object[]> getAssignAssignmentRaw(
             @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
-            @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup,
-            @Param("mediator") boolean mediator
+            @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup
     );
 
     @Query("""

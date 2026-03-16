@@ -234,20 +234,19 @@ public class LegalCaseService {
         if (request == null)
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
 
-        LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
-                .orElse(null);
+        LegalRelationshipGroup legalRelationshipGroup = request.getLegalRelationshipGroupId() == null
+                ? null
+                : legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
+                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-        if (!request.isMediator() && legalRelationshipGroup == null) {
-            throw new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED);
-        } else if (!request.isMediator() && legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
+        if (legalRelationshipGroup != null && legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
 
         // Lấy danh sách thẩm phán
         List<JudgeAssignmentInfo> judges = new ArrayList<>(
                 judgeRepository.getAssignAssignmentRaw(
                                 DateUtils.getMilestoneDateTime(),
-                                legalRelationshipGroup,
-                                request.isMediator()
+                                legalRelationshipGroup
                         ).stream()
                         .map(judgeMapper::toJudgeAssignmentInfo)
                         .peek(judge -> {
@@ -266,8 +265,7 @@ public class LegalCaseService {
         // Lấy danh sách vụ án cần phân công
         List<LegalCase> legalCases = legalCaseRepository.getAssignAssignment(
                 request.getLegalCaseIds(),
-                legalRelationshipGroup,
-                request.isMediator()
+                legalRelationshipGroup
         );
 
         if (legalCases.isEmpty())
@@ -276,12 +274,14 @@ public class LegalCaseService {
         boolean isGroupLand = legalRelationshipGroup != null
                 && legalRelationshipGroup.getLegalRelationshipGroupId().equals("N04");
 
+        boolean isMediator = legalRelationshipGroup == null;
+
         Random random = new Random();
 
         // --- PHÂN CÔNG ÁN ---
         while (!legalCases.isEmpty()) {
-            if (request.isMediator()) {
-                // luôn sắp xếp lại theo tổng án hiện tại (đảm bảo người ít án nhất lên trước)
+            if (isMediator) {
+                // luôn sắp xếp lại theo tổng án hiện tại
                 judges.sort(Comparator.comparingLong(JudgeAssignmentInfo::getNumberWithMediator));
 
                 // lấy thẩm phán ít án nhất
@@ -401,16 +401,14 @@ public class LegalCaseService {
     public PageResponse<LegalCaseResponse> getAssignmentList(AssignmentListRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
 
-        if (request.isMediator()) {
+        boolean isMediator = request.getLegalRelationshipGroupId() == null;
+
+        if (isMediator) {
             Page<LegalCaseResponse> resultPage = legalCaseRepository.getAssignmentListHasMediator(pageable)
                     .map(legalCaseMapper::toLegalCaseResponse);
 
             return pageMapper.map(resultPage);
         } else {
-            if (request.getLegalRelationshipGroupId() == null) {
-                throw new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED);
-            }
-
             LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
                     .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
@@ -474,12 +472,5 @@ public class LegalCaseService {
         legalCase.setLegalCaseStatus(LegalCaseStatus.WAITING_FOR_ASSIGNMENT);
         legalCase.setJudge(null);
         legalCaseRepository.save(legalCase);
-    }
-
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")
-    public void updateCaseStatuses() {
-        int waiting = legalCaseRepository.updateWaitingForAssignment();
-        int overdue = legalCaseRepository.updateOverdue();
-        System.out.println("Updated " + waiting + " cases to WAITING_FOR_ASSIGNMENT and " + overdue + " cases to OVERDUE.");
     }
 }

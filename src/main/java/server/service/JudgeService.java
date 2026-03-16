@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
+import server.dto.request.legalCase.AssignmentListRequest;
 import server.dto.response.PageResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.entity.*;
@@ -64,19 +65,20 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<JudgeResponse> listAssignment(String legalRelationshipGroupId, boolean mediator) {
-        LegalRelationshipGroup legalRelationshipGroup = null;
+    public List<JudgeResponse> listAssignment(AssignmentListRequest request) {
+        LegalRelationshipGroup legalRelationshipGroup = request.getLegalRelationshipGroupId() == null
+                ? null
+                : legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
+                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-        if (legalRelationshipGroupId != null) {
-            legalRelationshipGroup = legalRelationshipGroupRepository
-                    .findById(legalRelationshipGroupId)
-                    .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
-        }
+        if (legalRelationshipGroup != null && legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
+            throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
 
-        return judgeRepository.getAssignAssignmentRaw(DateUtils.getMilestoneDateTime(), legalRelationshipGroup, mediator)
+        return judgeRepository.getAssignAssignmentRaw(DateUtils.getMilestoneDateTime(), legalRelationshipGroup)
                 .stream()
                 .map(judgeMapper::toJudgeResponse)
-                .peek(judgeResponse -> judgeResponse.setRestrictedGroups(
+                .peek(judgeResponse ->
+                        judgeResponse.setRestrictedGroups(
                                 legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId()).stream()
                                         .map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
                                         .toList()

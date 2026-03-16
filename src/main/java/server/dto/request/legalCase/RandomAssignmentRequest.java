@@ -15,7 +15,5 @@ import java.util.List;
 @ToString
 public class RandomAssignmentRequest {
     List<String> legalCaseIds;
-    @JsonProperty("isMediator")
-    boolean isMediator;
     String legalRelationshipGroupId;
 }
