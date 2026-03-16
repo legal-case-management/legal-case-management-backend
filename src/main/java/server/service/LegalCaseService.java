@@ -473,4 +473,11 @@ public class LegalCaseService {
         legalCase.setJudge(null);
         legalCaseRepository.save(legalCase);
     }
+
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")
+    public void updateCaseStatuses() {
+        int waiting = legalCaseRepository.updateWaitingForAssignment();
+        int overdue = legalCaseRepository.updateOverdue();
+        System.out.println("Updated " + waiting + " cases to WAITING_FOR_ASSIGNMENT and " + overdue + " cases to OVERDUE.");
+    }
 }
