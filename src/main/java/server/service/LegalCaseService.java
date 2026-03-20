@@ -358,8 +358,8 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void assignAssignment(AssignAssignmentRequest request) {
-        if (request == null) {
-            throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
+        if (request == null || request.getLegalCaseId() == null || request.getJudgeId() == null) {
+            throw new AppException(ErrorCode.ASSIGN_ASSIGNMENT_FAILED);
         }
 
         LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
@@ -379,7 +379,6 @@ public class LegalCaseService {
         if (!isAvailable) {
             throw new AppException(ErrorCode.JUDGE_NOT_AVAILABLE);
         }
-
 
         legalCase.setAssignment(Assignment.ASSIGN);
         legalCase.setAssignmentDate(LocalDateTime.now());

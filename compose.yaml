@@ -1,4 +1,4 @@
-name: legal_case_management_services
+name: legal-case-management-services
 services:
   postgres:
     image: postgres:17
