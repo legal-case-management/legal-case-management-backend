@@ -71,9 +71,6 @@ public class JudgeService {
                 : legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-        if (legalRelationshipGroup != null && legalRelationshipGroup.getLegalRelationshipGroupId().equals("N01"))
-            throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_NOT_ALLOWED);
-
         return judgeRepository.getAssignAssignmentRaw(DateUtils.getMilestoneDateTime(), legalRelationshipGroup)
                 .stream()
                 .map(judgeMapper::toJudgeResponse)

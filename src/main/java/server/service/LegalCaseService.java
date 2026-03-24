@@ -141,6 +141,7 @@ public class LegalCaseService {
                 legalRelationship.getLegalCaseType().getCodeName(),
                 legalCaseMaxNumberOfId + 1
         );
+
         if (legalCaseRepository.existsById(legalCaseId)) {
             throw new AppException(ErrorCode.LEGAL_CASE_EXISTED);
         }
@@ -149,9 +150,13 @@ public class LegalCaseService {
         legalCase.setStorageDate(LocalDateTime.now());
         legalCase.setLegalRelationship(legalRelationship);
 
-        if (legalCase.getLegalCaseStatus() == null)
-            legalCase.setLegalCaseStatus(LegalCaseStatus.WAITING_FOR_ASSIGNMENT);
-
+        if (legalCase.getLegalCaseStatus() == null){
+            if(request.getJudgeId() != null) {
+                legalCase.setLegalCaseStatus(LegalCaseStatus.IN_PROCESS);
+            } else {
+                legalCase.setLegalCaseStatus(LegalCaseStatus.WAITING_FOR_ASSIGNMENT);
+            }
+        }
         if (request.getJudgeId() != null) {
             Judge existingJudge = judgeRepository.findById(request.getJudgeId())
                     .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));

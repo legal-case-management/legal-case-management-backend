@@ -93,12 +93,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                      j.maxWithMediator, j.maxWithoutMediator, j.officerStatus, j.account.email
             HAVING (:legalRelationshipGroup IS NOT NULL AND (j.maxWithoutMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END) < j.maxWithoutMediator))
                    OR (:legalRelationshipGroup IS NULL AND (j.maxWithMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END) < j.maxWithMediator))
-            ORDER BY
-                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END) ASC,
-                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END) DESC,
-                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END) ASC,
-                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END) ASC,
-                j.firstName ASC
+            ORDER BY j.officerId
             """)
     List<Object[]> getAssignAssignmentRaw(
             @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
