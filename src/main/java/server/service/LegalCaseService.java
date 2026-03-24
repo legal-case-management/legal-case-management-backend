@@ -157,6 +157,7 @@ public class LegalCaseService {
                 legalCase.setLegalCaseStatus(LegalCaseStatus.WAITING_FOR_ASSIGNMENT);
             }
         }
+
         if (request.getJudgeId() != null) {
             Judge existingJudge = judgeRepository.findById(request.getJudgeId())
                     .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));

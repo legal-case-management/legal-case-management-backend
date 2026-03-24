@@ -88,7 +88,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                    ON lc.batch.storageDate >= :milestoneDateTime
             LEFT JOIN lc.batch b
             WHERE j.officerStatus = 'WORKING'
-                  AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
+                  AND (:legalRelationshipGroup IS NULL OR j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
             GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
                      j.maxWithMediator, j.maxWithoutMediator, j.officerStatus, j.account.email
             HAVING (:legalRelationshipGroup IS NOT NULL AND (j.maxWithoutMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END) < j.maxWithoutMediator))
