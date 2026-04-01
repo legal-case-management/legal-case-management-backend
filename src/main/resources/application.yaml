@@ -24,7 +24,7 @@ spring:
       hibernate:
         dialect: ${HIBERNATE_DIALECT}
         jdbc:
-          time_zone: Asia/Ho_Chi_Minh
+          time_zone: ${TIME_ZONE}
 
   mail:
     host: ${MAIL_HOST}
