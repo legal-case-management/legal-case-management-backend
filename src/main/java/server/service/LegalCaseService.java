@@ -181,8 +181,7 @@ public class LegalCaseService {
             legalCase.setMediator(existingMediator);
         }
 
-        if (batch != null)
-            legalCase.setBatch(batch);
+        legalCase.setBatch(batch);
 
         legalCaseRepository.save(legalCase);
     }

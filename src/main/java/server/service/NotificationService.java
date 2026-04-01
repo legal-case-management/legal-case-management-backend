@@ -77,9 +77,9 @@ public class NotificationService {
         return notificationMapper.toNotificationResponse(notification);
     }
 
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")
+/*    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")
     @Transactional
     public void notifyExpiringCases() {
 
-    }
+    }*/
 }
