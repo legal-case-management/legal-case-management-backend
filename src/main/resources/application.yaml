@@ -12,6 +12,9 @@ spring:
     password: ${DB_PASS}
     driver-class-name: org.postgresql.Driver
 
+  jackson:
+    time-zone: ${TIME_ZONE}
+
   jpa:
     hibernate:
       ddl-auto: ${HIBERNATE_DDL}
@@ -19,8 +22,6 @@ spring:
     properties:
       hibernate:
         dialect: ${HIBERNATE_DIALECT}
-        jdbc:
-          time_zone: ${TIME_ZONE}
 
   mail:
     host: ${MAIL_HOST}
