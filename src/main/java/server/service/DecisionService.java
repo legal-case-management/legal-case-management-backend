@@ -64,6 +64,8 @@ public class DecisionService {
                     } else if (handle.getPostStatus().equals(LegalCaseStatus.TEMPORARY_SUSPENSION)) {
                         legalCase.setExpiredDate(null);
                     }
+
+                    break;
                 }
             }
 
