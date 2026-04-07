@@ -113,7 +113,7 @@ public class BatchService {
     }
 
     public List<BatchResponse> getAll() {
-        return batchRepository.findAll()
+        return batchRepository.findAll(Sort.by("batchId"))
                 .stream()
                 .map(batchMapper::toBatchResponseBasic)
                 .toList();
