@@ -51,6 +51,8 @@ public class DecisionService {
         LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
+        boolean handled = false;
+
         if (!typeOfDecision.getHandleTypeOfDecisions().isEmpty()) {
             for (HandleDecisionType handle : typeOfDecision.getHandleTypeOfDecisions()) {
 
@@ -64,12 +66,13 @@ public class DecisionService {
                     } else if (handle.getPostStatus().equals(LegalCaseStatus.TEMPORARY_SUSPENSION)) {
                         legalCase.setExpiredDate(null);
                     }
-
+                    handled = true;
                     break;
                 }
             }
 
-            throw new AppException(ErrorCode.CAN_NOT_HANDLE_TYPE_OF_DECISION);
+            if (!handled)
+                throw new AppException(ErrorCode.CAN_NOT_HANDLE_TYPE_OF_DECISION);
         }
 
         Integer maxId = decisionRepository.getMaxId(legalCase.getLegalCaseId()).orElse(0);
