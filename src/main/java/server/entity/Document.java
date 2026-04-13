@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "decisions")
+@Table(name = "documents")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -15,19 +15,23 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @ToString
 @Builder
-public class Decision {
+public class Document {
     @Id
-    @Column(name = "decision_id", nullable = false)
-    String decisionId;
-    @Column(name = "number", nullable = false)
-    String number;
+    @Column(name = "document_id", nullable = false)
+    String documentId;
+
+    @Column(name = "document_number", nullable = false)
+    String documentNumber;
+
     @Column(name = "release_date", nullable = false)
     LocalDate releaseDate;
-    @Column(name = "added_date", nullable = false)
-    LocalDate addedDate;
+
+    @Column(name = "storage_date", nullable = false)
+    LocalDate storageDate;
+
     @ManyToOne
-    @JoinColumn(name = "decision_type_id", nullable = false)
-    DecisionType decisionType;
+    @JoinColumn(name = "document_type_id", nullable = false)
+    DocumentType documentType;
     String note;
 
     @ManyToOne(fetch = FetchType.EAGER)

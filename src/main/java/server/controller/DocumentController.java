@@ -6,58 +6,58 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import server.dto.request.decision.DecisionRequest;
+import server.dto.request.document.DocumentRequest;
 import server.dto.response.ApiResponse;
-import server.dto.response.decision.DecisionResponse;
-import server.service.DecisionService;
+import server.dto.response.document.DocumentResponse;
+import server.service.DocumentService;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("/decision")
+@RequestMapping("/document")
 @Slf4j
-public class DecisionController {
-    DecisionService decisionService;
+public class DocumentController {
+    DocumentService documentService;
 
     @PostMapping
-    public ApiResponse<Void> create(@RequestBody @Valid DecisionRequest request) {
-        decisionService.create(request);
+    public ApiResponse<Void> create(@RequestBody @Valid DocumentRequest request) {
+        documentService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
-                .message("Thêm quyết định, thông báo thành công")
+                .message("Thêm tài liệu, thông báo thành công")
                 .build();
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid DecisionRequest request) {
-        decisionService.update(id, request);
+    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid DocumentRequest request) {
+        documentService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
-                .message("Cập nhật quyết định, thông báo thành công")
+                .message("Cập nhật tài liệu, thông báo thành công")
                 .build();
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> delete(@PathVariable String id) {
-        decisionService.delete(id);
+        documentService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
-                .message("Xóa quyết định, thông báo thành công")
+                .message("Xóa tài liệu, thông báo thành công")
                 .build();
     }
 
     @GetMapping("/by-legal-case/{legalCaseId}")
-    public ApiResponse<List<DecisionResponse>> getByLegalCase(@PathVariable String legalCaseId) {
-        return ApiResponse.<List<DecisionResponse>>builder()
+    public ApiResponse<List<DocumentResponse>> getByLegalCase(@PathVariable String legalCaseId) {
+        return ApiResponse.<List<DocumentResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(decisionService.getByLegalCase(legalCaseId))
+                .data(documentService.getByLegalCase(legalCaseId))
                 .build();
     }
 }

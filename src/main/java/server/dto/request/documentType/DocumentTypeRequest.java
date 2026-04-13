@@ -1,10 +1,11 @@
-package server.dto.response.handleDecisionType;
+package server.dto.request.documentType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.dto.response.decisionType.DecisionTypeResponse;
 import server.entity.enums.LegalCaseStatus;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -12,11 +13,11 @@ import server.entity.enums.LegalCaseStatus;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HandleDecisionTypeResponse {
-    DecisionTypeResponse decisionType;
-    LegalCaseStatus preStatus;
+@ToString
+public class DocumentTypeRequest {
+    String documentTypeName;
+    String legalCaseTypeId;
+    Set<LegalCaseStatus> preStatuses;
     LegalCaseStatus postStatus;
-    @JsonProperty("active")
-    boolean active;
     int extensionPeriod;
 }

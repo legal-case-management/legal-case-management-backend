@@ -6,56 +6,56 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import server.dto.request.decisionType.DecisionTypeRequest;
-import server.dto.request.decisionType.DecisionTypeSearchRequest;
+import server.dto.request.documentType.DocumentTypeRequest;
+import server.dto.request.documentType.DocumentTypeSearchRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
-import server.dto.response.decisionType.DecisionTypeResponse;
-import server.service.DecisionTypeService;
+import server.dto.response.documentType.DocumentTypeResponse;
+import server.service.DocumentTypeService;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("/decision-type")
+@RequestMapping("/document-type")
 @Slf4j
-public class DecisionTypeController {
-    DecisionTypeService decisionTypeService;
+public class DocumentTypeController {
+    DocumentTypeService documentTypeService;
 
     @GetMapping("/{id}")
-    public ApiResponse<DecisionTypeResponse> getById(@PathVariable String id) {
-        return ApiResponse.<DecisionTypeResponse>builder()
+    public ApiResponse<DocumentTypeResponse> getById(@PathVariable String id) {
+        return ApiResponse.<DocumentTypeResponse>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(decisionTypeService.getById(id))
+                .data(documentTypeService.getById(id))
                 .build();
     }
 
     @GetMapping("/all")
-    public ApiResponse<List<DecisionTypeResponse>> getAll() {
-        return ApiResponse.<List<DecisionTypeResponse>>builder()
+    public ApiResponse<List<DocumentTypeResponse>> getAll() {
+        return ApiResponse.<List<DocumentTypeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(decisionTypeService.getAll())
+                .data(documentTypeService.getAll())
                 .build();
     }
 
     @GetMapping("/by-legal-case-type/{legalCaseTypeId}")
-    public ApiResponse<List<DecisionTypeResponse>> getByLegalCaseType(@PathVariable String legalCaseTypeId) {
-        return ApiResponse.<List<DecisionTypeResponse>>builder()
+    public ApiResponse<List<DocumentTypeResponse>> getByLegalCaseType(@PathVariable String legalCaseTypeId) {
+        return ApiResponse.<List<DocumentTypeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(decisionTypeService.getByLegalCaseType(legalCaseTypeId))
+                .data(documentTypeService.getByLegalCaseType(legalCaseTypeId))
                 .build();
     }
 
     @PostMapping
-    public ApiResponse<Void> create(@RequestBody @Valid DecisionTypeRequest request) {
-        decisionTypeService.create(request);
+    public ApiResponse<Void> create(@RequestBody @Valid DocumentTypeRequest request) {
+        documentTypeService.create(request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -64,8 +64,8 @@ public class DecisionTypeController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid DecisionTypeRequest request) {
-        decisionTypeService.update(id, request);
+    public ApiResponse<Void> update(@PathVariable String id, @RequestBody @Valid DocumentTypeRequest request) {
+        documentTypeService.update(id, request);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -75,7 +75,7 @@ public class DecisionTypeController {
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> delete(@PathVariable String id) {
-        decisionTypeService.delete(id);
+        documentTypeService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)
                 .status(200)
@@ -84,18 +84,17 @@ public class DecisionTypeController {
     }
 
     @PostMapping("/search")
-    public ApiResponse<PageResponse<DecisionTypeResponse>> search(
-            @RequestBody @Valid DecisionTypeSearchRequest request,
+    public ApiResponse<PageResponse<DocumentTypeResponse>> search(
+            @RequestBody @Valid DocumentTypeSearchRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "decisionTypeId") String sortBy
     ) {
-        return ApiResponse.<PageResponse<DecisionTypeResponse>>builder()
+        return ApiResponse.<PageResponse<DocumentTypeResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Tìm kiếm thành công")
-                .data(decisionTypeService.search(request, page, size, sortBy))
+                .data(documentTypeService.search(request, page, size, sortBy))
                 .build();
     }
-
 }

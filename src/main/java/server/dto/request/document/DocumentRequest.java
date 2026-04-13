@@ -1,4 +1,4 @@
-package server.dto.request.decision;
+package server.dto.request.document;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -12,10 +12,10 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-public class DecisionRequest {
-    String number;
+public class DocumentRequest {
+    String documentNumber;
     LocalDate releaseDate;
     String note;
-    String decisionTypeId;
+    String documentTypeId;
     String legalCaseId;
 }

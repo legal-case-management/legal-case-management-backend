@@ -1,9 +1,9 @@
-package server.dto.response.decision;
+package server.dto.response.document;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.legalCase.LegalCaseResponse;
-import server.dto.response.decisionType.DecisionTypeResponse;
+import server.dto.response.documentType.DocumentTypeResponse;
 
 import java.time.LocalDate;
 
@@ -14,12 +14,12 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-public class DecisionResponse {
+public class DocumentResponse {
     String decisionId;
     String number;
     LocalDate releaseDate;
     LocalDate addedDate;
     String note;
-    DecisionTypeResponse decisionType;
+    DocumentTypeResponse decisionType;
     LegalCaseResponse legalCase;
 }

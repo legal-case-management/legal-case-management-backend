@@ -22,7 +22,7 @@ import server.entity.enums.Assignment;
 import server.entity.enums.LegalCaseStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
-import server.mapper.DecisionMapper;
+import server.mapper.DocumentMapper;
 import server.mapper.JudgeMapper;
 import server.mapper.LegalCaseMapper;
 import server.mapper.PageMapper;
@@ -41,7 +41,7 @@ public class LegalCaseService {
     LegalRelationshipRepository legalRelationshipRepository;
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
     LegalCaseTypeRepository legalCaseTypeRepository;
-    DecisionRepository decisionRepository;
+    DocumentRepository decisionRepository;
 
     JudgeRepository judgeRepository;
     BatchRepository batchRepository;
@@ -50,7 +50,7 @@ public class LegalCaseService {
     LegalCaseMapper legalCaseMapper;
     PageMapper pageMapper;
     JudgeMapper judgeMapper;
-    DecisionMapper decisionMapper;
+    DocumentMapper documentMapper;
 
 
     public List<LegalCaseResponse> getAll() {
@@ -80,11 +80,11 @@ public class LegalCaseService {
                 pageable
         ).map(legalCase -> {
             LegalCaseResponse legalCaseResponse = legalCaseMapper.toLegalCaseResponse(legalCase);
-            List<Decision> decisions = decisionRepository.findAllByLegalCase(legalCase, Sort.by("releaseDate").descending());
+            List<Document> documents = decisionRepository.findAllByLegalCase(legalCase, Sort.by("releaseDate").descending());
             legalCaseResponse.setDecisionInfos(
-                    decisions
+                    documents
                             .stream()
-                            .map(decisionMapper::toDecisionInfo)
+                            .map(documentMapper::toDecisionInfo)
                             .toList()
             );
             return legalCaseResponse;
@@ -212,7 +212,7 @@ public class LegalCaseService {
 
         if (request.getAcceptanceDate() != null
                 && !legalCaseSaved.getLegalCaseStatus().equals(LegalCaseStatus.WAITING_FOR_ASSIGNMENT)
-                && legalCaseSaved.getDecisions().isEmpty()
+                && legalCaseSaved.getDocuments().isEmpty()
         ) {
             LocalDate expiredDate = legalCaseSaved.getAcceptanceDate().plusMonths(4);
             legalCaseSaved.setExpiredDate(expiredDate);
