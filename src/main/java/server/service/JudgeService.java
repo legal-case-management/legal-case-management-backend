@@ -169,8 +169,8 @@ public class JudgeService {
         Judge judgeSaved = judgeRepository
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
-        long legalCases = legalCaseRepository.countLegalCasesByJudge(judgeSaved);
-        if (legalCases > 0) {
+        long numberLegalCase = legalCaseRepository.countLegalCasesByJudge(judgeSaved);
+        if (numberLegalCase > 0) {
             throw new AppException(ErrorCode.JUDGE_ASSIGNED_TO_LEGAL_CASE);
         }
         judgeRepository.delete(judgeSaved);

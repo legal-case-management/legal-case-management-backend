@@ -15,11 +15,11 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 public class DocumentResponse {
-    String decisionId;
-    String number;
+    String documentId;
+    String documentNumber;
     LocalDate releaseDate;
-    LocalDate addedDate;
+    LocalDate storageDate;
     String note;
-    DocumentTypeResponse decisionType;
+    DocumentTypeResponse documentType;
     LegalCaseResponse legalCase;
 }

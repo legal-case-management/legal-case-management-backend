@@ -62,6 +62,7 @@ public enum ErrorCode {
     /* Mediator */
     MEDIATOR_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Hòa giải viên không tồn tại"),
     MEDIATOR_EXISTED(404, HttpStatus.BAD_REQUEST, "Hòa giải viên đã tồn tại"),
+    MEDIATOR_ASSIGNED_TO_LEGAL_CASE(400, HttpStatus.BAD_REQUEST, "Hòa giải viên đã được phân công cho vụ án"),
 
     /* Legal relationship */
     LEGAL_RELATIONSHIP_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Quan hệ pháp luật không tồn tại"),

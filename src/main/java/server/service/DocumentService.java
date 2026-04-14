@@ -58,11 +58,11 @@ public class DocumentService {
                         legalCase.setExpiredDate(document.getReleaseDate().plusMonths(documentType.getExtensionPeriod()));
                     }
 
-                    if (documentType.getPostStatus() != null)
+                    if (documentType.getPostStatus() != null){
+                        legalCase.setLegalCaseStatus(documentType.getPostStatus());
                         if (documentType.getPostStatus().equals(LegalCaseStatus.TEMPORARY_SUSPENSION))
                             legalCase.setExpiredDate(null);
-                        else
-                            legalCase.setLegalCaseStatus(documentType.getPostStatus());
+                    }
 
                     break;
                 }

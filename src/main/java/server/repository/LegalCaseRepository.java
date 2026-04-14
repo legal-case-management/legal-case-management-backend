@@ -7,10 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import server.entity.Batch;
-import server.entity.Judge;
-import server.entity.LegalCase;
-import server.entity.LegalRelationshipGroup;
+import server.entity.*;
 import server.entity.enums.LegalCaseStatus;
 
 import java.time.LocalDate;
@@ -20,6 +17,7 @@ import java.util.Optional;
 
 public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     long countLegalCaseByBatch(Batch batch);
+    long countLegalCasesByMediator(Mediator mediator);
 
     @Query("""
                 SELECT DISTINCT lc FROM LegalCase lc

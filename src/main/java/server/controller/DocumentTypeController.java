@@ -88,7 +88,7 @@ public class DocumentTypeController {
             @RequestBody @Valid DocumentTypeSearchRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "decisionTypeId") String sortBy
+            @RequestParam(defaultValue = "documentTypeId") String sortBy
     ) {
         return ApiResponse.<PageResponse<DocumentTypeResponse>>builder()
                 .success(true)

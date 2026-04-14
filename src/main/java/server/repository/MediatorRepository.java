@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MediatorRepository extends JpaRepository<Mediator, String> {
+
     @Query("""
         SELECT
             m.officerId,
