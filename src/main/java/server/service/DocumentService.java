@@ -50,26 +50,23 @@ public class DocumentService {
         LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
-        boolean handled = false;
 
         if (!documentType.getPreStatuses().isEmpty()) {
             for (LegalCaseStatus status : documentType.getPreStatuses()) {
-
                 if (status.equals(legalCase.getLegalCaseStatus())) {
-
-                    legalCase.setLegalCaseStatus(documentType.getPostStatus());
                     if (documentType.getExtensionPeriod() > 0) {
                         legalCase.setExpiredDate(document.getReleaseDate().plusMonths(documentType.getExtensionPeriod()));
-                    } else if (documentType.getPostStatus().equals(LegalCaseStatus.TEMPORARY_SUSPENSION)) {
-                        legalCase.setExpiredDate(null);
                     }
-                    handled = true;
+
+                    if (documentType.getPostStatus() != null)
+                        if (documentType.getPostStatus().equals(LegalCaseStatus.TEMPORARY_SUSPENSION))
+                            legalCase.setExpiredDate(null);
+                        else
+                            legalCase.setLegalCaseStatus(documentType.getPostStatus());
+
                     break;
                 }
             }
-
-            if (!handled)
-                throw new AppException(ErrorCode.CAN_NOT_HANDLE_TYPE_OF_DECISION);
         }
 
         Integer maxId = documentRepository.getMaxId(legalCase.getLegalCaseId()).orElse(0);
