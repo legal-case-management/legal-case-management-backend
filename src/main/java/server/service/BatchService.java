@@ -87,19 +87,6 @@ public class BatchService {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public PageResponse<BatchResponse> search(BatchSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-        Page<Batch> test = batchRepository.search(
-                request.getBatchId(),
-                request.getBatchName(),
-                request.getNote(),
-                request.getStartStorageDate(),
-                request.getEndStorageDate(),
-                pageable
-        );
-        System.out.println("hello");
-        test.forEach(e -> {
-            System.out.println(e.getBatchId());
-            System.out.println(e.getStorageDate());
-        });
         Page<BatchResponse> resultPage = batchRepository.search(
                 request.getBatchId(),
                 request.getBatchName(),
