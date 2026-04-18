@@ -3,8 +3,6 @@ package server.config;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import server.dto.response.ApiResponse;
 import server.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,8 +29,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import org.apache.catalina.connector.Connector;
-
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -42,16 +38,16 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
     String[] PUBLIC_POST_ENDPOINTS = {
-            "auth/introspect",
-            "auth/login",
-            "auth/logout",
-            "auth/refresh-token",
-            "auth/forgot-password",
-            "auth/verify-otp"
+            "/auth/introspect",
+            "/auth/login",
+            "/auth/logout",
+            "/auth/refresh-token",
+            "/auth/forgot-password",
+            "/auth/verify-otp"
     };
 
     String[] PUBLIC_GET_ENDPOINTS = {
-            "auth/ping"
+            "/auth/ping"
     };
 
     @NonFinal
@@ -127,18 +123,6 @@ public class SecurityConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
-    }
-
-    @Bean
-    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> servletContainer() {
-        return factory -> {
-            Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
-            connector.setScheme("http");
-            connector.setPort(8080); // Cổng HTTP
-            connector.setSecure(false);
-            connector.setRedirectPort(8081); // Chuyển hướng tới cổng HTTPS
-            factory.addAdditionalTomcatConnectors(connector);
-        };
     }
 
     @Bean

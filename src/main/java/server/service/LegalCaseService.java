@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,12 +21,10 @@ import server.dto.response.legalCase.LegalCaseResponse;
 import server.entity.*;
 import server.entity.enums.Assignment;
 import server.entity.enums.LegalCaseStatus;
+import server.entity.enums.NotificationType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
-import server.mapper.DocumentMapper;
-import server.mapper.JudgeMapper;
-import server.mapper.LegalCaseMapper;
-import server.mapper.PageMapper;
+import server.mapper.*;
 import server.repository.*;
 import server.utils.DateUtils;
 
@@ -46,11 +45,16 @@ public class LegalCaseService {
     JudgeRepository judgeRepository;
     BatchRepository batchRepository;
     MediatorRepository mediatorRepository;
+    NotificationRepository notificationRepository;
+    AccountRepository accountRepository;
 
     LegalCaseMapper legalCaseMapper;
     PageMapper pageMapper;
     JudgeMapper judgeMapper;
     DocumentMapper documentMapper;
+    NotificationMapper notificationMapper;
+
+    SimpMessagingTemplate messagingTemplate;
 
 
     public List<LegalCaseResponse> getAll() {
@@ -335,11 +339,34 @@ public class LegalCaseService {
         }
     }
 
-    private void assignLegalCaseToJudge(LegalCase legalCase, JudgeAssignmentInfo judge) {
-        legalCase.setAssignment(Assignment.RANDOM);
+    public void sendAssignmentNotification(LegalCase legalCase, Account account) {
+        if (legalCase.getJudge() != null) {
+            String destination = String.format("/topic/notifications/%s", account.getAccountId());
 
+            Notification notification = Notification.builder()
+                    .notificationId(UUID.randomUUID().toString())
+                    .notificationType(NotificationType.LEGAL_CASE_CASE_ASSIGNED)
+                    .title("Thông báo phân công án")
+                    .content(String.format("Bạn đã được phân công thụ lý vụ án %s", legalCase.getLegalCaseId()))
+                    .legalCase(legalCase)
+                    .account(account)
+                    .storageDate(LocalDateTime.now())
+                    .build();
+
+            Notification notificationSaved = notificationRepository.save(notification);
+
+            messagingTemplate.convertAndSend(
+                    destination,
+                    notificationMapper.toNotificationResponse(notificationSaved)
+            );
+        }
+    }
+
+    private void assignLegalCaseToJudge(LegalCase legalCase, JudgeAssignmentInfo judge) {
         LegalCaseType legalCaseType = legalCaseTypeRepository.getByLegalRelationships(legalCase.getLegalRelationship())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
+
+        legalCase.setAssignment(Assignment.RANDOM);
 
         legalCase.setExpiredDate(
                 legalCaseType.getCodeName().equals("HS")
@@ -356,6 +383,11 @@ public class LegalCaseService {
         );
 
         legalCaseRepository.save(legalCase);
+
+        Account account = accountRepository.findAccountByOfficerOfficerId(judge.getOfficerId())
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        sendAssignmentNotification(legalCase, account);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -399,6 +431,11 @@ public class LegalCaseService {
         legalCase.setJudge(judge);
 
         legalCaseRepository.save(legalCase);
+
+        Account account = accountRepository.findAccountByOfficerOfficerId(judge.getOfficerId())
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        sendAssignmentNotification(legalCase, account);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
