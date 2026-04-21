@@ -340,7 +340,7 @@ public class AuthenticationService {
     }
 
     public void resetPassword(ResetPasswordRequest request) {
-        String accountId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String accountId = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
@@ -379,7 +379,7 @@ public class AuthenticationService {
 
     public AccountResponse getMyInfo() {
         SecurityContext context = SecurityContextHolder.getContext();
-        String accountId = context.getAuthentication().getName();
+        String accountId = Objects.requireNonNull(context.getAuthentication()).getName();
         return accountMapper.toAccountResponse(
                 accountRepository
                         .findById(accountId)
@@ -427,14 +427,14 @@ public class AuthenticationService {
         accountRepository.save(account);
     }
 
-//    @Scheduled(cron = "0 */6 * * * *")
-//    public void keepServerAwake() {
-//        try {
-//            RestTemplate restTemplate = new RestTemplate();
-//            String url = "https://legal-case-management-backend-sggy.onrender.com/auth/ping";
-//            restTemplate.getForObject(url, String.class);
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
-//    }
+    @Scheduled(cron = "0 */6 * * * *")
+    public void keepServerAwake() {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://legal-case-management-backend-sggy.onrender.com/auth/ping";
+            restTemplate.getForObject(url, String.class);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
