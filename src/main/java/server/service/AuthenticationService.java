@@ -174,7 +174,7 @@ public class AuthenticationService {
 
     public void changePassword(ChangePasswordRequest request) {
         // Lấy accountId từ JWT token trong SecurityContext
-        String accountId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String accountId = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
 
         // Tìm account trong database
         Account account = accountRepository.findById(accountId)
@@ -427,14 +427,14 @@ public class AuthenticationService {
         accountRepository.save(account);
     }
 
-    @Scheduled(cron = "0 */6 * * * *")
-    public void keepServerAwake() {
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            String url = "https://legal-case-management-backend-sggy.onrender.com/auth/ping";
-            restTemplate.getForObject(url, String.class);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
+//    @Scheduled(cron = "0 */6 * * * *")
+//    public void keepServerAwake() {
+//        try {
+//            RestTemplate restTemplate = new RestTemplate();
+//            String url = "https://legal-case-management-backend-sggy.onrender.com/auth/ping";
+//            restTemplate.getForObject(url, String.class);
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
 }

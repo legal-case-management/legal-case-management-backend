@@ -235,7 +235,7 @@ public class LegalCaseService {
         legalCaseRepository.delete(legalCaseSaved);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Synchronized
     @Transactional
@@ -390,7 +390,7 @@ public class LegalCaseService {
         sendAssignmentNotification(legalCase, account);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @Async
     @Synchronized
     @Transactional
