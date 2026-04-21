@@ -339,28 +339,6 @@ public class LegalCaseService {
         }
     }
 
-    public void sendAssignmentNotification(LegalCase legalCase, Account account) {
-        if (legalCase.getJudge() != null) {
-            String destination = String.format("/topic/notifications/%s", account.getAccountId());
-
-            Notification notification = Notification.builder()
-                    .notificationId(UUID.randomUUID().toString())
-                    .notificationType(NotificationType.LEGAL_CASE_CASE_ASSIGNED)
-                    .title("Thông báo phân công án")
-                    .content(String.format("Bạn đã được phân công thụ lý vụ án %s", legalCase.getLegalCaseId()))
-                    .legalCase(legalCase)
-                    .account(account)
-                    .storageDate(LocalDateTime.now())
-                    .build();
-
-            Notification notificationSaved = notificationRepository.save(notification);
-
-            messagingTemplate.convertAndSend(
-                    destination,
-                    notificationMapper.toNotificationResponse(notificationSaved)
-            );
-        }
-    }
 
     private void assignLegalCaseToJudge(LegalCase legalCase, JudgeAssignmentInfo judge) {
         LegalCaseType legalCaseType = legalCaseTypeRepository.getByLegalRelationships(legalCase.getLegalRelationship())
@@ -383,11 +361,6 @@ public class LegalCaseService {
         );
 
         legalCaseRepository.save(legalCase);
-
-        Account account = accountRepository.findAccountByOfficerOfficerId(judge.getOfficerId())
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
-
-        sendAssignmentNotification(legalCase, account);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
@@ -431,11 +404,6 @@ public class LegalCaseService {
         legalCase.setJudge(judge);
 
         legalCaseRepository.save(legalCase);
-
-        Account account = accountRepository.findAccountByOfficerOfficerId(judge.getOfficerId())
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
-
-        sendAssignmentNotification(legalCase, account);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
