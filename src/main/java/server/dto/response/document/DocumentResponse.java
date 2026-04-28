@@ -1,5 +1,6 @@
 package server.dto.response.document;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.legalCase.LegalCaseResponse;
@@ -18,7 +19,9 @@ import java.time.LocalDateTime;
 public class DocumentResponse {
     String documentId;
     String documentNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     LocalDate releaseDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime storageDate;
     String note;
     DocumentTypeResponse documentType;
