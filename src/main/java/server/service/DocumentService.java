@@ -23,6 +23,7 @@ import server.repository.LegalCaseRepository;
 import server.repository.DocumentTypeRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -77,7 +78,7 @@ public class DocumentService {
         document.setDocumentId(decisionId);
         document.setDocumentType(documentType);
         document.setLegalCase(legalCase);
-        document.setStorageDate(LocalDate.now());
+        document.setStorageDate(LocalDateTime.now());
 
         documentRepository.save(document);
     }

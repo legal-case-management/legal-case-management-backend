@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "documents")
@@ -27,7 +28,7 @@ public class Document {
     LocalDate releaseDate;
 
     @Column(name = "storage_date", nullable = false)
-    LocalDate storageDate;
+    LocalDateTime storageDate;
 
     @ManyToOne
     @JoinColumn(name = "document_type_id", nullable = false)
