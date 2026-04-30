@@ -10,7 +10,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 public enum LegalCaseStatus {
     TEMPORARY_SUSPENSION("Tạm đình chỉ"),
-    SUSPENSION("Đình chỉ"),
     OVERDUE("Quá hạn"),
     CANCELED("Án hủy"),
     EDITED("Án sửa"),
