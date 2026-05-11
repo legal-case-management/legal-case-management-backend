@@ -88,7 +88,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND lc.judge IS NULL
             AND lc.mediator IS NOT NULL
             """)
-    Page<LegalCase> getAssignmentListHasMediator(Pageable pageable);
+    Page<LegalCase> getAssignmentListWithMediator(Pageable pageable);
 
     @Query("""
             SELECT lc FROM LegalCase lc
@@ -97,7 +97,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             AND lc.judge IS NULL
             AND lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId
             """)
-    Page<LegalCase> getAssignmentListByLegalRelationshipGroup(String legalRelationshipGroupId, Pageable pageable);
+    Page<LegalCase> getAssignmentListWithoutMediator(String legalRelationshipGroupId, Pageable pageable);
 
     @Query("""
             SELECT lc FROM LegalCase lc

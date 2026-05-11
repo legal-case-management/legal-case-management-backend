@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse<?>> handleException(Exception e) {
-        ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
-
-        ApiResponse<?> apiResponse = ApiResponse
-                .builder()
-                .success(false)
-                .status(errorCode.getStatus())
-                .error(errorCode.getMessage())
-                .build();
-        return ResponseEntity
-                .status(errorCode.getHttpStatus())
-                .body(apiResponse);
-    }
+//    @ExceptionHandler(value = Exception.class)
+//    ResponseEntity<ApiResponse<?>> handleException(Exception e) {
+//        ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
+//
+//        ApiResponse<?> apiResponse = ApiResponse
+//                .builder()
+//                .success(false)
+//                .status(errorCode.getStatus())
+//                .error(errorCode.getMessage())
+//                .build();
+//        return ResponseEntity
+//                .status(errorCode.getHttpStatus())
+//                .body(apiResponse);
+//    }
 
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse<?>> handleAppException(AppException e) {

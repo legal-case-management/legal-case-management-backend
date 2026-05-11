@@ -16,29 +16,17 @@ import java.util.Optional;
 public interface MediatorRepository extends JpaRepository<Mediator, String> {
 
     @Query("""
-        SELECT
-            m.officerId,
-            m.lastName,
-            m.firstName,
-            m.fullName,
-            m.officerStatus,
-            m.account.email,
-            SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
-            SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END)
+        SELECT m
         FROM Mediator m
-        LEFT JOIN m.legalCases lc
-            ON lc.batch.storageDate >= :milestoneDate
         WHERE (:officerId IS NULL OR m.officerId LIKE %:officerId%)
           AND (:fullName IS NULL OR m.fullName LIKE %:fullName%)
           AND (:statusOfOfficer IS NULL OR m.officerStatus = :statusOfOfficer)
-        GROUP BY m.officerId, m.lastName, m.firstName, m.fullName, m.officerStatus, m.account.email
         ORDER BY m.officerId
     """)
-    Page<Object[]> search(
+    Page<Mediator> search(
             @Param("officerId") String officerId,
             @Param("fullName") String fullName,
             @Param("statusOfOfficer") OfficerStatus statusOfOfficer,
-            @Param("milestoneDate") LocalDateTime milestoneDate,
             Pageable pageable
     );
 

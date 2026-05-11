@@ -126,7 +126,6 @@ public class MediatorService {
                 request.getOfficerId(),
                 request.getFullName(),
                 request.getOfficerStatus(),
-                DateUtils.getMilestoneDateTime(),
                 pageable
         ).map(mediatorMapper::toMediatorResponse);
 

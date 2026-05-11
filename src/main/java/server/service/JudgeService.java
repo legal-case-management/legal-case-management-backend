@@ -8,14 +8,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.request.legalCase.AssignmentListRequest;
 import server.dto.response.PageResponse;
+import server.dto.response.judge.JudgeAssignmentInfoResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.entity.*;
 import server.entity.enums.Role;
@@ -65,22 +64,27 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<JudgeResponse> listAssignment(AssignmentListRequest request) {
-        LegalRelationshipGroup legalRelationshipGroup = request.getLegalRelationshipGroupId() == null
-                ? null
-                : legalRelationshipGroupRepository.findById(request.getLegalRelationshipGroupId())
-                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
+    public List<JudgeAssignmentInfoResponse> listAssignment(String legalRelationshipGroupId) {
+        boolean isMediator = legalRelationshipGroupId == null;
+        if (isMediator) {
+            return judgeRepository.getAssignAssignmentWithMediatorRaw(
+                            DateUtils.getMilestoneStartDate(),
+                            DateUtils.getMilestoneEndDate()
+                    )
+                    .stream()
+                    .map(judgeMapper::toJudgeAssignmentInfo)
+                    .toList();
+        }
+        LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(legalRelationshipGroupId)
+                  .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-        return judgeRepository.getAssignAssignmentRaw(DateUtils.getMilestoneDateTime(), legalRelationshipGroup)
-                .stream()
-                .map(judgeMapper::toJudgeResponse)
-                .peek(judgeResponse ->
-                        judgeResponse.setRestrictedGroups(
-                                legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId()).stream()
-                                        .map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
-                                        .toList()
-                        )
+        return judgeRepository.getAssignAssignmentWithoutMediatorRaw(
+                        DateUtils.getMilestoneStartDate(),
+                        DateUtils.getMilestoneEndDate(),
+                        legalRelationshipGroup
                 )
+                .stream()
+                .map(judgeMapper::toJudgeAssignmentInfo)
                 .toList();
     }
 
@@ -88,21 +92,11 @@ public class JudgeService {
     public PageResponse<JudgeResponse> search(JudgeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         Page<JudgeResponse> resultPage = judgeRepository.search(
-                        request.getOfficerId(),
-                        request.getFullName(),
-                        request.getOfficerStatus(),
-                        DateUtils.getMilestoneDateTime(),
-                        pageable
-                ).map(judgeMapper::toJudgeResponse)
-                .map(judgeResponse -> {
-                    judgeResponse.setRestrictedGroups(
-                            legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId())
-                                    .stream()
-                                    .map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
-                                    .toList()
-                    );
-                    return judgeResponse;
-                });
+                request.getOfficerId(),
+                request.getFullName(),
+                request.getOfficerStatus(),
+                pageable
+        ).map(judgeMapper::toJudgeResponse);
 
         return pageMapper.map(resultPage);
     }

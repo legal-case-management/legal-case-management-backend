@@ -1,9 +1,10 @@
-package server.dto.other.judge;
+package server.dto.response.judge;
 
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import server.entity.enums.OfficerStatus;
 
 @Getter
 @Setter
@@ -11,12 +12,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class JudgeAssignmentInfo {
+public class JudgeAssignmentInfoResponse {
     String officerId;
-    Long maxWithMediator;
-    Long maxWithoutMediator;
-    long numberWithMediator;
-    long numberWithoutMediator;
-    long numberLegalCase;
-    long numberGroupLand;
+    String fullName;
+    OfficerStatus officerStatus;
+    Long maxByCondition;
+    long numberByCondition;
 }

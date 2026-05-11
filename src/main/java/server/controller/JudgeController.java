@@ -7,6 +7,7 @@ import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.request.legalCase.AssignmentListRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
+import server.dto.response.judge.JudgeAssignmentInfoResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.service.JudgeService;
 import lombok.AccessLevel;
@@ -51,12 +52,12 @@ public class JudgeController {
     }
 
     @PostMapping("/list-assignment")
-    public ApiResponse<List<JudgeResponse>> listAssignment(@RequestBody @Valid AssignmentListRequest request) {
-        return ApiResponse.<List<JudgeResponse>>builder()
+    public ApiResponse<List<JudgeAssignmentInfoResponse>> listAssignment(@RequestParam String legalRelationshipGroupId) {
+        return ApiResponse.<List<JudgeAssignmentInfoResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Successful")
-                .data(judgeService.listAssignment(request))
+                .data(judgeService.listAssignment(legalRelationshipGroupId))
                 .build();
     }
 

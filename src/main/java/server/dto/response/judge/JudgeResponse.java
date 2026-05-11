@@ -17,12 +17,5 @@ import java.util.List;
 public class JudgeResponse extends OfficerResponse {
     Long maxWithMediator;
     Long maxWithoutMediator;
-    long numberWithMediator;
-    long numberWithoutMediator;
-    long numberLegalCase;
-    long numberInProcess;
-    long numberTemporarySuspension;
-    long numberOverdue;
-    long numberCanceledAndEdited;
     List<LegalRelationshipGroupResponse> restrictedGroups;
 }

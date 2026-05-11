@@ -10,11 +10,21 @@ import java.time.format.DateTimeFormatter;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DateUtils {
     static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    public static LocalDate getMilestoneDate() {
+    public static LocalDate getMilestoneStartDate() {
         LocalDate today = LocalDate.now();
         LocalDate milestone = LocalDate.of(today.getYear(), 10, 1);
 
         if (today.isBefore(milestone)) {
+            milestone = milestone.minusYears(1);
+        }
+        return milestone;
+    }
+
+    public static LocalDate getMilestoneEndDate() {
+        LocalDate today = LocalDate.now();
+        LocalDate milestone = LocalDate.of(today.getYear(), 9, 30);
+
+        if (today.isAfter(milestone)) {
             milestone = milestone.minusYears(1);
         }
         return milestone;
@@ -28,17 +38,6 @@ public class DateUtils {
             milestone = milestone.minusYears(1);
         }
         return milestone;
-    }
-
-    public static int getCurrentYear() {
-        LocalDate today = LocalDate.now();
-        LocalDate milestone = LocalDate.of(today.getYear(), 10, 1);
-
-        if (today.isBefore(milestone)) {
-            return today.getYear();
-        } else {
-            return today.getYear() + 1;
-        }
     }
 
     public static int getCurrentYear(LocalDate date) {

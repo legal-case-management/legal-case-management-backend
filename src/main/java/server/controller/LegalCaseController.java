@@ -119,7 +119,7 @@ public class LegalCaseController {
 
     @PostMapping("/assignment-list")
     public ApiResponse<PageResponse<LegalCaseResponse>> getAssignmentList(
-            @RequestBody @Valid AssignmentListRequest request,
+            @RequestParam String legalRelationshipGroupId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "legalCaseId") String sortBy
@@ -128,7 +128,7 @@ public class LegalCaseController {
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalCaseService.getAssignmentList(request, page, size, sortBy))
+                .data(legalCaseService.getAssignmentList(legalRelationshipGroupId, page, size, sortBy))
                 .build();
     }
 
