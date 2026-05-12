@@ -52,7 +52,7 @@ public class JudgeController {
     }
 
     @GetMapping("/list-assignment")
-    public ApiResponse<List<JudgeAssignmentInfoResponse>> listAssignment(@RequestParam String legalRelationshipGroupId) {
+    public ApiResponse<List<JudgeAssignmentInfoResponse>> listAssignment(@RequestParam(required = false) String legalRelationshipGroupId) {
         return ApiResponse.<List<JudgeAssignmentInfoResponse>>builder()
                 .success(true)
                 .status(200)

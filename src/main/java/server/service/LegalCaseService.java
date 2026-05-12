@@ -411,17 +411,6 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public PageResponse<LegalCaseResponse> getPending(int page, int size, String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
-        Page<LegalCaseResponse> resultPage = legalCaseRepository.getPending(
-                DateUtils.getMilestoneStartDate(),
-                pageable
-        ).map(legalCaseMapper::toLegalCaseResponse);
-
-        return pageMapper.map(resultPage);
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public void removeAssignment(String legalCaseId) {
         LegalCase legalCase = legalCaseRepository.findById(legalCaseId)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));

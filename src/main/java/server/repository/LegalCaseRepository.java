@@ -112,21 +112,6 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             """)
     Page<LegalCase> getAssignmentListWithoutMediator(String legalRelationshipGroupId, Pageable pageable);
 
-    @Query("""
-            SELECT lc FROM LegalCase lc
-            LEFT JOIN lc.legalRelationship lr
-            LEFT JOIN lc.batch b
-            WHERE (lc.legalCaseStatus = 'IN_PROCESS'
-                   OR lc.legalCaseStatus = 'OVERDUE'
-                   OR lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT'
-                   OR lc.legalCaseStatus = 'TEMPORARY_SUSPENSION')
-                  AND b.storageDate < :milestoneDate
-            """)
-    Page<LegalCase> getPending(
-            @Param("milestoneDate") LocalDate milestoneDate,
-            Pageable pageable
-    );
-
     @Modifying
     @Transactional
     @Query("""

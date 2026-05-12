@@ -17,5 +17,4 @@ public class OfficerResponse {
     String firstName;
     String fullName;
     OfficerStatus officerStatus;
-    String email;
 }
