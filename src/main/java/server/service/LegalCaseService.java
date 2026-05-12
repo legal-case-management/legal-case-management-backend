@@ -348,6 +348,7 @@ public class LegalCaseService {
                     judge.getOfficerId()
             );
         }
+
         if (!isAvailable) {
             throw new AppException(ErrorCode.JUDGE_NOT_AVAILABLE);
         }
