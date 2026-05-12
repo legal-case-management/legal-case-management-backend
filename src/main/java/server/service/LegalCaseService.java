@@ -50,16 +50,6 @@ public class LegalCaseService {
 
     JudgeService judgeService;
 
-
-
-
-    public List<LegalCaseResponse> getAll() {
-        return legalCaseRepository
-                .findAll()
-                .stream().map(legalCaseMapper::toLegalCaseResponse)
-                .toList();
-    }
-
     public PageResponse<LegalCaseResponse> search(LegalCaseSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
         Page<LegalCaseResponse> resultPage = legalCaseRepository.search(

@@ -22,16 +22,6 @@ import java.util.List;
 public class LegalCaseController {
     LegalCaseService legalCaseService;
 
-    @GetMapping("/all")
-    public ApiResponse<List<LegalCaseResponse>> getAll() {
-        return ApiResponse.<List<LegalCaseResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Thành công")
-                .data(legalCaseService.getAll())
-                .build();
-    }
-
     @PostMapping("/search")
     public ApiResponse<PageResponse<LegalCaseResponse>> search(
             @RequestBody @Valid LegalCaseSearchRequest request,
