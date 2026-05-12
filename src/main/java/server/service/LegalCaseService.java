@@ -239,7 +239,6 @@ public class LegalCaseService {
         if (request == null)
             throw new AppException(ErrorCode.RANDOM_ASSIGNMENT_FAILED);
 
-        // Lấy danh sách thẩm phán
         List<JudgeAssignmentInfoResponse> judges = judgeService.listAssignment(
                 request.getLegalRelationshipGroupId()
         );
@@ -247,67 +246,47 @@ public class LegalCaseService {
         if (judges.isEmpty())
             throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
 
-        // Lấy danh sách vụ án cần phân công
-        List<LegalCase> legalCases = getAssignmentList(l)
+        List<LegalCase> legalCases = getAssignmentList(
+                request.getLegalCaseIds(),
+                request.getLegalRelationshipGroupId()
+        );
 
         if (legalCases.isEmpty())
             throw new AppException(ErrorCode.NO_LEGAL_CASES_FOUND);
 
-        boolean isGroupLand = legalRelationshipGroup != null
-                && legalRelationshipGroup.getLegalRelationshipGroupId().equals("N04");
-
-        boolean isMediator = legalRelationshipGroup == null;
-
         Random random = new Random();
 
-        // --- PHÂN CÔNG ÁN ---
+        // --- PHÂN CÔNG CÂN BẰNG VỚI MIN-HEAP ---
+        // Luôn lấy ra thẩm phán có số án ít nhất để phân công
+        PriorityQueue<JudgeAssignmentInfoResponse> minHeap = new PriorityQueue<>(
+                Comparator.comparingLong(JudgeAssignmentInfoResponse::getNumberByCondition)
+        );
+
+        // Đưa thẩm phán chưa đạt giới hạn
+        for (JudgeAssignmentInfoResponse judge : judges) {
+            minHeap.offer(judge);
+        }
+
+        if (minHeap.isEmpty())
+            throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE);
+
         while (!legalCases.isEmpty()) {
-            if (isMediator) {
-                // luôn sắp xếp lại theo tổng án hiện tại
-                judges.sort(Comparator.comparingLong(JudgeAssignmentInfoResponse::getNumberWithMediator));
+            // Không còn thẩm phán nào nhận án được → dừng
+            if (minHeap.isEmpty())
+                throw new AppException(ErrorCode.NO_JUDGES_AVAILABLE_FOR_LEGAL_CASES);
 
-                // lấy thẩm phán ít án nhất
-                JudgeAssignmentInfoResponse judge = judges.getFirst();
+            // Lấy thẩm phán có số án ít nhất
+            JudgeAssignmentInfoResponse currentJudge = minHeap.poll();
 
-                Long maxCases = judge.getMaxWithMediator();
-                if (maxCases != null && judge.getNumberWithMediator() >= maxCases)
-                    break;
+            // Phân công 1 án ngẫu nhiên
+            LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
+            assignLegalCaseToJudge(legalCase, currentJudge);
+            currentJudge.setNumberByCondition(currentJudge.getNumberByCondition() + 1);
+            currentJudge.setNumberWithType(currentJudge.getNumberWithType() + 1);
 
-                // lấy vụ án bất kỳ
-                LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
-
-                assignLegalCaseToJudge(legalCase, judge);
-                judge.setNumberWithMediator(judge.getNumberWithMediator() + 1);
-            } else if (isGroupLand) {
-                // Sắp xếp danh sách thẩm phán theo số án đất hiện tại (tăng dần)
-                judges.sort(Comparator.comparingLong(JudgeAssignmentInfoResponse::getNumberGroupLand));
-
-                // Lấy thẩm phán có số án đất ít nhất
-                JudgeAssignmentInfoResponse judge = judges.getFirst();
-
-                Long maxCases = judge.getMaxWithoutMediator();
-                if (maxCases != null && judge.getNumberWithoutMediator() >= maxCases)
-                    break;
-
-                LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
-                assignLegalCaseToJudge(legalCase, judge);
-                judge.setNumberGroupLand(judge.getNumberGroupLand() + 1);
-            } else {
-                // luôn sắp xếp lại theo tổng án hiện tại
-                judges.sort(Comparator.comparingLong(JudgeAssignmentInfoResponse::getNumberWithoutMediator));
-
-                // lấy thẩm phán ít án nhất
-                JudgeAssignmentInfoResponse judge = judges.getFirst();
-
-                Long maxCases = judge.getMaxWithoutMediator();
-                if (maxCases != null && judge.getNumberWithoutMediator() >= maxCases)
-                    break;
-
-                // lấy vụ án bất kỳ
-                LegalCase legalCase = legalCases.remove(random.nextInt(legalCases.size()));
-
-                assignLegalCaseToJudge(legalCase, judge);
-                judge.setNumberWithoutMediator(judge.getNumberWithoutMediator() + 1);
+            // Đưa lại vào heap nếu chưa đạt giới hạn
+            if (currentJudge.getMaxWithType() != null && currentJudge.getNumberWithType() < currentJudge.getMaxWithType()) {
+                minHeap.offer(currentJudge);
             }
         }
     }
@@ -352,16 +331,27 @@ public class LegalCaseService {
         Judge judge = judgeRepository.findById(request.getJudgeId())
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
-        boolean isAvailable = judgeRepository.isAvailableAssignment(
-                DateUtils.getMilestoneDateTime(),
-                legalCase.getLegalRelationship().getLegalRelationshipGroup(),
-                legalCase.getMediator() != null,
-                judge.getOfficerId()
-        );
+        boolean isMediator = legalCase.getMediator() != null;
 
+        boolean isAvailable;
+        if(isMediator){
+            isAvailable = judgeRepository.isAvailableAssignmentWithMediator(
+                    DateUtils.getMilestoneStartDate(),
+                    DateUtils.getMilestoneEndDate(),
+                    judge.getOfficerId()
+            );
+        }else {
+            isAvailable = judgeRepository.isAvailableAssignmentWithoutMediator(
+                    DateUtils.getMilestoneStartDate(),
+                    DateUtils.getMilestoneEndDate(),
+                    legalCase.getLegalRelationship().getLegalRelationshipGroup(),
+                    judge.getOfficerId()
+            );
+        }
         if (!isAvailable) {
             throw new AppException(ErrorCode.JUDGE_NOT_AVAILABLE);
         }
+
 
         legalCase.setAssignment(Assignment.ASSIGN);
         legalCase.setAssignmentDate(LocalDateTime.now());
@@ -403,51 +393,20 @@ public class LegalCaseService {
         }
     }
 
-    public List<LegalCase> getAssignmentList(String legalRelationshipGroupId) {
-
+    public List<LegalCase> getAssignmentList(List<String> legalCaseIds, String legalRelationshipGroupId) {
         boolean isMediator = legalRelationshipGroupId == null;
 
         if (isMediator) {
-             legalCaseRepository.getAssignmentListWithMediator(pageable)
-                    .map(legalCaseMapper::toLegalCaseResponse);
-
+             return legalCaseRepository.getAssignmentListWithMediator(legalCaseIds);
         } else {
             LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(legalRelationshipGroupId)
                     .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-            Page<LegalCaseResponse> resultPage = legalCaseRepository.getAssignmentListWithoutMediator(
-                    legalRelationshipGroup.getLegalRelationshipGroupId(),
-                    pageable
-            ).map(legalCaseMapper::toLegalCaseResponse);
-
-            return pageMapper.map(resultPage);
+            return legalCaseRepository.getAssignmentListWithoutMediator(
+                    legalCaseIds,
+                    legalRelationshipGroup
+            );
         }
-    }
-
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Async
-    @Synchronized
-    @Transactional
-    public void changeBatch(ChangeBatchRequest request) {
-        if (request == null
-                || request.getLegalCaseIds() == null
-                || request.getLegalCaseIds().isEmpty()
-                || request.getBatchId() == null
-        ) {
-            throw new AppException(ErrorCode.BATCH_CHANGE_FAILED);
-        }
-
-        Batch batch = batchRepository.findById(request.getBatchId())
-                .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
-
-        request.getLegalCaseIds().forEach(legalCaseId -> {
-            LegalCase legalCase = legalCaseRepository.findById(legalCaseId)
-                    .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
-
-            legalCase.setBatch(batch);
-            legalCaseRepository.save(legalCase);
-        });
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

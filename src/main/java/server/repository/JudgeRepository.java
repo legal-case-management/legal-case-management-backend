@@ -44,13 +44,14 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.fullName,
                 j.officerStatus,
                 j.maxWithoutMediator,
-                count(lc)
+                COUNT(lc),
+                SUM(CASE WHEN lrg = :legalRelationshipGroup THEN 1 ELSE 0 END)
             FROM Judge j
             LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND lc.mediator IS NULL
-            LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg ON lrg = :legalRelationshipGroup
+            LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
             WHERE j.officerStatus = 'WORKING'
                   AND (:legalRelationshipGroup IS NULL OR j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
-            GROUP BY j.officerId, j.fullName, j.maxWithoutMediator, j.officerStatus
+            GROUP BY j.officerId, j.firstName, j.lastName, j.fullName, j.maxWithoutMediator, j.officerStatus
             HAVING (j.maxWithoutMediator IS NULL OR count(lc) < j.maxWithoutMediator)
             ORDER BY j.officerId
             """)
@@ -66,12 +67,13 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.fullName,
                 j.officerStatus,
                 j.maxWithMediator,
-                count(lc)
+                COUNT(lc),
+                COUNT(lc)
             FROM Judge j
             LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND lc.mediator IS NOT NULL
             WHERE j.officerStatus = 'WORKING'
                   AND (:legalRelationshipGroup IS NULL OR j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
-            GROUP BY j.officerId, j.fullName, j.maxWithMediator, j.officerStatus
+            GROUP BY j.officerId, j.firstName, j.lastName, j.fullName, j.maxWithMediator, j.officerStatus
             HAVING (j.maxWithMediator IS NULL OR count(lc) < j.maxWithMediator)
             ORDER BY j.officerId
             """)
@@ -84,22 +86,33 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     @Query("""
             SELECT COUNT(j) > 0
             FROM Judge j
-            LEFT JOIN j.legalCases lc
-                   ON lc.batch.storageDate >= :milestoneDateTime
-            LEFT JOIN lc.batch b
+            LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND lc.mediator IS NULL
             WHERE j.officerId = :officerId
                   AND j.officerStatus = 'WORKING'
                   AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
-            GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
-                     j.maxWithMediator, j.maxWithoutMediator, j.officerStatus, j.account.email
-            HAVING (:mediator = false AND (j.maxWithoutMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END) < j.maxWithoutMediator))
-                   OR (:mediator = true AND (j.maxWithMediator IS NULL OR SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END) < j.maxWithMediator))
+            GROUP BY j.officerId
+            HAVING j.maxWithoutMediator IS NULL OR COUNT(*) < j.maxWithoutMediator
             """)
-    boolean isAvailableAssignment(
-                @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
-                @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup,
-                @Param("mediator") boolean mediator,
-                @Param("officerId") String officerId
+    boolean isAvailableAssignmentWithoutMediator(
+            @Param("milestoneStartDate") LocalDate milestoneStartDate,
+            @Param("milestoneEndDate") LocalDate milestoneEndDate,
+            @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup,
+            @Param("officerId") String officerId
+    );
+
+    @Query("""
+            SELECT COUNT(j) > 0
+            FROM Judge j
+            LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND lc.mediator IS NOT NULL
+            WHERE j.officerId = :officerId
+                  AND j.officerStatus = 'WORKING'
+            GROUP BY j.officerId
+            HAVING j.maxWithoutMediator IS NULL OR COUNT(*) < j.maxWithoutMediator
+            """)
+    boolean isAvailableAssignmentWithMediator(
+            @Param("milestoneStartDate") LocalDate milestoneStartDate,
+            @Param("milestoneEndDate") LocalDate milestoneEndDate,
+            @Param("officerId") String officerId
     );
 
     @Query("""

@@ -146,16 +146,6 @@ public class LegalCaseController {
                 .build();
     }
 
-    @PostMapping("/change-batch")
-    public ApiResponse<Void> changeBatch(@RequestBody @Valid ChangeBatchRequest request) {
-        legalCaseService.changeBatch(request);
-        return ApiResponse.<Void>builder()
-                .success(true)
-                .status(200)
-                .message("Chuyển đợt nhập án thành công")
-                .build();
-    }
-
     @PostMapping("remove-assignment/{id}")
     public ApiResponse<Void> removeAssignment(@PathVariable String id) {
         legalCaseService.removeAssignment(id);

@@ -16,6 +16,7 @@ public class JudgeAssignmentInfoResponse {
     String officerId;
     String fullName;
     OfficerStatus officerStatus;
-    Long maxByCondition;
+    Long maxWithType;
+    long numberWithType;
     long numberByCondition;
 }

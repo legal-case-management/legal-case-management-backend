@@ -34,7 +34,8 @@ public interface JudgeMapper {
             "officerId",
             "fullName",
             "officerStatus",
-            "maxByCondition",
+            "maxWithType",
+            "numberWithType",
             "numberByCondition"
     };
 
