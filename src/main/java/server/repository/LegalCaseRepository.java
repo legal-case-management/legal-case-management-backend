@@ -24,15 +24,15 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
                 LEFT JOIN lc.judge j
                 LEFT JOIN lc.legalRelationship lr
                 LEFT JOIN lc.litigants l
-                WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber LIKE %:acceptanceNumber%)
+                WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber ILIKE %:acceptanceNumber%)
                 AND (cast(:startAcceptanceDate as date) IS NULL OR lc.acceptanceDate >= :startAcceptanceDate)
                 AND (cast(:endAcceptanceDate as date) IS NULL OR lc.acceptanceDate <= :endAcceptanceDate)
                 AND (:legalRelationshipId IS NULL OR lr.legalRelationshipId = :legalRelationshipId)
                 AND (:legalCaseTypeId IS NULL OR lr.legalCaseType.legalCaseTypeId = :legalCaseTypeId)
                 AND (:legalRelationshipGroupId IS NULL OR lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId)
-                AND (:litigantName IS NULL OR l.name LIKE %:litigantName%)
+                AND (:litigantName IS NULL OR l.name ILIKE %:litigantName%)
                 AND (:litigantYearOfBirth IS NULL OR l.yearOfBirth = :litigantYearOfBirth)
-                AND (:litigantAddress IS NULL OR l.address LIKE %:litigantAddress%)
+                AND (:litigantAddress IS NULL OR l.address ILIKE %:litigantAddress%)
                 AND (:legalCaseStatus IS NULL OR lc.legalCaseStatus = :legalCaseStatus)
                 AND (:judgeId IS NULL OR (j IS NOT NULL AND j.officerId = :judgeId))
                 AND (:batchId IS NULL OR (lc.batch IS NOT NULL AND lc.batch.batchId = :batchId))

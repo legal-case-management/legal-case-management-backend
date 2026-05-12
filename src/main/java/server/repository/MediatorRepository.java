@@ -18,8 +18,8 @@ public interface MediatorRepository extends JpaRepository<Mediator, String> {
     @Query("""
         SELECT m
         FROM Mediator m
-        WHERE (:officerId IS NULL OR m.officerId LIKE %:officerId%)
-          AND (:fullName IS NULL OR m.fullName LIKE %:fullName%)
+        WHERE (:officerId IS NULL OR m.officerId ILIKE %:officerId%)
+          AND (:fullName IS NULL OR m.fullName ILIKE %:fullName%)
           AND (:statusOfOfficer IS NULL OR m.officerStatus = :statusOfOfficer)
         ORDER BY m.officerId
     """)

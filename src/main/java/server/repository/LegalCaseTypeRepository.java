@@ -18,9 +18,9 @@ public interface LegalCaseTypeRepository extends JpaRepository<LegalCaseType, St
 
     @Query("""
             SELECT lct FROM LegalCaseType lct
-            WHERE (:legalCaseTypeId IS NULL OR lct.legalCaseTypeId LIKE %:legalCaseTypeId%)
-            AND (:legalCaseTypeName IS NULL OR lct.legalCaseTypeName LIKE %:legalCaseTypeName%)
-            AND (:codeName IS NULL OR lct.codeName LIKE %:codeName%)
+            WHERE (:legalCaseTypeId IS NULL OR lct.legalCaseTypeId ILIKE %:legalCaseTypeId%)
+            AND (:legalCaseTypeName IS NULL OR lct.legalCaseTypeName ILIKE %:legalCaseTypeName%)
+            AND (:codeName IS NULL OR lct.codeName ILIKE %:codeName%)
             """)
     Page<LegalCaseType> search(
             String legalCaseTypeId,

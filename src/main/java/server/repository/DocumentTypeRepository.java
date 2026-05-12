@@ -15,8 +15,8 @@ public interface DocumentTypeRepository extends JpaRepository<DocumentType, Stri
 
     @Query("""
             SELECT dt FROM DocumentType dt
-            WHERE (:documentTypeId IS NULL OR dt.documentTypeId LIKE %:documentTypeId%)
-            AND (:documentTypeName IS NULL OR dt.documentTypeName LIKE %:documentTypeName%)
+            WHERE (:documentTypeId IS NULL OR dt.documentTypeId ILIKE %:documentTypeId%)
+            AND (:documentTypeName IS NULL OR dt.documentTypeName ILIKE %:documentTypeName%)
             AND (:legalCaseTypeId IS NULL OR dt.legalCaseType.legalCaseTypeId = :legalCaseTypeId)
             """)
     Page<DocumentType> search(

@@ -19,8 +19,8 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     @Query("""
         SELECT j
         FROM Judge j
-        WHERE (:officerId IS NULL OR j.officerId LIKE %:officerId%)
-          AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
+        WHERE (:officerId IS NULL OR j.officerId ILIKE %:officerId%)
+          AND (:fullName IS NULL OR j.fullName ILIKE %:fullName%)
           AND (:officerStatus IS NULL OR j.officerStatus = :officerStatus)
         """)
     Page<Judge> search(
