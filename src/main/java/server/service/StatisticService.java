@@ -10,6 +10,8 @@ import server.dto.response.statistic.BarChartDataset;
 import server.dto.response.statistic.BarChartResponse;
 import server.entity.LegalCaseType;
 import server.entity.LegalRelationshipGroup;
+import server.exception.AppException;
+import server.exception.ErrorCode;
 import server.repository.JudgeRepository;
 import server.repository.LegalCaseTypeRepository;
 import server.repository.LegalRelationshipGroupRepository;
@@ -31,6 +33,12 @@ public class StatisticService {
             LocalDate startDate,
             LocalDate endDate
     ) {
+        if(startDate == null || endDate == null)
+            throw new AppException(ErrorCode.INVALID_PARAMETERS);
+
+        if (startDate.isAfter(endDate))
+            throw new AppException(ErrorCode.START_DATE_AFTER_END_DATE);
+
         List<Object[]> rows = judgeRepository.getStatisticsJudgeByLegalRelationshipGroup(startDate, endDate);
 
         Map<String, String> allGroupNames = legalRelationshipGroupRepository.findAll(Sort.by("legalRelationshipGroupId"))
@@ -114,6 +122,12 @@ public class StatisticService {
             LocalDate startDate,
             LocalDate endDate
     ) {
+        if(startDate == null || endDate == null)
+            throw new AppException(ErrorCode.INVALID_PARAMETERS);
+
+        if (startDate.isAfter(endDate))
+            throw new AppException(ErrorCode.START_DATE_AFTER_END_DATE);
+
         List<Object[]> rows = judgeRepository.getStatisticsJudgeByLegalCaseType(startDate, endDate);
 
         // Lấy tất cả loại án để đảm bảo đủ cột kể cả khi = 0

@@ -109,6 +109,12 @@ public enum ErrorCode {
     /* Notification */
 
     NOTIFICATION_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Thông báo không tồn tại"),
+
+
+    /* Statistic */
+
+    START_DATE_AFTER_END_DATE(400, HttpStatus.BAD_REQUEST, "Ngày bắt đầu phải trước ngày kết thúc"),
+    INVALID_PARAMETERS(400, HttpStatus.BAD_REQUEST, "Tham số không hợp lệ")
     ;
 
     int status;

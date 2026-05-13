@@ -30,6 +30,14 @@ public class DateUtils {
         return milestone;
     }
 
+    public static LocalDate getMilestoneStartDate(int year) {
+        return LocalDate.of(year - 1, 10, 1);
+    }
+
+    public static LocalDate getMilestoneEndDate(int year) {
+        return LocalDate.of(year, 9, 30);
+    }
+
     public static int getCurrentYear(LocalDate date) {
         LocalDate milestone = LocalDate.of(date.getYear(), 10, 1);
 
