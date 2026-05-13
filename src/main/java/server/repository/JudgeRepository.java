@@ -4,14 +4,12 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import server.dto.response.judge.JudgeResponse;
 import server.entity.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
 import server.entity.LegalRelationshipGroup;
 import server.entity.enums.OfficerStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -122,13 +120,29 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END),
             SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END)
         FROM Judge j
-        LEFT JOIN j.legalCases lc
-            ON lc.acceptanceDate BETWEEN :startDate AND :endDate
+        LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :startDate AND :endDate
         LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
-        GROUP BY j.officerId, j.fullName, lrg.legalRelationshipGroupId, lrg.legalRelationshipGroupName
+        GROUP BY j.officerId, j.fullName, lrg.legalRelationshipGroupId
         ORDER BY j.officerId, lrg.legalRelationshipGroupId
         """)
-    List<Object[]> getStatisticsJudge(
+    List<Object[]> getStatisticsJudgeByLegalRelationshipGroup(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+        SELECT
+            j.officerId,
+            j.fullName,
+            lct.legalCaseTypeId,
+            COUNT(lc)
+        FROM Judge j
+        LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :startDate AND :endDate
+        LEFT JOIN lc.legalRelationship.legalCaseType lct
+        GROUP BY j.officerId, j.fullName, lct.legalCaseTypeId
+        ORDER BY j.officerId, lct.legalCaseTypeId
+    """)
+    List<Object[]> getStatisticsJudgeByLegalCaseType(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );

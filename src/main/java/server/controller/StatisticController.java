@@ -23,8 +23,8 @@ import java.util.List;
 @Slf4j
 public class StatisticController {
     StatisticService statisticService;
-    @GetMapping("/judge")
-    public ApiResponse<BarChartResponse> getJudgeStatistic(
+    @GetMapping("/judge/legal-relationship-group")
+    public ApiResponse<BarChartResponse> getStatisticsJudgeByLegalRelationshipGroup(
             @RequestParam(defaultValue = "2025-10-01") LocalDate startDate,
             @RequestParam(defaultValue = "2026-09-30") LocalDate endDate
     ) {
@@ -32,7 +32,20 @@ public class StatisticController {
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(statisticService.getJudgeStatistics(startDate, endDate))
+                .data(statisticService.getStatisticsJudgeByLegalRelationshipGroup(startDate, endDate))
+                .build();
+    }
+
+    @GetMapping("/judge/legal-case-type")
+    public ApiResponse<BarChartResponse> getJudgeStatisticByLegalCaseType(
+            @RequestParam(defaultValue = "2025-10-01") LocalDate startDate,
+            @RequestParam(defaultValue = "2026-09-30") LocalDate endDate
+    ) {
+        return ApiResponse.<BarChartResponse>builder()
+                .success(true)
+                .status(200)
+                .message("Thành công")
+                .data(statisticService.getJudgeStatisticsByLegalCaseType(startDate, endDate))
                 .build();
     }
 }
