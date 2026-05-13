@@ -116,15 +116,20 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
 
     @Query("""
         SELECT
-            COUNT(lc)
+            j.officerId,
+            j.fullName,
+            lrg.legalRelationshipGroupId,
+            SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END),
+            SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END)
         FROM Judge j
         LEFT JOIN j.legalCases lc
-        WHERE j.officerId = :officerId
-              AND lc.legalRelationship.legalRelationshipGroup.legalRelationshipGroupId = 'N04'
-              AND lc.acceptanceDate >= :milestoneDate
-    """)
-    long getNumberOfLandCasesByJudge(
-            @Param("officerId") String officerId,
-            @Param("milestoneDate") LocalDate milestoneDate
+            ON lc.acceptanceDate BETWEEN :startDate AND :endDate
+        LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
+        GROUP BY j.officerId, j.fullName, lrg.legalRelationshipGroupId, lrg.legalRelationshipGroupName
+        ORDER BY j.officerId, lrg.legalRelationshipGroupId
+        """)
+    List<Object[]> getStatisticsJudge(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
     );
 }
