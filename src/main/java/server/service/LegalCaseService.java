@@ -45,7 +45,6 @@ public class LegalCaseService {
 
     LegalCaseMapper legalCaseMapper;
     PageMapper pageMapper;
-    JudgeMapper judgeMapper;
     DocumentMapper documentMapper;
 
     JudgeService judgeService;
