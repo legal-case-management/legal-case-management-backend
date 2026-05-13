@@ -8,11 +8,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import server.dto.response.statistic.BarChartDataset;
 import server.dto.response.statistic.BarChartResponse;
+import server.dto.response.statistic.PieChartResponse;
 import server.entity.LegalCaseType;
 import server.entity.LegalRelationshipGroup;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.repository.JudgeRepository;
+import server.repository.LegalCaseRepository;
 import server.repository.LegalCaseTypeRepository;
 import server.repository.LegalRelationshipGroupRepository;
 
@@ -27,6 +29,7 @@ public class StatisticService {
     JudgeRepository judgeRepository;
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
     LegalCaseTypeRepository legalCaseTypeRepository;
+    LegalCaseRepository legalCaseRepository;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public BarChartResponse getStatisticsJudgeByLegalRelationshipGroup(
@@ -108,7 +111,7 @@ public class StatisticService {
         }
 
         BarChartResponse response = new BarChartResponse();
-        response.setChartName("Thống kê án theo thẩm phán");
+        response.setChartName("Thống kê án số lượng án của thẩm phán theo nhóm quan hệ pháp luật");
         response.setXAxisName("Thẩm phán");
         response.setYAxisName("Số lượng án");
         response.setLabels(labels);
@@ -118,7 +121,7 @@ public class StatisticService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public BarChartResponse getJudgeStatisticsByLegalCaseType(
+    public BarChartResponse getStatisticsJudgeByLegalCaseType(
             LocalDate startDate,
             LocalDate endDate
     ) {
@@ -183,7 +186,7 @@ public class StatisticService {
         }
 
         BarChartResponse response = new BarChartResponse();
-        response.setChartName("Thống kê án theo loại án");
+        response.setChartName("Thống kê án số lượng án của thẩm phán theo loại vụ án");
         response.setXAxisName("Thẩm phán");
         response.setYAxisName("Số lượng án");
         response.setLabels(labels);
@@ -191,4 +194,95 @@ public class StatisticService {
 
         return response;
     }
+
+    public PieChartResponse getStatisticsLegalCaseByLegalCaseType(
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        if(startDate == null || endDate == null)
+            throw new AppException(ErrorCode.INVALID_PARAMETERS);
+
+        if (startDate.isAfter(endDate))
+            throw new AppException(ErrorCode.START_DATE_AFTER_END_DATE);
+
+        // Query cũ — chỉ trả về loại có vụ
+        List<Object[]> rows = legalCaseRepository.getStatisticsByLegalCaseType(startDate, endDate);
+
+        // Map kết quả từ query
+        Map<String, Double> countMap = rows.stream()
+                .collect(Collectors.toMap(
+                        row -> (String) row[1], // legalCaseTypeName
+                        row -> ((Number) row[2]).doubleValue()
+                ));
+
+        // Lấy tất cả loại án, fill 0 nếu không có trong kết quả
+        List<LegalCaseType> allTypes = legalCaseTypeRepository.findAll(Sort.by("legalCaseTypeId"));
+
+        List<String> labels = new ArrayList<>();
+        List<Double> values = new ArrayList<>();
+
+        for (LegalCaseType type : allTypes) {
+            labels.add(type.getLegalCaseTypeName());
+            values.add(countMap.getOrDefault(type.getLegalCaseTypeName(), 0.0));
+        }
+
+        PieChartResponse response = new PieChartResponse();
+        response.setChartName("Thống kê án theo loại vụ án");
+        response.setLabels(labels);
+        response.setValues(values);
+        return response;
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public PieChartResponse getStatisticsLegalCaseByLegalRelationshipGroup(
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        if (startDate == null || endDate == null)
+            throw new AppException(ErrorCode.INVALID_PARAMETERS);
+
+        if (startDate.isAfter(endDate))
+            throw new AppException(ErrorCode.START_DATE_AFTER_END_DATE);
+
+        List<Object[]> rows = legalCaseRepository.getStatisticsLegalCaseByLegalRelationshipGroup(startDate, endDate);
+
+        List<String> labels = new ArrayList<>();
+        List<Double> values = new ArrayList<>();
+
+        double totalWithMediator = 0;
+
+        for (Object[] row : rows) {
+            String groupName = row[0] != null
+                    ? (String) row[0]
+                    : "Không xác định";
+
+            long withMediator = row[1] != null
+                    ? (Long) row[1]
+                    : 0L;
+
+            long withoutMediator = row[2] != null
+                    ? (Long) row[2]
+                    : 0L;
+
+            // Tổng án có hòa giải viên
+            totalWithMediator += withMediator;
+
+            // Án không có hòa giải viên theo từng nhóm QHPL
+            labels.add(groupName);
+            values.add((double) withoutMediator);
+        }
+
+        // Thêm phần án có hòa giải viên
+        labels.addFirst("Có hòa giải viên");
+        values.addFirst(totalWithMediator);
+
+        PieChartResponse response = new PieChartResponse();
+        response.setChartName("Thống kê án số lượng án theo nhóm quan hệ pháp luật");
+        response.setLabels(labels);
+        response.setValues(values);
+
+        return response;
+    }
+
+
 }

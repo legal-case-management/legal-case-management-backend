@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import server.dto.response.ApiResponse;
-import server.dto.response.mediator.MediatorResponse;
 import server.dto.response.statistic.BarChartResponse;
+import server.dto.response.statistic.PieChartResponse;
 import server.service.StatisticService;
 import server.utils.DateUtils;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/statistic")
@@ -24,6 +23,7 @@ import java.util.List;
 @Slf4j
 public class StatisticController {
     StatisticService statisticService;
+
     @GetMapping("/judge/legal-relationship-group")
     public ApiResponse<BarChartResponse> getStatisticsJudgeByLegalRelationshipGroup(
             @RequestParam(required = false) LocalDate startDate,
@@ -32,7 +32,7 @@ public class StatisticController {
     ) {
         if (
                 (year == null && (startDate == null || endDate == null))
-                || (year != null && (startDate != null || endDate != null))
+                        || (year != null && (startDate != null || endDate != null))
         ) {
             return ApiResponse.<BarChartResponse>builder()
                     .success(false)
@@ -82,7 +82,7 @@ public class StatisticController {
                     .success(true)
                     .status(200)
                     .message("Thành công")
-                    .data(statisticService.getJudgeStatisticsByLegalCaseType(
+                    .data(statisticService.getStatisticsJudgeByLegalCaseType(
                             DateUtils.getMilestoneStartDate(year),
                             DateUtils.getMilestoneEndDate(year)
                     ))
@@ -92,7 +92,79 @@ public class StatisticController {
                     .success(true)
                     .status(200)
                     .message("Thành công")
-                    .data(statisticService.getJudgeStatisticsByLegalCaseType(startDate, endDate))
+                    .data(statisticService.getStatisticsJudgeByLegalCaseType(startDate, endDate))
+                    .build();
+    }
+
+    @GetMapping("/legal-case/legal-relationship-group")
+    public ApiResponse<PieChartResponse> getStatisticsLegalCaseByLegalRelationshipGroup(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) Integer year
+    ) {
+        if (
+                (year == null && (startDate == null || endDate == null))
+                        || (year != null && (startDate != null || endDate != null))
+        ) {
+            return ApiResponse.<PieChartResponse>builder()
+                    .success(false)
+                    .status(400)
+                    .message("Thống kê phải theo năm hoặc theo khoảng thời gian")
+                    .build();
+        }
+
+        if (year != null)
+            return ApiResponse.<PieChartResponse>builder()
+                    .success(true)
+                    .status(200)
+                    .message("Thành công")
+                    .data(statisticService.getStatisticsLegalCaseByLegalRelationshipGroup(
+                            DateUtils.getMilestoneStartDate(year),
+                            DateUtils.getMilestoneEndDate(year)
+                    ))
+                    .build();
+        else
+            return ApiResponse.<PieChartResponse>builder()
+                    .success(true)
+                    .status(200)
+                    .message("Thành công")
+                    .data(statisticService.getStatisticsLegalCaseByLegalRelationshipGroup(startDate, endDate))
+                    .build();
+    }
+
+    @GetMapping("/legal-case/legal-case-type")
+    public ApiResponse<PieChartResponse> getStatisticsLegalCaseByLegalLegalCaseType(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) Integer year
+    ) {
+        if (
+                (year == null && (startDate == null || endDate == null))
+                        || (year != null && (startDate != null || endDate != null))
+        ) {
+            return ApiResponse.<PieChartResponse>builder()
+                    .success(false)
+                    .status(400)
+                    .message("Thống kê phải theo năm hoặc theo khoảng thời gian")
+                    .build();
+        }
+
+        if (year != null)
+            return ApiResponse.<PieChartResponse>builder()
+                    .success(true)
+                    .status(200)
+                    .message("Thành công")
+                    .data(statisticService.getStatisticsLegalCaseByLegalCaseType(
+                            DateUtils.getMilestoneStartDate(year),
+                            DateUtils.getMilestoneEndDate(year)
+                    ))
+                    .build();
+        else
+            return ApiResponse.<PieChartResponse>builder()
+                    .success(true)
+                    .status(200)
+                    .message("Thành công")
+                    .data(statisticService.getStatisticsLegalCaseByLegalCaseType(startDate, endDate))
                     .build();
     }
 }

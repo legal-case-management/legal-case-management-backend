@@ -1,14 +1,18 @@
 package server.repository;
 
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import server.entity.DocumentType;
 import server.entity.LegalCase;
 import server.entity.LegalCaseType;
 import server.entity.LegalRelationship;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface LegalCaseTypeRepository extends JpaRepository<LegalCaseType, String> {

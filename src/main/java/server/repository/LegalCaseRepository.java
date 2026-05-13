@@ -146,4 +146,36 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     );
 
     long countLegalCasesByJudge(Judge judge);
+
+    @Query("""
+        SELECT
+            lct.legalCaseTypeId,
+            lct.legalCaseTypeName,
+            COUNT(lc)
+        FROM LegalCase lc
+        JOIN lc.legalRelationship.legalCaseType lct
+        WHERE lc.acceptanceDate BETWEEN :startDate AND :endDate
+        GROUP BY lct.legalCaseTypeId, lct.legalCaseTypeName
+        ORDER BY lct.legalCaseTypeId
+    """)
+    List<Object[]> getStatisticsByLegalCaseType(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+        SELECT
+            lrg.legalRelationshipGroupName,
+            SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END),
+            SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END)
+        FROM LegalCase lc
+        LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
+        WHERE lc.acceptanceDate BETWEEN :startDate AND :endDate
+        GROUP BY lrg.legalRelationshipGroupId, lrg.legalRelationshipGroupName
+        ORDER BY lrg.legalRelationshipGroupId
+    """)
+    List<Object[]> getStatisticsLegalCaseByLegalRelationshipGroup(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }
