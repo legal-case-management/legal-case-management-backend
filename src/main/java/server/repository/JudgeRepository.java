@@ -42,8 +42,8 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.fullName,
                 j.officerStatus,
                 j.maxWithoutMediator,
-                COUNT(lc),
-                SUM(CASE WHEN lrg = :legalRelationshipGroup THEN 1 ELSE 0 END)
+                COUNT(lc) AS numberWithoutMediator,
+                SUM(CASE WHEN lrg = :legalRelationshipGroup THEN 1 ELSE 0 END) AS numberByCondition
             FROM Judge j
             LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND (lc.mediator IS NULL)
             LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
@@ -51,7 +51,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                   AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
             GROUP BY j.officerId, j.firstName, j.lastName, j.fullName, j.maxWithoutMediator, j.officerStatus
             HAVING (j.maxWithoutMediator IS NULL OR count(lc) < j.maxWithoutMediator)
-            ORDER BY j.officerId
+            ORDER BY numberByCondition, j.officerId
             """)
     List<Object[]> getAssignAssignmentWithoutMediatorRaw(
             @Param("milestoneStartDate") LocalDate milestoneStartDate,
@@ -65,14 +65,14 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.fullName,
                 j.officerStatus,
                 j.maxWithMediator,
-                COUNT(lc),
-                COUNT(lc)
+                COUNT(lc) AS numberWithMediator,
+                COUNT(lc) AS numberByCondition
             FROM Judge j
             LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND lc.mediator IS NOT NULL
             WHERE j.officerStatus = 'WORKING'
             GROUP BY j.officerId, j.firstName, j.lastName, j.fullName, j.maxWithMediator, j.officerStatus
             HAVING (j.maxWithMediator IS NULL OR count(lc) < j.maxWithMediator)
-            ORDER BY j.officerId
+            ORDER BY numberByCondition, j.officerId
             """)
     List<Object[]> getAssignAssignmentWithMediatorRaw(
             @Param("milestoneStartDate") LocalDate milestoneStartDate,
