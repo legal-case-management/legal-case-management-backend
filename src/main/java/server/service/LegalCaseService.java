@@ -203,7 +203,14 @@ public class LegalCaseService {
                 && !legalCaseSaved.getLegalCaseStatus().equals(LegalCaseStatus.WAITING_FOR_ASSIGNMENT)
                 && legalCaseSaved.getDocuments().isEmpty()
         ) {
-            LocalDate expiredDate = legalCaseSaved.getAcceptanceDate().plusMonths(4);
+            LegalCaseType legalCaseType = legalCaseTypeRepository.getByLegalRelationships(legalCaseSaved.getLegalRelationship())
+                    .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
+            LocalDate expiredDate;
+            if(legalCaseType.getCodeName().equals("HS")) {
+                expiredDate = legalCaseSaved.getAcceptanceDate().plusMonths(2);
+            }else {
+                expiredDate = legalCaseSaved.getAcceptanceDate().plusMonths(4);
+            }
             legalCaseSaved.setExpiredDate(expiredDate);
         }
 
@@ -251,7 +258,7 @@ public class LegalCaseService {
                 Comparator.comparingLong(JudgeAssignmentInfoResponse::getNumberByCondition)
         );
 
-        // Đưa thẩm phán chưa đạt giới hạn
+        // Đưa thẩm phán vào heap
         for (JudgeAssignmentInfoResponse judge : judges) {
             minHeap.offer(judge);
         }
@@ -274,7 +281,7 @@ public class LegalCaseService {
             currentJudge.setNumberWithType(currentJudge.getNumberWithType() + 1);
 
             // Đưa lại vào heap nếu chưa đạt giới hạn
-            if (currentJudge.getMaxWithType() != null && currentJudge.getNumberWithType() < currentJudge.getMaxWithType()) {
+            if (currentJudge.getMaxWithType() == null || currentJudge.getNumberWithType() < currentJudge.getMaxWithType()) {
                 minHeap.offer(currentJudge);
             }
         }
