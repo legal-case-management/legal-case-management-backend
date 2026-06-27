@@ -40,6 +40,7 @@ public class LegalRelationshipService {
     PageMapper pageMapper;
 
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<LegalRelationshipResponse> getAll() {
         return legalRelationshipRepository
                 .getAll()

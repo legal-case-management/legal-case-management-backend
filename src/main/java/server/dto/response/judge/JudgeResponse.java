@@ -14,8 +14,13 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class JudgeResponse extends OfficerResponse {
-    Long maxWithMediator;
-    Long maxWithoutMediator;
+    Long maxNumberOfLegalCase;
+    Long numberOfLegalCase;
+    Long numberOfInProcess;
+    Long numberOfTemporarySuspension;
+    Long numberOfOverdue;
+    Long numberOfCanceledAndEdited;
     List<LegalRelationshipGroupResponse> restrictedGroups;
 }

@@ -4,27 +4,48 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import server.dto.response.judge.JudgeResponse;
 import server.entity.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
 import server.entity.LegalRelationshipGroup;
 import server.entity.enums.OfficerStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface JudgeRepository extends JpaRepository<Judge, String> {
     @Query("""
-        SELECT j
-        FROM Judge j
-        WHERE (:officerId IS NULL OR j.officerId ILIKE %:officerId%)
-          AND (:fullName IS NULL OR j.fullName ILIKE %:fullName%)
-          AND (:officerStatus IS NULL OR j.officerStatus = :officerStatus)
-        """)
-    Page<Judge> search(
+            SELECT
+                j.officerId,
+                j.lastName,
+                j.firstName,
+                j.fullName,
+                j.officerStatus,
+                j.account.email,
+                j.maxNumberOfLegalCase,
+                SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
+            FROM Judge j
+            LEFT JOIN j.legalCases lc
+                ON lc.batch.storageDate >= :milestoneDateTime
+            LEFT JOIN lc.batch b
+                ON b.storageDate >= :milestoneDateTime
+            WHERE (:officerId IS NULL OR j.officerId LIKE %:officerId%)
+                  AND (:fullName IS NULL OR j.fullName LIKE %:fullName%)
+                  AND (:officerStatus IS NULL OR j.officerStatus = :officerStatus)
+            GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
+                     j.maxNumberOfLegalCase, j.officerStatus, j.account.email
+            """)
+    Page<Object[]> search(
             @Param("officerId") String officerId,
             @Param("fullName") String fullName,
             @Param("officerStatus") OfficerStatus officerStatus,
+            @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
             Pageable pageable
     );
 
@@ -39,111 +60,54 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     @Query("""
             SELECT
                 j.officerId,
+                j.lastName,
+                j.firstName,
                 j.fullName,
                 j.officerStatus,
-                j.maxWithoutMediator,
-                COUNT(lc) AS numberWithoutMediator,
-                SUM(CASE WHEN lrg = :legalRelationshipGroup THEN 1 ELSE 0 END) AS numberByCondition
+                j.account.email,
+                j.maxNumberOfLegalCase,
+                SUM(CASE WHEN lc IS NOT NULL THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END),
+                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END)
             FROM Judge j
-            LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND (lc.mediator IS NULL)
-            LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
+            LEFT JOIN j.legalCases lc
+                   ON lc.batch.storageDate >= :milestoneDateTime
+            LEFT JOIN lc.batch b
             WHERE j.officerStatus = 'WORKING'
                   AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
-            GROUP BY j.officerId, j.firstName, j.lastName, j.fullName, j.maxWithoutMediator, j.officerStatus
-            HAVING (j.maxWithoutMediator IS NULL OR count(lc) < j.maxWithoutMediator)
-            ORDER BY numberByCondition, j.officerId
+            GROUP BY j.officerId, j.lastName, j.firstName, j.fullName,
+                     j.maxNumberOfLegalCase, j.officerStatus, j.account.email
+            HAVING j.maxNumberOfLegalCase < 0
+                   OR SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END) < j.maxNumberOfLegalCase
+            ORDER BY
+                SUM(CASE WHEN lc.legalCaseStatus = 'IN_PROCESS' THEN 1 ELSE 0 END) ASC,
+                SUM(CASE WHEN lc.legalCaseStatus = 'TEMPORARY_SUSPENSION' THEN 1 ELSE 0 END) DESC,
+                SUM(CASE WHEN lc.legalCaseStatus = 'OVERDUE' THEN 1 ELSE 0 END) ASC,
+                SUM(CASE WHEN (lc.legalCaseStatus = 'CANCELED' OR lc.legalCaseStatus = 'EDITED') THEN 1 ELSE 0 END) ASC,
+                j.firstName ASC
             """)
-    List<Object[]> getAssignAssignmentWithoutMediatorRaw(
-            @Param("milestoneStartDate") LocalDate milestoneStartDate,
-            @Param("milestoneEndDate") LocalDate milestoneEndDate,
+    List<Object[]> getAssignAssignmentRaw(
+            @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
             @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup
     );
 
     @Query("""
-            SELECT
-                j.officerId,
-                j.fullName,
-                j.officerStatus,
-                j.maxWithMediator,
-                COUNT(lc) AS numberWithMediator,
-                COUNT(lc) AS numberByCondition
-            FROM Judge j
-            LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND lc.mediator IS NOT NULL
-            WHERE j.officerStatus = 'WORKING'
-            GROUP BY j.officerId, j.firstName, j.lastName, j.fullName, j.maxWithMediator, j.officerStatus
-            HAVING (j.maxWithMediator IS NULL OR count(lc) < j.maxWithMediator)
-            ORDER BY numberByCondition, j.officerId
-            """)
-    List<Object[]> getAssignAssignmentWithMediatorRaw(
-            @Param("milestoneStartDate") LocalDate milestoneStartDate,
-            @Param("milestoneEndDate") LocalDate milestoneEndDate
-    );
-
-
-    @Query("""
-            SELECT COUNT(j) > 0
-            FROM Judge j
-            LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND lc.mediator IS NULL
-            WHERE j.officerId = :officerId
-                  AND j.officerStatus = 'WORKING'
-                  AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
-            GROUP BY j.officerId
-            HAVING j.maxWithoutMediator IS NULL OR COUNT(*) < j.maxWithoutMediator
-            """)
-    boolean isAvailableAssignmentWithoutMediator(
-            @Param("milestoneStartDate") LocalDate milestoneStartDate,
-            @Param("milestoneEndDate") LocalDate milestoneEndDate,
-            @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup,
-            @Param("officerId") String officerId
-    );
-
-    @Query("""
-            SELECT COUNT(j) > 0
-            FROM Judge j
-            LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND lc.mediator IS NOT NULL
-            WHERE j.officerId = :officerId
-                  AND j.officerStatus = 'WORKING'
-            GROUP BY j.officerId
-            HAVING j.maxWithoutMediator IS NULL OR COUNT(*) < j.maxWithoutMediator
-            """)
-    boolean isAvailableAssignmentWithMediator(
-            @Param("milestoneStartDate") LocalDate milestoneStartDate,
-            @Param("milestoneEndDate") LocalDate milestoneEndDate,
-            @Param("officerId") String officerId
-    );
-
-    @Query("""
         SELECT
-            j.officerId,
-            j.fullName,
-            lrg.legalRelationshipGroupId,
-            SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1 ELSE 0 END),
-            SUM(CASE WHEN lc.mediator IS NULL THEN 1 ELSE 0 END)
-        FROM Judge j
-        LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :startDate AND :endDate
-        LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
-        GROUP BY j.officerId, j.fullName, lrg.legalRelationshipGroupId
-        ORDER BY j.officerId, lrg.legalRelationshipGroupId
-        """)
-    List<Object[]> getStatisticsJudgeByLegalRelationshipGroup(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate
-    );
-
-    @Query("""
-        SELECT
-            j.officerId,
-            j.fullName,
-            lct.legalCaseTypeId,
             COUNT(lc)
         FROM Judge j
-        LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :startDate AND :endDate
-        LEFT JOIN lc.legalRelationship.legalCaseType lct
-        GROUP BY j.officerId, j.fullName, lct.legalCaseTypeId
-        ORDER BY j.officerId, lct.legalCaseTypeId
+        LEFT JOIN j.legalCases lc
+               ON lc.batch.storageDate >= :milestoneDateTime
+        WHERE j.officerStatus = 'WORKING'
+              AND j.officerId = :officerId
+              AND lc.legalRelationship.legalRelationshipGroup.legalRelationshipGroupId = 'N04'
+              AND lc.acceptanceDate >= :milestoneDate
     """)
-    List<Object[]> getStatisticsJudgeByLegalCaseType(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate
+    Long getNumberOfLandCasesByJudge(
+            @Param("officerId") String officerId,
+            @Param("milestoneDateTime") LocalDateTime milestoneDateTime,
+            @Param("milestoneDate") LocalDate milestoneDate
     );
+
 }

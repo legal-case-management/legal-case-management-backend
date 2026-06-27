@@ -1,7 +1,6 @@
 package server.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import server.dto.request.authentication.*;
 import server.dto.request.legalCase.LegalCaseSearchRequest;
 import server.dto.response.ApiResponse;
@@ -192,10 +191,5 @@ public class AuthenticationController {
                 .status(200)
                 .message("Thành công")
                 .build();
-    }
-
-    @GetMapping("/ping")
-    public ResponseEntity<Void> ping() {
-        return ResponseEntity.ok().build();
     }
 }

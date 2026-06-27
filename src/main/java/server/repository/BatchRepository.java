@@ -26,9 +26,9 @@ public interface BatchRepository extends JpaRepository<Batch, String> {
 
     @Query("""
             SELECT b FROM Batch b
-            WHERE (:batchId IS NULL OR b.batchId ILIKE %:batchId%)
-            AND (:batchName IS NULL OR b.batchName ILIKE %:batchName%)
-            AND (:note IS NULL OR b.note ILIKE %:note%)
+            WHERE (:batchId IS NULL OR b.batchId LIKE %:batchId%)
+            AND (:batchName IS NULL OR b.batchName LIKE %:batchName%)
+            AND (:note IS NULL OR b.note LIKE %:note%)
             AND (cast(:startStorageDate as timestamp) IS NULL OR b.storageDate >= :startStorageDate)
             AND (cast(:endStorageDate as timestamp) IS NULL OR b.storageDate <= :endStorageDate)
             """)

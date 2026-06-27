@@ -34,6 +34,7 @@ public class LegalCaseTypeService {
     LegalCaseTypeMapper legalCaseTypeMapper;
     PageMapper pageMapper;
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public List<LegalCaseTypeResponse> getAll() {
         return legalCaseTypeRepository
                 .findAll()

@@ -26,10 +26,10 @@ public interface LegalRelationshipRepository extends JpaRepository<LegalRelation
             SELECT lr FROM LegalRelationship lr
             LEFT JOIN lr.legalCaseType lt
             LEFT JOIN lr.legalRelationshipGroup lrg
-            WHERE (:legalRelationshipId IS NULL OR lr.legalRelationshipId ILIKE %:legalRelationshipId%)
-            AND (:legalRelationshipName IS NULL OR lr.legalRelationshipName ILIKE %:legalRelationshipName%)
-            AND (:legalCaseTypeId IS NULL OR lt.legalCaseTypeId ILIKE %:legalCaseTypeId%)
-            AND (:legalRelationshipGroupId IS NULL OR lrg.legalRelationshipGroupId ILIKE %:legalRelationshipGroupId%)
+            WHERE (:legalRelationshipId IS NULL OR lr.legalRelationshipId LIKE %:legalRelationshipId%)
+            AND (:legalRelationshipName IS NULL OR lr.legalRelationshipName LIKE %:legalRelationshipName%)
+            AND (:legalCaseTypeId IS NULL OR lt.legalCaseTypeId LIKE %:legalCaseTypeId%)
+            AND (:legalRelationshipGroupId IS NULL OR lrg.legalRelationshipGroupId LIKE %:legalRelationshipGroupId%)
             ORDER BY lt.legalCaseTypeId, lr.legalRelationshipId
             """)
     Page<LegalRelationship> search(

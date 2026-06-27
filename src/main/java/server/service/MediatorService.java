@@ -27,9 +27,8 @@ import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.MediatorMapper;
 import server.mapper.PageMapper;
-import server.repository.LegalCaseRepository;
 import server.repository.MediatorRepository;
-import server.utils.DateUtils;
+import server.utils.JudicialDate;
 
 import java.util.List;
 
@@ -38,7 +37,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MediatorService {
     MediatorRepository mediatorRepository;
-    LegalCaseRepository legalCaseRepository;
 
     MediatorMapper mediatorMapper;
     PageMapper pageMapper;
@@ -110,11 +108,6 @@ public class MediatorService {
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.MEDIATOR_NOT_EXISTED));
 
-        long numberLegalCase = legalCaseRepository.countLegalCasesByMediator(mediatorSaved);
-        if (numberLegalCase > 0) {
-            throw new AppException(ErrorCode.MEDIATOR_ASSIGNED_TO_LEGAL_CASE);
-        }
-
         mediatorRepository.delete(mediatorSaved);
     }
 
@@ -126,6 +119,7 @@ public class MediatorService {
                 request.getOfficerId(),
                 request.getFullName(),
                 request.getOfficerStatus(),
+                JudicialDate.getMilestoneDateTime(),
                 pageable
         ).map(mediatorMapper::toMediatorResponse);
 

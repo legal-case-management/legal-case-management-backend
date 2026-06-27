@@ -29,8 +29,8 @@ public class Notification {
     String title;
     @Column(length = 2000)
     String content;
-    @Column(name = "storage_date", nullable = false)
-    LocalDateTime storageDate;
+    @Column(name = "created_at", nullable = false)
+    LocalDateTime createdAt;
     @Column(name = "is_read", nullable = false)
     boolean isRead;
 

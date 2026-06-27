@@ -18,11 +18,8 @@ import java.util.Set;
 @ToString(callSuper = true)
 @SuperBuilder
 public class Judge extends Officer{
-    @Column(name = "max_with_mediator")
-    Long maxWithMediator;
-
-    @Column(name = "max_without_mediator")
-    Long maxWithoutMediator;
+    @Column(name = "max_number_of_legal_case")
+    Long maxNumberOfLegalCase;
 
     @ManyToMany
     @JoinTable(

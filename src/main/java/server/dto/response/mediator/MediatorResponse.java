@@ -16,6 +16,6 @@ import server.entity.enums.OfficerStatus;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediatorResponse extends OfficerResponse {
-    long numberOfLegalCase;
-    long numberOfInProcess;
+    Long numberOfLegalCase;
+    Long numberOfInProcess;
 }

@@ -19,8 +19,8 @@ public interface LegalRelationshipGroupRepository extends JpaRepository<LegalRel
 
     @Query("""
             SELECT lrg FROM LegalRelationshipGroup lrg
-            WHERE (:legalRelationshipGroupId IS NULL OR lrg.legalRelationshipGroupId ILIKE %:legalRelationshipGroupId%)
-            AND (:legalRelationshipGroupName IS NULL OR lrg.legalRelationshipGroupName ILIKE %:legalRelationshipGroupName%)
+            WHERE (:legalRelationshipGroupId IS NULL OR lrg.legalRelationshipGroupId LIKE %:legalRelationshipGroupId%)
+            AND (:legalRelationshipGroupName IS NULL OR lrg.legalRelationshipGroupName LIKE %:legalRelationshipGroupName%)
             """)
     Page<LegalRelationshipGroup> search(
             String legalRelationshipGroupId,

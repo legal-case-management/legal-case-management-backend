@@ -1,6 +1,5 @@
 package server.dto.request.legalCase;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

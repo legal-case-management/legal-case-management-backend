@@ -1,4 +1,4 @@
-name: legal-case-management-services
+name: QuanLyAn_Server
 services:
   postgres:
     image: postgres:17
@@ -6,7 +6,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: root
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: legal_case_management
     volumes:
@@ -19,7 +19,7 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    command: ["redis-server", "--appendonly", "yes", "--requirepass", "123456"]
+    command: ["redis-server", "--appendonly", "yes"]
 
 volumes:
   postgres_data:
