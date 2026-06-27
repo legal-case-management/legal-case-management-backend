@@ -158,7 +158,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
         GROUP BY lct.legalCaseTypeId, lct.legalCaseTypeName
         ORDER BY lct.legalCaseTypeId
     """)
-    List<Object[]> getStatisticsByLegalCaseType(
+    List<Object[]> getPieByLegalCaseType(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
@@ -174,7 +174,110 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
         GROUP BY lrg.legalRelationshipGroupId, lrg.legalRelationshipGroupName
         ORDER BY lrg.legalRelationshipGroupId
     """)
-    List<Object[]> getStatisticsLegalCaseByLegalRelationshipGroup(
+    List<Object[]> getPieByLegalRelationshipGroup(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+    SELECT YEAR(lc.acceptanceDate),
+           MONTH(lc.acceptanceDate),
+           lct.legalCaseTypeId,
+           lct.legalCaseTypeName,
+           COUNT(lc)
+    FROM LegalCase lc
+    JOIN lc.legalRelationship.legalCaseType lct
+    WHERE lc.acceptanceDate BETWEEN :startDate AND :endDate
+    GROUP BY YEAR(lc.acceptanceDate), MONTH(lc.acceptanceDate), lct.legalCaseTypeId, lct.legalCaseTypeName
+    ORDER BY YEAR(lc.acceptanceDate), MONTH(lc.acceptanceDate)
+    """)
+    List<Object[]> getTimelineByLegalCaseTypeMonth(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+    SELECT YEAR(lc.acceptanceDate),
+           QUARTER(lc.acceptanceDate),
+           lct.legalCaseTypeId,
+           lct.legalCaseTypeName,
+           COUNT(lc)
+    FROM LegalCase lc
+    JOIN lc.legalRelationship.legalCaseType lct
+    WHERE lc.acceptanceDate BETWEEN :startDate AND :endDate
+    GROUP BY YEAR(lc.acceptanceDate), QUARTER(lc.acceptanceDate), lct.legalCaseTypeId, lct.legalCaseTypeName
+    ORDER BY YEAR(lc.acceptanceDate), QUARTER(lc.acceptanceDate)
+    """)
+    List<Object[]> getTimelineByLegalCaseTypeQuarter(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+    SELECT YEAR(lc.acceptanceDate),
+           lct.legalCaseTypeId,
+           lct.legalCaseTypeName,
+           COUNT(lc)
+    FROM LegalCase lc
+    JOIN lc.legalRelationship.legalCaseType lct
+    WHERE lc.acceptanceDate BETWEEN :startDate AND :endDate
+    GROUP BY YEAR(lc.acceptanceDate), lct.legalCaseTypeId, lct.legalCaseTypeName
+    ORDER BY YEAR(lc.acceptanceDate)
+    """)
+    List<Object[]> getTimelineByLegalCaseTypeYear(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+    SELECT YEAR(lc.acceptanceDate),
+           MONTH(lc.acceptanceDate),
+           lrg.legalRelationshipGroupId,
+           lrg.legalRelationshipGroupName,
+           SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1L ELSE 0L END),
+           SUM(CASE WHEN lc.mediator IS NULL THEN 1L ELSE 0L END)
+    FROM LegalCase lc
+    LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
+    WHERE lc.acceptanceDate BETWEEN :startDate AND :endDate
+    GROUP BY YEAR(lc.acceptanceDate), MONTH(lc.acceptanceDate), lrg.legalRelationshipGroupId, lrg.legalRelationshipGroupName
+    ORDER BY YEAR(lc.acceptanceDate), MONTH(lc.acceptanceDate)
+    """)
+    List<Object[]> getTimelineByLegalRelationshipGroupMonth(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+    SELECT YEAR(lc.acceptanceDate),
+           QUARTER(lc.acceptanceDate),
+           lrg.legalRelationshipGroupId,
+           lrg.legalRelationshipGroupName,
+           SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1L ELSE 0L END),
+           SUM(CASE WHEN lc.mediator IS NULL THEN 1L ELSE 0L END)
+    FROM LegalCase lc
+    LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
+    WHERE lc.acceptanceDate BETWEEN :startDate AND :endDate
+    GROUP BY YEAR(lc.acceptanceDate), QUARTER(lc.acceptanceDate), lrg.legalRelationshipGroupId, lrg.legalRelationshipGroupName
+    ORDER BY YEAR(lc.acceptanceDate), QUARTER(lc.acceptanceDate)
+    """)
+    List<Object[]> getTimelineByLegalRelationshipGroupQuarter(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+    SELECT YEAR(lc.acceptanceDate),
+           lrg.legalRelationshipGroupId,
+           lrg.legalRelationshipGroupName,
+           SUM(CASE WHEN lc.mediator IS NOT NULL THEN 1L ELSE 0L END),
+           SUM(CASE WHEN lc.mediator IS NULL THEN 1L ELSE 0L END)
+    FROM LegalCase lc
+    LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
+    WHERE lc.acceptanceDate BETWEEN :startDate AND :endDate
+    GROUP BY YEAR(lc.acceptanceDate), lrg.legalRelationshipGroupId, lrg.legalRelationshipGroupName
+    ORDER BY YEAR(lc.acceptanceDate)
+    """)
+    List<Object[]> getTimelineByLegalRelationshipGroupYear(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
