@@ -147,15 +147,15 @@ public class LegalCaseService {
             }
         }
 
+        LegalCaseType legalCaseType = legalCaseTypeRepository.findById(legalRelationship.getLegalCaseType().getLegalCaseTypeId())
+                .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
+
         if (request.getJudgeId() != null) {
             Judge existingJudge = judgeRepository.findById(request.getJudgeId())
                     .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
             legalCase.setJudge(existingJudge);
             legalCase.setAssignment(Assignment.ASSIGN);
             legalCase.setAssignmentDate(LocalDateTime.now());
-
-            LegalCaseType legalCaseType = legalCaseTypeRepository.findById(legalRelationship.getLegalCaseType().getLegalCaseTypeId())
-                    .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));
 
             legalCase.setExpiredDate(
                     legalCaseType.getCodeName().equals("HS")
@@ -165,13 +165,14 @@ public class LegalCaseService {
         }
 
         if (request.getMediatorId() != null) {
+            if(legalCaseType.getCodeName().equals("HS"))
+                throw new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_CODE_EXISTED);
             Mediator existingMediator = mediatorRepository.findById(request.getMediatorId())
                     .orElseThrow(() -> new AppException(ErrorCode.MEDIATOR_NOT_EXISTED));
             legalCase.setMediator(existingMediator);
         }
 
         legalCase.setBatch(batch);
-
         legalCaseRepository.save(legalCase);
     }
 

@@ -51,8 +51,8 @@ public enum ErrorCode {
     RANDOM_ASSIGNMENT_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Phân công án ngẫu nhiên thất bại"),
     NO_JUDGES_AVAILABLE_FOR_LEGAL_CASES(400, HttpStatus.BAD_REQUEST, "Không có đủ thẩm phán nào đủ điều kiện để phân công cho các vụ án"),
     ASSIGN_ASSIGNMENT_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Phân công án chỉ định thất bại"),
-    BATCH_CHANGE_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Chuyển đợt nhập án thất bại"),
     LEGAL_CASE_NOT_ASSIGNED(400, HttpStatus.BAD_REQUEST, "Vụ án chưa được phân công"),
+    CRIMINAL_CASE_CANNOT_HAVE_MEDIATOR(400, HttpStatus.BAD_REQUEST, "Án hình sự không được có hòa giải viên"),
 
     /* Judge */
     JUDGE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Thẩm phán không tồn tại"),
