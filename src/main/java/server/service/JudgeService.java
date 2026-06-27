@@ -12,7 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
+import server.dto.request.legalCase.AssignmentListRequest;
 import server.dto.response.PageResponse;
+import server.dto.response.judge.JudgeAssignmentInfoResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.entity.*;
 import server.entity.enums.Role;
@@ -28,8 +30,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import server.repository.LegalCaseRepository;
 import server.repository.LegalRelationshipGroupRepository;
-import server.utils.JudicialDate;
+import server.utils.DateUtils;
 
 import java.util.List;
 
@@ -38,6 +41,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JudgeService {
     JudgeRepository judgeRepository;
+    LegalCaseRepository legalCaseRepository;
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
 
     JudgeMapper judgeMapper;
@@ -52,29 +56,35 @@ public class JudgeService {
     @NonFinal
     String DEFAULT_PASSWORD;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'JUDGE')")
     public List<JudgeResponse> getAll() {
-        return judgeRepository.findAll()
+        return judgeRepository.findAll(Sort.by("officerId"))
                 .stream()
                 .map(judgeMapper::toJudgeResponseBasic)
                 .toList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<JudgeResponse> listAssignment(String legalRelationshipGroupId) {
-        LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository
-                .findById(legalRelationshipGroupId)
-                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
+    public List<JudgeAssignmentInfoResponse> listAssignment(String legalRelationshipGroupId) {
+        boolean isMediator = legalRelationshipGroupId == null;
+        if (isMediator) {
+            return judgeRepository.getAssignAssignmentWithMediatorRaw(
+                            DateUtils.getMilestoneStartDate(),
+                            DateUtils.getMilestoneEndDate()
+                    )
+                    .stream()
+                    .map(judgeMapper::toJudgeAssignmentInfo)
+                    .toList();
+        }
+        LegalRelationshipGroup legalRelationshipGroup = legalRelationshipGroupRepository.findById(legalRelationshipGroupId)
+                  .orElseThrow(() -> new AppException(ErrorCode.LEGAL_RELATIONSHIP_GROUP_NOT_EXISTED));
 
-        return judgeRepository.getAssignAssignmentRaw(JudicialDate.getMilestoneDateTime(), legalRelationshipGroup)
-                .stream()
-                .map(judgeMapper::toJudgeResponse)
-                .peek(judgeResponse -> judgeResponse.setRestrictedGroups(
-                        legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId()).stream()
-                                .map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
-                                .toList()
-                        )
+        return judgeRepository.getAssignAssignmentWithoutMediatorRaw(
+                        DateUtils.getMilestoneStartDate(),
+                        DateUtils.getMilestoneEndDate(),
+                        legalRelationshipGroup
                 )
+                .stream()
+                .map(judgeMapper::toJudgeAssignmentInfo)
                 .toList();
     }
 
@@ -82,21 +92,11 @@ public class JudgeService {
     public PageResponse<JudgeResponse> search(JudgeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         Page<JudgeResponse> resultPage = judgeRepository.search(
-                        request.getOfficerId(),
-                        request.getFullName(),
-                        request.getOfficerStatus(),
-                        JudicialDate.getMilestoneDateTime(),
-                        pageable
-                ).map(judgeMapper::toJudgeResponse)
-                .map(judgeResponse -> {
-                    judgeResponse.setRestrictedGroups(
-                            legalRelationshipGroupRepository.getRestrictedGroupsByJudgeId(judgeResponse.getOfficerId())
-                                    .stream()
-                                    .map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
-                                    .toList()
-                    );
-                    return judgeResponse;
-                });
+                request.getOfficerId(),
+                request.getFullName(),
+                request.getOfficerStatus(),
+                pageable
+        ).map(judgeMapper::toJudgeResponse);
 
         return pageMapper.map(resultPage);
     }
@@ -145,7 +145,7 @@ public class JudgeService {
         Judge judgeSaved = judgeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
 
-        if(request.getRestrictedGroupIds() != null){
+        if (request.getRestrictedGroupIds() != null) {
             List<LegalRelationshipGroup> restrictedGroups = legalRelationshipGroupRepository
                     .findAllById(request.getRestrictedGroupIds());
             judgeSaved.setRestrictedGroups(restrictedGroups);
@@ -163,6 +163,10 @@ public class JudgeService {
         Judge judgeSaved = judgeRepository
                 .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.JUDGE_NOT_EXISTED));
+        long numberLegalCase = legalCaseRepository.countLegalCasesByJudge(judgeSaved);
+        if (numberLegalCase > 0) {
+            throw new AppException(ErrorCode.JUDGE_ASSIGNED_TO_LEGAL_CASE);
+        }
         judgeRepository.delete(judgeSaved);
     }
 }

@@ -5,12 +5,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import server.dto.other.judge.JudgeAssignmentInfo;
+import server.dto.response.judge.JudgeAssignmentInfoResponse;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.response.judge.JudgeResponse;
+import server.dto.response.legalCase.LegalCaseResponse;
 import server.entity.Judge;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
+import server.entity.LegalCase;
 import server.utils.GsonDateAdapters;
 
 import java.time.LocalDate;
@@ -30,36 +32,17 @@ public interface JudgeMapper {
 
     String[] JUDGE_RESPONSE_KEYS = {
             "officerId",
-            "lastName",
-            "firstName",
             "fullName",
             "officerStatus",
-            "email",
-            "maxNumberOfLegalCase",
-            "numberOfLegalCase",
-            "numberOfInProcess",
-            "numberOfTemporarySuspension",
-            "numberOfOverdue",
-            "numberOfCanceledAndEdited"
+            "maxWithType",
+            "numberWithType",
+            "numberByCondition"
     };
 
     Judge toJudge(JudgeRequest request);
     void toJudge(JudgeRequest request, @MappingTarget Judge judge);
 
-    default JudgeResponse toJudgeResponse(Object[] values) {
-        if (values == null || JUDGE_RESPONSE_KEYS.length != values.length) {
-            throw new IllegalArgumentException("Number of values does not match JudgeResponse keys.");
-        }
-
-        Map<String, Object> map = new HashMap<>();
-        for (int i = 0; i < JUDGE_RESPONSE_KEYS.length; i++) {
-            map.put(JUDGE_RESPONSE_KEYS[i], values[i]);
-        }
-
-        return GSON.fromJson(GSON.toJson(map), JudgeResponse.class);
-    }
-
-    default JudgeAssignmentInfo toJudgeAssignmentInfo(Object[] values) {
+    default JudgeAssignmentInfoResponse toJudgeAssignmentInfo(Object[] values) {
         if (values == null || JUDGE_RESPONSE_KEYS.length != values.length) {
             throw new IllegalArgumentException("Number of values does not match JudgeAssignmentInfo keys.");
         }
@@ -69,8 +52,10 @@ public interface JudgeMapper {
             map.put(JUDGE_RESPONSE_KEYS[i], values[i]);
         }
 
-        return GSON.fromJson(GSON.toJson(map), JudgeAssignmentInfo.class);
+        return GSON.fromJson(GSON.toJson(map), JudgeAssignmentInfoResponse.class);
     }
+
+    JudgeResponse toJudgeResponse(Judge judge);
 
     default JudgeResponse toJudgeResponseBasic(Judge judge){
         return JudgeResponse.builder()

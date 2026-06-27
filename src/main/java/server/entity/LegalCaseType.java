@@ -30,5 +30,5 @@ public class LegalCaseType {
     List<LegalRelationship> legalRelationships;
 
     @OneToMany(mappedBy = "legalCaseType", fetch = FetchType.LAZY)
-    List<DecisionType> typeOfDecisions;
+    List<DocumentType> typeOfDecisions;
 }

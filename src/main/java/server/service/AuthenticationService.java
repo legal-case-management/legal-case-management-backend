@@ -10,18 +10,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import server.dto.request.authentication.*;
 import server.dto.response.PageResponse;
 import server.dto.response.authentication.AccountResponse;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.dto.response.authentication.VerifyOtpResponse;
 import server.entity.Account;
-import server.entity.LegalRelationshipGroup;
-import server.entity.enums.AccountStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.AccountMapper;
@@ -41,7 +41,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import server.repository.JudgeRepository;
-import server.utils.JudicialDate;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -96,7 +95,7 @@ public class AuthenticationService {
                 : accountRepository.findAccountByUsername(identifier)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
-        if (account.getAccountStatus().equals(AccountStatus.BLOCKED))
+        if (!account.isActive())
             throw new AppException(ErrorCode.ACCOUNT_BLOCKED);
 
         /* 2. Check password*/
@@ -175,7 +174,7 @@ public class AuthenticationService {
 
     public void changePassword(ChangePasswordRequest request) {
         // Lấy accountId từ JWT token trong SecurityContext
-        String accountId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String accountId = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
 
         // Tìm account trong database
         Account account = accountRepository.findById(accountId)
@@ -208,14 +207,18 @@ public class AuthenticationService {
     @Synchronized
     @Transactional
     public void updateAccount(String id, AccountRequest request) {
-        if (accountRepository.existsByUsername(request.getUsername()))
-            throw new AppException(ErrorCode.USERNAME_EXISTED);
-
-        if (accountRepository.existsByEmail(request.getEmail()))
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
-
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
+
+        if (!account.getUsername().equals(request.getUsername())
+                && accountRepository.existsByUsername(request.getUsername()))
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
+
+        if (!account.getEmail().equals(request.getEmail())
+                && accountRepository.existsByEmail(request.getEmail()))
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+
+
 
         accountMapper.toAccount(request, account);
         accountRepository.save(account);
@@ -242,22 +245,20 @@ public class AuthenticationService {
         }
 
         account.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
-        account.setAccountStatus(AccountStatus.ACTIVE);
+        account.setActive(true);
         accountRepository.save(account);
     }
 
     private String generateToken(Account account, boolean isForgotPassword) throws JOSEException {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
-
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
                 .jwtID(UUID.randomUUID().toString())
                 .subject(account.getAccountId())
-                .issuer("QuanLyAn_ToaAnKhuVuc9_DongThap")
+                .issuer("legal-case-management")
                 .issueTime(new Date())
                 .expirationTime(isForgotPassword ?
-                        new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli())
-                        : new Date(Instant.now().plus(RESET_PASSWORD_DURATION, ChronoUnit.SECONDS).toEpochMilli())
-                        )
+                        new Date(Instant.now().plus(RESET_PASSWORD_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                        : new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
                 .claim("username", account.getUsername())
                 .claim("displayName", account.getOfficer() != null
                         ? account.getOfficer().getFullName()
@@ -339,7 +340,7 @@ public class AuthenticationService {
     }
 
     public void resetPassword(ResetPasswordRequest request) {
-        String accountId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String accountId = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
@@ -378,7 +379,7 @@ public class AuthenticationService {
 
     public AccountResponse getMyInfo() {
         SecurityContext context = SecurityContextHolder.getContext();
-        String accountId = context.getAuthentication().getName();
+        String accountId = Objects.requireNonNull(context.getAuthentication()).getName();
         return accountMapper.toAccountResponse(
                 accountRepository
                         .findById(accountId)
@@ -400,7 +401,6 @@ public class AuthenticationService {
                 request.getUsername(),
                 request.getEmail(),
                 request.getRole(),
-                request.getAccountStatus(),
                 request.getFullName(),
                 pageable
         ).map(accountMapper::toAccountResponse);
@@ -413,7 +413,7 @@ public class AuthenticationService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
-        account.setAccountStatus(AccountStatus.BLOCKED);
+        account.setActive(false);
         accountRepository.save(account);
 
         tokenRedis.delete("account:" + account.getAccountId() + ":token");
@@ -423,7 +423,18 @@ public class AuthenticationService {
     public void activeAccount(String id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
-        account.setAccountStatus(AccountStatus.ACTIVE);
+        account.setActive(true);
         accountRepository.save(account);
+    }
+
+    @Scheduled(cron = "0 */6 * * * *")
+    public void keepServerAwake() {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://legal-case-management-backend-sggy.onrender.com/auth/ping";
+            restTemplate.getForObject(url, String.class);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

@@ -36,4 +36,5 @@ public class LegalCaseSearchRequest {
     LocalDateTime startStorageDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime endStorageDate;
+    Boolean mediator;
 }

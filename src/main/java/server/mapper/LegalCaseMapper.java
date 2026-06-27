@@ -1,9 +1,6 @@
 package server.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import server.dto.request.legalCase.LegalCaseRequest;
 import server.dto.request.legalCase.LegalCasesRequest;
 import server.dto.response.legalCase.LegalCaseResponse;

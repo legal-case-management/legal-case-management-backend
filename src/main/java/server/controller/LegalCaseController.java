@@ -22,16 +22,6 @@ import java.util.List;
 public class LegalCaseController {
     LegalCaseService legalCaseService;
 
-    @GetMapping("/all")
-    public ApiResponse<List<LegalCaseResponse>> getAll() {
-        return ApiResponse.<List<LegalCaseResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Thành công")
-                .data(legalCaseService.getAll())
-                .build();
-    }
-
     @PostMapping("/search")
     public ApiResponse<PageResponse<LegalCaseResponse>> search(
             @RequestBody @Valid LegalCaseSearchRequest request,
@@ -117,9 +107,9 @@ public class LegalCaseController {
                 .build();
     }
 
-    @PostMapping("/assignment-list")
+    @GetMapping("/assignment-list")
     public ApiResponse<PageResponse<LegalCaseResponse>> getAssignmentList(
-            @RequestBody @Valid AssignmentListRequest request,
+            @RequestParam(required = false) String legalRelationshipGroupId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "legalCaseId") String sortBy
@@ -128,31 +118,7 @@ public class LegalCaseController {
                 .success(true)
                 .status(200)
                 .message("Thành công")
-                .data(legalCaseService.getAssignmentList(request, page, size, sortBy))
-                .build();
-    }
-
-    @GetMapping("/pending")
-    public ApiResponse<PageResponse<LegalCaseResponse>> getPendingLegalCases(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "legalCaseId") String sortBy
-    ) {
-        return ApiResponse.<PageResponse<LegalCaseResponse>>builder()
-                .success(true)
-                .status(200)
-                .message("Thành công")
-                .data(legalCaseService.getPending(page, size, sortBy))
-                .build();
-    }
-
-    @PostMapping("/change-batch")
-    public ApiResponse<Void> changeBatch(@RequestBody @Valid ChangeBatchRequest request) {
-        legalCaseService.changeBatch(request);
-        return ApiResponse.<Void>builder()
-                .success(true)
-                .status(200)
-                .message("Chuyển đợt nhập án thành công")
+                .data(legalCaseService.getAssignmentList(legalRelationshipGroupId, page, size, sortBy))
                 .build();
     }
 

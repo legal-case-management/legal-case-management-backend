@@ -1,7 +1,8 @@
 package server.config;
 
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import server.dto.response.ApiResponse;
 import server.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,24 +29,28 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import org.apache.catalina.connector.Connector;
-
 
 import javax.crypto.spec.SecretKeySpec;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINTS = {
-            "auth/introspect",
-            "auth/login",
-            "auth/logout",
-            "auth/refresh-token",
-            "auth/forgot-password",
-            "auth/verify-otp",
+    String[] PUBLIC_POST_ENDPOINTS = {
+            "/auth/introspect",
+            "/auth/login",
+            "/auth/logout",
+            "/auth/refresh-token",
+            "/auth/forgot-password",
+            "/auth/verify-otp"
     };
 
+    String[] PUBLIC_GET_ENDPOINTS = {
+            "/auth/ping"
+    };
+
+    @NonFinal
     @Value("${jwt.signerKey}")
     private String signerKey;
 
@@ -55,7 +60,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                                .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                                .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->
@@ -117,18 +123,6 @@ public class SecurityConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
-    }
-
-    @Bean
-    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> servletContainer() {
-        return factory -> {
-            Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
-            connector.setScheme("http");
-            connector.setPort(8080); // Cổng HTTP
-            connector.setSecure(false);
-            connector.setRedirectPort(8081); // Chuyển hướng tới cổng HTTPS
-            factory.addAdditionalTomcatConnectors(connector);
-        };
     }
 
     @Bean

@@ -13,8 +13,8 @@ import server.entity.enums.LitigantType;
 @ToString
 public class LitigantRequest {
     LitigantType litigantType;
-    Integer ordinal;
+    int ordinal;
     String name;
-    String yearOfBirth;
+    Integer yearOfBirth;
     String address;
 }

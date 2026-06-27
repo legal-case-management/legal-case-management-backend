@@ -72,10 +72,9 @@ public class LegalRelationshipGroupService {
         legalRelationshipGroupRepository.delete(existing);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<LegalRelationshipGroupResponse> getAll() {
         return legalRelationshipGroupRepository
-                .findAll()
+                .findAll(Sort.by("legalRelationshipGroupId"))
                 .stream().map(legalRelationshipGroupMapper::toLegalRelationshipGroupResponse)
                 .toList();
     }

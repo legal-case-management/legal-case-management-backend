@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import server.entity.enums.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.AccountStatus;
 
 @Entity
 @Table(name = "accounts")
@@ -22,15 +21,16 @@ public class Account {
     String accountId;
     @Column(unique = true, nullable = false)
     String username;
+    @Column(nullable = false)
     String password;
     @Column(unique = true, nullable = false)
     String email;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     Role role;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "account_status", nullable = false)
-    AccountStatus accountStatus;
+    @Column(name = "active", nullable = false)
+    boolean active;
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "officer_id")

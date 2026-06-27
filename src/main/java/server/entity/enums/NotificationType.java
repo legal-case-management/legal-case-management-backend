@@ -9,7 +9,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor
 public enum NotificationType {
-    UPCOMING_DEADLINE("Thông báo án sắp hết hạn"),
-    OVERDUE_CASE("Thông báo án quá hạn");
+    LEGAL_CASE_CASE_ASSIGNED("Thông báo án được phân công"),
+    LEGAL_CASE_UPCOMING_DEADLINE("Thông báo án sắp hết hạn"),
+    LEGAL_CASE_OVERDUE("Thông báo án quá hạn")
+    ;
     String name;
 }

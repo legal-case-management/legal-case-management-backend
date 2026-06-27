@@ -24,11 +24,11 @@ public class Litigant {
     @Column(name = "litigant_type", nullable = false)
     LitigantType litigantType;
     @Column(nullable = false)
-    Integer ordinal;
+    int ordinal;
     @Column(nullable = false)
     String name;
     @Column(name = "year_of_birth")
-    String yearOfBirth;
+    Integer yearOfBirth;
     String address;
 }
 

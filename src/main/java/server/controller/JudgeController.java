@@ -1,10 +1,13 @@
 package server.controller;
 
 import jakarta.validation.Valid;
+import org.hibernate.annotations.Parameter;
 import server.dto.request.judge.JudgeRequest;
 import server.dto.request.judge.JudgeSearchRequest;
+import server.dto.request.legalCase.AssignmentListRequest;
 import server.dto.response.ApiResponse;
 import server.dto.response.PageResponse;
+import server.dto.response.judge.JudgeAssignmentInfoResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.service.JudgeService;
 import lombok.AccessLevel;
@@ -48,9 +51,9 @@ public class JudgeController {
                 .build();
     }
 
-    @GetMapping("/list-assignment/{legalRelationshipGroupId}")
-    public ApiResponse<List<JudgeResponse>> listAssignment(@PathVariable String legalRelationshipGroupId) {
-        return ApiResponse.<List<JudgeResponse>>builder()
+    @GetMapping("/list-assignment")
+    public ApiResponse<List<JudgeAssignmentInfoResponse>> listAssignment(@RequestParam(required = false) String legalRelationshipGroupId) {
+        return ApiResponse.<List<JudgeAssignmentInfoResponse>>builder()
                 .success(true)
                 .status(200)
                 .message("Successful")
@@ -58,7 +61,7 @@ public class JudgeController {
                 .build();
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ApiResponse<Void> create(@RequestBody @Valid JudgeRequest request) {
         judgeService.create(request);
         return ApiResponse.<Void>builder()

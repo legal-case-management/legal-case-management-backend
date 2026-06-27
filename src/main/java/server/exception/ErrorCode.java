@@ -49,16 +49,21 @@ public enum ErrorCode {
     LEGAL_CASE_NOT_WAITING_FOR_ASSIGNMENT(400, HttpStatus.BAD_REQUEST, "Vụ án không ở trạng thái chờ phân công"),
 
     RANDOM_ASSIGNMENT_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Phân công án ngẫu nhiên thất bại"),
-    BATCH_CHANGE_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Chuyển đợt nhập án thất bại"),
+    NO_JUDGES_AVAILABLE_FOR_LEGAL_CASES(400, HttpStatus.BAD_REQUEST, "Không có đủ thẩm phán nào đủ điều kiện để phân công cho các vụ án"),
+    ASSIGN_ASSIGNMENT_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Phân công án chỉ định thất bại"),
     LEGAL_CASE_NOT_ASSIGNED(400, HttpStatus.BAD_REQUEST, "Vụ án chưa được phân công"),
+    CRIMINAL_CASE_CANNOT_HAVE_MEDIATOR(400, HttpStatus.BAD_REQUEST, "Án hình sự không được có hòa giải viên"),
 
     /* Judge */
     JUDGE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Thẩm phán không tồn tại"),
     JUDGE_EXISTED(404, HttpStatus.BAD_REQUEST, "Thẩm phán đã tồn tại"),
+    JUDGE_ASSIGNED_TO_LEGAL_CASE(400, HttpStatus.BAD_REQUEST, "Thẩm phán đã được phân công cho vụ án"),
+    JUDGE_NOT_AVAILABLE(400, HttpStatus.BAD_REQUEST, "Thẩm phán không đủ điều kiện để được phân công"),
 
     /* Mediator */
     MEDIATOR_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Hòa giải viên không tồn tại"),
     MEDIATOR_EXISTED(404, HttpStatus.BAD_REQUEST, "Hòa giải viên đã tồn tại"),
+    MEDIATOR_ASSIGNED_TO_LEGAL_CASE(400, HttpStatus.BAD_REQUEST, "Hòa giải viên đã được phân công cho vụ án"),
 
     /* Legal relationship */
     LEGAL_RELATIONSHIP_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Quan hệ pháp luật không tồn tại"),
@@ -96,6 +101,7 @@ public enum ErrorCode {
     DECISION_EXISTED(404, HttpStatus.BAD_REQUEST, "Quyết định, thông báo đã tồn tại"),
     DECISION_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Quyết định, thông báo không tồn tại"),
     CAN_NOT_HANDLE_TYPE_OF_DECISION(400, HttpStatus.BAD_REQUEST, "Không thể thực hiện loại quyết định, thông báo này với trạng thái hiện tại của vụ án"),
+    HANDLE_DECISION_TYPE_BLOCKED(400, HttpStatus.BAD_REQUEST, "Không thể thực hiện loại quyết định, thông báo này với trạng thái hiện tại của vụ án"),
 
     /* Random assignment */
     RANDOM_ASSIGNMENT_NOT_ALLOWED(400, HttpStatus.BAD_REQUEST, "Nhóm quan hệ pháp luật không được phép phân công ngẫu nhiên"),
@@ -103,6 +109,12 @@ public enum ErrorCode {
     /* Notification */
 
     NOTIFICATION_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Thông báo không tồn tại"),
+
+
+    /* Statistic */
+
+    START_DATE_AFTER_END_DATE(400, HttpStatus.BAD_REQUEST, "Ngày bắt đầu phải trước ngày kết thúc"),
+    INVALID_PARAMETERS(400, HttpStatus.BAD_REQUEST, "Tham số không hợp lệ")
     ;
 
     int status;
