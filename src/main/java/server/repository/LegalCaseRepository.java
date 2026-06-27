@@ -38,6 +38,9 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
                 AND (:batchId IS NULL OR (lc.batch IS NOT NULL AND lc.batch.batchId = :batchId))
                 AND (cast(:startStorageDate as timestamp) IS NULL OR lc.storageDate >= :startStorageDate)
                 AND (cast(:endStorageDate as timestamp) IS NULL OR lc.storageDate <= :endStorageDate)
+                AND (:isMediator IS NULL
+                    OR (:isMediator = true AND lc.mediator IS NOT NULL)
+                    OR (:isMediator = false AND lc.mediator IS NULL))
             """)
     Page<LegalCase> search(
             @Param("acceptanceNumber") String acceptanceNumber,
@@ -54,6 +57,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             @Param("batchId") String batchId,
             @Param("startStorageDate") LocalDateTime startStorageDate,
             @Param("endStorageDate") LocalDateTime endStorageDate,
+            @Param("isMediator") Boolean isMediator,
             Pageable pageable
     );
 
