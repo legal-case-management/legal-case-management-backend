@@ -80,6 +80,11 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
     );
 
 
+    /*
+     * Trả về Boolean (cho phép null). Khi GROUP BY/HAVING không tạo ra dòng nào
+     * (thẩm phán không thỏa điều kiện hoặc đã vượt giới hạn) -> kết quả null,
+     * service sẽ coi như "không khả dụng". Dùng Boolean để tránh lỗi map null vào boolean.
+     */
     @Query("""
             SELECT COUNT(j) > 0
             FROM Judge j
@@ -90,7 +95,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             GROUP BY j.officerId
             HAVING j.maxWithoutMediator IS NULL OR COUNT(*) < j.maxWithoutMediator
             """)
-    boolean isAvailableAssignmentWithoutMediator(
+    Boolean isAvailableAssignmentWithoutMediator(
             @Param("milestoneStartDate") LocalDate milestoneStartDate,
             @Param("milestoneEndDate") LocalDate milestoneEndDate,
             @Param("legalRelationshipGroup") LegalRelationshipGroup legalRelationshipGroup,
@@ -104,9 +109,9 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
             WHERE j.officerId = :officerId
                   AND j.officerStatus = 'WORKING'
             GROUP BY j.officerId
-            HAVING j.maxWithoutMediator IS NULL OR COUNT(*) < j.maxWithoutMediator
+            HAVING j.maxWithMediator IS NULL OR COUNT(*) < j.maxWithMediator
             """)
-    boolean isAvailableAssignmentWithMediator(
+    Boolean isAvailableAssignmentWithMediator(
             @Param("milestoneStartDate") LocalDate milestoneStartDate,
             @Param("milestoneEndDate") LocalDate milestoneEndDate,
             @Param("officerId") String officerId

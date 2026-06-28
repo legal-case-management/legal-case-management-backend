@@ -14,6 +14,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import server.dto.response.judge.JudgeAssignmentInfoResponse;
 import server.dto.request.legalCase.*;
 import server.dto.response.PageResponse;
@@ -354,7 +356,7 @@ public class LegalCaseService {
 
         boolean isMediator = legalCase.getMediator() != null;
 
-        boolean isAvailable;
+        Boolean isAvailable;
         if(isMediator){
             isAvailable = judgeRepository.isAvailableAssignmentWithMediator(
                     DateUtils.getMilestoneStartDate(),
@@ -370,7 +372,8 @@ public class LegalCaseService {
             );
         }
 
-        if (!isAvailable) {
+        // Query có thể trả null khi GROUP BY/HAVING không sinh dòng -> coi như không khả dụng.
+        if (isAvailable == null || !isAvailable) {
             throw new AppException(ErrorCode.JUDGE_NOT_AVAILABLE);
         }
 
@@ -467,12 +470,33 @@ public class LegalCaseService {
     }
 
     /**
-     * Gửi thông báo như một side-effect: nếu tạo/đẩy thông báo lỗi thì chỉ ghi log,
-     * KHÔNG được làm hỏng (rollback) nghiệp vụ chính (thêm/sửa/xóa/phân công án).
-     * Các phương thức notify chạy ở transaction riêng (REQUIRES_NEW) nên lỗi của chúng
-     * không đánh dấu rollback transaction chính.
+     * Gửi thông báo như một side-effect SAU KHI transaction nghiệp vụ commit thành công.
+     *
+     * Lý do chạy sau commit: thông báo tham chiếu khóa ngoại tới án (legal_case_id).
+     * Nếu chạy trong khi transaction nghiệp vụ chưa commit, bản ghi án chưa hiện hữu ở
+     * tầng DB nên insert thông báo sẽ vi phạm khóa ngoại. Sau commit, án đã tồn tại,
+     * các phương thức notify (chạy transaction mới) sẽ thấy được và tạo thông báo hợp lệ.
+     *
+     * Nếu tạo/đẩy thông báo lỗi thì chỉ ghi log, KHÔNG ảnh hưởng nghiệp vụ chính
+     * (vốn đã commit xong).
      */
     private void safeNotify(Runnable notifyAction) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(
+                    new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            runNotify(notifyAction);
+                        }
+                    }
+            );
+        } else {
+            // Không có transaction đang hoạt động -> chạy trực tiếp.
+            runNotify(notifyAction);
+        }
+    }
+
+    private void runNotify(Runnable notifyAction) {
         try {
             notifyAction.run();
         } catch (Exception e) {
