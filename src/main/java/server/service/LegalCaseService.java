@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class LegalCaseService {
     LegalCaseRepository legalCaseRepository;
     LegalRelationshipRepository legalRelationshipRepository;
@@ -48,6 +50,7 @@ public class LegalCaseService {
     DocumentMapper documentMapper;
 
     JudgeService judgeService;
+    NotificationService notificationService;
 
     public PageResponse<LegalCaseResponse> search(LegalCaseSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
@@ -84,14 +87,18 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Async
     @Synchronized
     @Transactional
     public void create(LegalCaseRequest request) {
+        Account actor = notificationService.getCurrentActorOrNull();
+
         Batch batch = batchRepository.findById(request.getBatchId())
                 .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
 
-        createSingle(request, batch);
+        LegalCase created = createSingle(request, batch);
+
+        // Thông báo nhập án mới (và phân công nếu án mới đã có sẵn thẩm phán).
+        safeNotify(() -> notificationService.notifyCaseCreated(created, actor));
     }
 
     public LegalCaseResponse getById(String id) {
@@ -101,19 +108,21 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Async
     @Synchronized
     @Transactional
     public void importFromExcel(LegalCasesRequest request) {
+        Account actor = notificationService.getCurrentActorOrNull();
+
         Batch batch = batchRepository.findById(request.getBatchId())
                 .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
 
         for (LegalCaseRequest legalCaseRequest : request.getLegalCases()) {
-            createSingle(legalCaseRequest, batch);
+            LegalCase created = createSingle(legalCaseRequest, batch);
+            safeNotify(() -> notificationService.notifyCaseCreated(created, actor));
         }
     }
 
-    private void createSingle(LegalCaseRequest request, Batch batch) {
+    private LegalCase createSingle(LegalCaseRequest request, Batch batch) {
         LegalCase legalCase = LegalCase.builder().build();
         legalCaseMapper.toLegalCase(request, legalCase);
 
@@ -174,15 +183,16 @@ public class LegalCaseService {
         }
 
         legalCase.setBatch(batch);
-        legalCaseRepository.save(legalCase);
+        return legalCaseRepository.save(legalCase);
     }
 
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Async
     @Synchronized
     @Transactional
     public void update(String id, LegalCaseRequest request) {
+        Account actor = notificationService.getCurrentActorOrNull();
+
         LegalCase legalCaseSaved = legalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
@@ -217,20 +227,28 @@ public class LegalCaseService {
         }
 
         legalCaseRepository.save(legalCaseSaved);
+
+        // Thông báo cập nhật thông tin án cho người cập nhật và thẩm phán (nếu có).
+        safeNotify(() -> notificationService.notifyCaseUpdated(legalCaseSaved, actor));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Async
     @Synchronized
     @Transactional
     public void delete(String id) {
+        Account actor = notificationService.getCurrentActorOrNull();
+
         LegalCase legalCaseSaved = legalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
+
+        // Thông báo xóa án (cho người xóa và thẩm phán) TRƯỚC khi xóa khỏi DB,
+        // vì sau khi xóa không còn lấy được thông tin án/thẩm phán.
+        safeNotify(() -> notificationService.notifyCaseDeleted(legalCaseSaved, actor));
+
         legalCaseRepository.delete(legalCaseSaved);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Async
     @Synchronized
     @Transactional
     public void randomAssignment(RandomAssignmentRequest request) {
@@ -311,10 +329,12 @@ public class LegalCaseService {
         );
 
         legalCaseRepository.save(legalCase);
+
+        // Thông báo phân công ngẫu nhiên cho thẩm phán tương ứng (real-time).
+        safeNotify(() -> notificationService.notifyCaseAssigned(legalCase));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @Async
     @Synchronized
     @Transactional
     public void assignAssignment(AssignAssignmentRequest request) {
@@ -366,6 +386,9 @@ public class LegalCaseService {
         legalCase.setJudge(judge);
 
         legalCaseRepository.save(legalCase);
+
+        // Thông báo phân công chỉ định cho thẩm phán tương ứng (real-time).
+        safeNotify(() -> notificationService.notifyCaseAssigned(legalCase));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -409,12 +432,18 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Transactional
     public void removeAssignment(String legalCaseId) {
+        Account actor = notificationService.getCurrentActorOrNull();
+
         LegalCase legalCase = legalCaseRepository.findById(legalCaseId)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
 
         if (legalCase.getJudge() == null)
             throw new AppException(ErrorCode.LEGAL_CASE_NOT_ASSIGNED);
+
+        // Lưu lại thẩm phán bị gỡ trước khi set null để còn thông báo cho họ.
+        Judge removedJudge = legalCase.getJudge();
 
         legalCase.setAssignment(null);
         legalCase.setAssignmentDate(null);
@@ -422,6 +451,9 @@ public class LegalCaseService {
         legalCase.setLegalCaseStatus(LegalCaseStatus.WAITING_FOR_ASSIGNMENT);
         legalCase.setJudge(null);
         legalCaseRepository.save(legalCase);
+
+        // Thông báo gỡ phân công cho người thực hiện và thẩm phán bị gỡ (real-time).
+        safeNotify(() -> notificationService.notifyAssignmentRemoved(legalCase, removedJudge, actor));
     }
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")
@@ -429,5 +461,19 @@ public class LegalCaseService {
         int waiting = legalCaseRepository.updateWaitingForAssignment();
         int overdue = legalCaseRepository.updateOverdue();
         System.out.println("Updated " + waiting + " cases to WAITING_FOR_ASSIGNMENT and " + overdue + " cases to OVERDUE.");
+    }
+
+    /**
+     * Gửi thông báo như một side-effect: nếu tạo/đẩy thông báo lỗi thì chỉ ghi log,
+     * KHÔNG được làm hỏng (rollback) nghiệp vụ chính (thêm/sửa/xóa/phân công án).
+     * Các phương thức notify chạy ở transaction riêng (REQUIRES_NEW) nên lỗi của chúng
+     * không đánh dấu rollback transaction chính.
+     */
+    private void safeNotify(Runnable notifyAction) {
+        try {
+            notifyAction.run();
+        } catch (Exception e) {
+            log.error("Gửi thông báo thất bại", e);
+        }
     }
 }

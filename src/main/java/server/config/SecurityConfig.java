@@ -50,6 +50,11 @@ public class SecurityConfig {
             "/auth/ping"
     };
 
+    /* Endpoint handshake WebSocket - xác thực JWT được thực hiện ở tầng STOMP CONNECT */
+    String[] PUBLIC_ENDPOINTS = {
+            "/ws/**"
+    };
+
     @NonFinal
     @Value("${jwt.signerKey}")
     private String signerKey;
@@ -62,6 +67,7 @@ public class SecurityConfig {
                         request
                                 .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
                                 .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
+                                .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 ->

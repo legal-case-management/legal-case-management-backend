@@ -149,6 +149,29 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             @Param("futureDate") LocalDate futureDate
     );
 
+    /* Án sắp hết hạn: còn hạn (expiredDate >= hôm nay), trong khoảng [today, futureDate], đã có thẩm phán, đang xử lý. */
+    @Query("""
+                SELECT lc FROM LegalCase lc
+                WHERE lc.judge IS NOT NULL
+                  AND lc.expiredDate BETWEEN :today AND :futureDate
+                  AND lc.legalCaseStatus = server.entity.enums.LegalCaseStatus.IN_PROCESS
+            """)
+    List<LegalCase> findUpcomingDeadlineCases(
+            @Param("today") LocalDate today,
+            @Param("futureDate") LocalDate futureDate
+    );
+
+    /* Án quá hạn: expiredDate trong [earliest, today] (today = quá hạn 0 ngày, earliest = quá hạn nhiều ngày nhất), đã có thẩm phán. */
+    @Query("""
+                SELECT lc FROM LegalCase lc
+                WHERE lc.judge IS NOT NULL
+                  AND lc.expiredDate BETWEEN :earliest AND :today
+            """)
+    List<LegalCase> findOverdueCasesBetween(
+            @Param("earliest") LocalDate earliest,
+            @Param("today") LocalDate today
+    );
+
     long countLegalCasesByJudge(Judge judge);
 
     @Query("""
