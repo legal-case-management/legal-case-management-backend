@@ -43,7 +43,7 @@ public class NotificationSchemaMigration implements ApplicationRunner {
                 return;
             }
             dropStaleCheckConstraints(connection);
-            dropStaleForeignKeys(connection);
+            ensureLegalCaseFkOnDeleteSetNull(connection);
         } catch (Exception e) {
             log.warn("Không thể dọn dẹp ràng buộc cũ của bảng notifications: {}", e.getMessage());
         }
@@ -74,10 +74,14 @@ public class NotificationSchemaMigration implements ApplicationRunner {
         dropConstraints(connection, findSql, "CHECK");
     }
 
-    /** Xóa khóa ngoại cũ trên cột legal_case_id (nếu còn). */
-    private void dropStaleForeignKeys(Connection connection) throws Exception {
+    /**
+     * Đảm bảo khóa ngoại legal_case_id -> legal_cases có ON DELETE SET NULL.
+     * Hibernate ddl-auto=update không tự sửa hành vi ON DELETE của FK đã tồn tại,
+     * nên ta chuẩn hóa lại: nếu có FK chưa phải SET NULL thì drop và tạo lại đúng.
+     */
+    private void ensureLegalCaseFkOnDeleteSetNull(Connection connection) throws Exception {
         String findSql = """
-                SELECT con.conname
+                SELECT con.conname, con.confdeltype
                 FROM pg_constraint con
                 JOIN pg_class rel ON rel.oid = con.conrelid
                 JOIN pg_attribute att ON att.attrelid = con.conrelid AND att.attnum = ANY (con.conkey)
@@ -85,7 +89,40 @@ public class NotificationSchemaMigration implements ApplicationRunner {
                   AND con.contype = 'f'
                   AND att.attname = 'legal_case_id'
                 """;
-        dropConstraints(connection, findSql, "FOREIGN KEY");
+        List<String> toDrop = new ArrayList<>();
+        boolean hasCorrectFk = false;
+        try (Statement st = connection.createStatement();
+             ResultSet rs = st.executeQuery(findSql)) {
+            while (rs.next()) {
+                String name = rs.getString(1);
+                String delType = rs.getString(2); // 'n' = SET NULL
+                if ("n".equals(delType)) {
+                    hasCorrectFk = true;
+                } else {
+                    toDrop.add(name);
+                }
+            }
+        }
+
+        for (String name : toDrop) {
+            try (Statement st = connection.createStatement()) {
+                st.executeUpdate("ALTER TABLE notifications DROP CONSTRAINT IF EXISTS \"" + name + "\"");
+                log.info("Đã xóa FK legal_case_id cũ (không phải ON DELETE SET NULL): {}", name);
+            }
+        }
+
+        if (!hasCorrectFk) {
+            try (Statement st = connection.createStatement()) {
+                st.executeUpdate(
+                        "ALTER TABLE notifications " +
+                        "ADD CONSTRAINT fk_notifications_legal_case " +
+                        "FOREIGN KEY (legal_case_id) REFERENCES legal_cases(legal_case_id) " +
+                        "ON DELETE SET NULL");
+                log.info("Đã tạo FK legal_case_id với ON DELETE SET NULL.");
+            } catch (Exception e) {
+                log.warn("Không thể tạo FK legal_case_id ON DELETE SET NULL: {}", e.getMessage());
+            }
+        }
     }
 
     private void dropConstraints(Connection connection, String findSql, String label) throws Exception {

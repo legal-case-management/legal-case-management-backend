@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import server.entity.Account;
+import server.entity.LegalCase;
 import server.entity.Notification;
 
 import java.util.List;
@@ -47,13 +48,16 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
             """)
     int markAllAsRead(@Param("account") Account account);
 
+    /**
+     * Gỡ liên kết tới án (set null) cho mọi thông báo đang tham chiếu án này.
+     * Gọi trước khi xóa án để FK không chặn việc xóa, đồng thời thông báo vẫn còn.
+     */
+    @Modifying
+    @Transactional
     @Query("""
-        SELECT MAX(CAST(SUBSTRING(tb.notificationId, 7, 6) AS int))
-        FROM Notification tb
-        WHERE SUBSTRING(tb.notificationId, 1, 4) = :year
-          AND SUBSTRING(tb.notificationId, 5, 2) = 'TB'
-    """)
-    Optional<Integer> getMaxId(
-            @Param("year") String year
-    );
+            UPDATE Notification n
+            SET n.legalCase = NULL
+            WHERE n.legalCase = :legalCase
+            """)
+    int detachLegalCase(@Param("legalCase") LegalCase legalCase);
 }

@@ -4,6 +4,8 @@ package server.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import server.entity.enums.NotificationType;
 
 import java.time.LocalDateTime;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Notification {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "notification_id")
     String notificationId;
 
@@ -44,14 +47,8 @@ public class Notification {
     @JoinColumn(name = "account_id", nullable = false)
     Account account;
 
-    /*
-     * Lưu ID/số thụ lý của án dưới dạng chuỗi (không phải khóa ngoại) để thông báo
-     * vẫn còn liên kết tới án sau khi án bị xóa. Với loại "xóa án" thì án không còn
-     * tồn tại nên không thể dùng khóa ngoại.
-     */
-    @Column(name = "legal_case_id")
-    String legalCaseId;
-
-    @Column(name = "acceptance_number")
-    String acceptanceNumber;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "legal_case_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    LegalCase legalCase;
 }

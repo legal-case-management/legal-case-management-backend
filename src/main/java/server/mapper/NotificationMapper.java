@@ -15,5 +15,9 @@ import server.entity.Notification;
 public interface NotificationMapper {
     // Bắt buộc map trường boolean isRead (MapStruct + @SuperBuilder/Lombok dễ bỏ sót).
     @Mapping(target = "isRead", source = "read")
+    // Lấy thông tin án liên quan từ quan hệ legalCase (null khi án đã bị xóa).
+    @Mapping(target = "legalCaseId", source = "legalCase.legalCaseId")
+    @Mapping(target = "acceptanceNumber", source = "legalCase.acceptanceNumber")
+    @Mapping(target = "acceptanceDate", source = "legalCase.acceptanceDate")
     NotificationResponse toNotificationResponse(Notification notification);
 }

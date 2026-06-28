@@ -245,6 +245,9 @@ public class LegalCaseService {
         // vì sau khi xóa không còn lấy được thông tin án/thẩm phán.
         safeNotify(() -> notificationService.notifyCaseDeleted(legalCaseSaved, actor));
 
+        // Gỡ liên kết án khỏi các thông báo cũ để FK không chặn việc xóa.
+        notificationService.detachLegalCaseFromNotifications(legalCaseSaved);
+
         legalCaseRepository.delete(legalCaseSaved);
     }
 

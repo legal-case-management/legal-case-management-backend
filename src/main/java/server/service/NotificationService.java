@@ -28,11 +28,12 @@ import server.exception.ErrorCode;
 import server.mapper.NotificationMapper;
 import server.mapper.PageMapper;
 import server.repository.AccountRepository;
+import server.repository.LegalCaseRepository;
 import server.repository.NotificationRepository;
+import server.utils.DateUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -42,6 +43,7 @@ import java.util.*;
 public class NotificationService {
     NotificationRepository notificationRepository;
     AccountRepository accountRepository;
+    LegalCaseRepository legalCaseRepository;
 
     NotificationMapper notificationMapper;
     PageMapper pageMapper;
@@ -102,6 +104,14 @@ public class NotificationService {
         pushUnreadCount(account);
     }
 
+    /**
+     * Gỡ liên kết án khỏi mọi thông báo trước khi xóa án (để FK không chặn).
+     * Chạy trong cùng transaction với thao tác xóa án.
+     */
+    public void detachLegalCaseFromNotifications(LegalCase legalCase) {
+        notificationRepository.detachLegalCase(legalCase);
+    }
+
     /* =========================================================================
      *  TẠO THÔNG BÁO THEO TỪNG NGHIỆP VỤ
      * ========================================================================= */
@@ -124,9 +134,9 @@ public class NotificationService {
         String assignmentText = describeAssignment(legalCase.getAssignment());
         String title = "Bạn được phân công một vụ án";
         String content = String.format(
-                "Bạn vừa được phân công vụ án có số thụ lý %s%s. Vui lòng kiểm tra thông tin vụ án.",
-                safe(legalCase.getAcceptanceNumber()),
-                assignmentText
+                "Bạn vừa được phân công một vụ án%s. Vui lòng kiểm tra thông tin vụ án.%s",
+                assignmentText,
+                caseInfo(legalCase)
         );
 
         createAndPush(judgeAccount, NotificationType.CASE_ASSIGNED, title, content, legalCase);
@@ -141,8 +151,8 @@ public class NotificationService {
         if (creator != null) {
             String title = "Nhập án mới thành công";
             String content = String.format(
-                    "Vụ án có số thụ lý %s đã được nhập vào hệ thống thành công.",
-                    safe(legalCase.getAcceptanceNumber())
+                    "Một vụ án đã được nhập vào hệ thống thành công.%s",
+                    caseInfo(legalCase)
             );
             createAndPush(creator, NotificationType.CASE_CREATED, title, content, legalCase);
         }
@@ -162,20 +172,20 @@ public class NotificationService {
     public void notifyCaseDeleted(LegalCase legalCase, Account actor) {
         String title = "Một vụ án đã bị xóa";
         String content = String.format(
-                "Vụ án có số thụ lý %s đã bị xóa khỏi hệ thống.",
-                safe(legalCase.getAcceptanceNumber())
+                "Một vụ án đã bị xóa khỏi hệ thống.%s",
+                caseInfo(legalCase)
         );
 
         Set<String> notifiedAccountIds = new HashSet<>();
 
         if (actor != null) {
-            createAndPushDeleted(actor, title, content, legalCase);
+            createAndPushDeleted(actor, title, content);
             notifiedAccountIds.add(actor.getAccountId());
         }
 
         Account judgeAccount = resolveJudgeAccount(legalCase);
         if (judgeAccount != null && !notifiedAccountIds.contains(judgeAccount.getAccountId())) {
-            createAndPushDeleted(judgeAccount, title, content, legalCase);
+            createAndPushDeleted(judgeAccount, title, content);
         }
     }
 
@@ -187,8 +197,8 @@ public class NotificationService {
     public void notifyCaseUpdated(LegalCase legalCase, Account actor) {
         String title = "Thông tin vụ án đã được cập nhật";
         String content = String.format(
-                "Thông tin vụ án có số thụ lý %s vừa được cập nhật.",
-                safe(legalCase.getAcceptanceNumber())
+                "Thông tin một vụ án vừa được cập nhật.%s",
+                caseInfo(legalCase)
         );
 
         Set<String> notifiedAccountIds = new HashSet<>();
@@ -218,8 +228,8 @@ public class NotificationService {
 
         if (actor != null) {
             String contentForActor = String.format(
-                    "Bạn đã gỡ phân công thẩm phán khỏi vụ án có số thụ lý %s.",
-                    safe(legalCase.getAcceptanceNumber())
+                    "Bạn đã gỡ phân công thẩm phán khỏi một vụ án.%s",
+                    caseInfo(legalCase)
             );
             createAndPush(actor, NotificationType.ASSIGNMENT_REMOVED, title, contentForActor, legalCase);
             notifiedAccountIds.add(actor.getAccountId());
@@ -231,8 +241,8 @@ public class NotificationService {
                     .orElse(null);
             if (judgeAccount != null && !notifiedAccountIds.contains(judgeAccount.getAccountId())) {
                 String contentForJudge = String.format(
-                        "Bạn đã bị gỡ phân công khỏi vụ án có số thụ lý %s.",
-                        safe(legalCase.getAcceptanceNumber())
+                        "Bạn đã bị gỡ phân công khỏi một vụ án.%s",
+                        caseInfo(legalCase)
                 );
                 createAndPush(judgeAccount, NotificationType.ASSIGNMENT_REMOVED, title, contentForJudge, legalCase);
             }
@@ -250,10 +260,10 @@ public class NotificationService {
         }
         String title = "Vụ án sắp hết hạn";
         String content = String.format(
-                "Vụ án có số thụ lý %s sẽ hết hạn trong %d ngày (hạn: %s).",
-                safe(legalCase.getAcceptanceNumber()),
+                "Một vụ án bạn phụ trách sẽ hết hạn trong %d ngày (hạn: %s).%s",
                 daysLeft,
-                legalCase.getExpiredDate()
+                formatDate(legalCase.getExpiredDate()),
+                caseInfo(legalCase)
         );
         createAndPush(judgeAccount, NotificationType.UPCOMING_DEADLINE, title, content, legalCase);
     }
@@ -270,14 +280,14 @@ public class NotificationService {
         String title = "Vụ án đã quá hạn";
         String content = daysOverdue == 0
                 ? String.format(
-                        "Vụ án có số thụ lý %s đã đến hạn hôm nay (%s) và bị quá hạn.",
-                        safe(legalCase.getAcceptanceNumber()),
-                        legalCase.getExpiredDate())
+                        "Một vụ án bạn phụ trách đã đến hạn hôm nay (%s) và bị quá hạn.%s",
+                        formatDate(legalCase.getExpiredDate()),
+                        caseInfo(legalCase))
                 : String.format(
-                        "Vụ án có số thụ lý %s đã quá hạn %d ngày (hạn: %s).",
-                        safe(legalCase.getAcceptanceNumber()),
+                        "Một vụ án bạn phụ trách đã quá hạn %d ngày (hạn: %s).%s",
                         daysOverdue,
-                        legalCase.getExpiredDate());
+                        formatDate(legalCase.getExpiredDate()),
+                        caseInfo(legalCase));
         createAndPush(judgeAccount, NotificationType.OVERDUE, title, content, legalCase);
     }
 
@@ -287,29 +297,25 @@ public class NotificationService {
 
     private void createAndPush(Account account, NotificationType type, String title, String content, LegalCase legalCase) {
         Notification notification = buildNotification(account, type, title, content);
-        if (legalCase != null) {
-            notification.setLegalCaseId(legalCase.getLegalCaseId());
-            notification.setAcceptanceNumber(legalCase.getAcceptanceNumber());
+        if (legalCase != null && legalCase.getLegalCaseId() != null) {
+            // Gắn reference tới án (lấy theo id để hợp lệ trong transaction REQUIRES_NEW hiện tại).
+            // Khi án bị xóa, FK sẽ tự chuyển null (ON DELETE SET NULL).
+            notification.setLegalCase(legalCaseRepository.getReferenceById(legalCase.getLegalCaseId()));
         }
         persistAndPush(account, notification);
     }
 
     /**
-     * Trường hợp xóa án: vẫn lưu số thụ lý để hiển thị nhưng KHÔNG lưu legalCaseId
-     * (vì án không còn tồn tại, không nên link tới trang chi tiết án đã xóa).
+     * Trường hợp xóa án: KHÔNG gắn reference tới án (vì án đang/sẽ bị xóa).
+     * Thông tin án đã được nhúng sẵn trong content khi tạo thông báo.
      */
-    private void createAndPushDeleted(Account account, String title, String content, LegalCase legalCase) {
+    private void createAndPushDeleted(Account account, String title, String content) {
         Notification notification = buildNotification(account, NotificationType.CASE_DELETED, title, content);
-        if (legalCase != null) {
-            notification.setAcceptanceNumber(legalCase.getAcceptanceNumber());
-        }
         persistAndPush(account, notification);
     }
 
     private void persistAndPush(Account account, Notification notification) {
-        // saveAndFlush để bản ghi được ghi xuống DB ngay trong transaction hiện tại,
-        // nhờ đó generateId() (dựa trên getMaxId) thấy được id vừa tạo, tránh trùng id
-        // khi một nghiệp vụ tạo nhiều thông báo (vd: thông báo cho cả người tạo và thẩm phán).
+        // saveAndFlush để id (UUID) được sinh và ghi xuống DB ngay, phục vụ đẩy real-time.
         notificationRepository.saveAndFlush(notification);
         NotificationResponse response = notificationMapper.toNotificationResponse(notification);
         pushNotification(account, response);
@@ -321,7 +327,6 @@ public class NotificationService {
         // truyền vào có thể đã detached. Lấy reference theo id để gắn vào transaction hiện tại.
         Account managedAccount = accountRepository.getReferenceById(account.getAccountId());
         return Notification.builder()
-                .notificationId(generateId())
                 .account(managedAccount)
                 .notificationType(type)
                 .title(title)
@@ -329,6 +334,35 @@ public class NotificationService {
                 .storageDate(LocalDateTime.now())
                 .isRead(false)
                 .build();
+    }
+
+    /**
+     * Khối thông tin án nhúng vào content: mã án, số thụ lý, ngày thụ lý, loại án.
+     */
+    private String caseInfo(LegalCase legalCase) {
+        if (legalCase == null) {
+            return "";
+        }
+        String legalCaseTypeName = "";
+        try {
+            if (legalCase.getLegalRelationship() != null
+                    && legalCase.getLegalRelationship().getLegalCaseType() != null) {
+                legalCaseTypeName = safe(legalCase.getLegalRelationship().getLegalCaseType().getLegalCaseTypeName());
+            }
+        } catch (Exception ignored) {
+            // Quan hệ có thể chưa tải -> bỏ qua, không để ảnh hưởng nội dung chính.
+        }
+        return String.format(
+                "%n- Mã án: %s%n- Số thụ lý: %s%n- Ngày thụ lý: %s%n- Loại án: %s",
+                safe(legalCase.getLegalCaseId()),
+                safe(legalCase.getAcceptanceNumber()),
+                formatDate(legalCase.getAcceptanceDate()),
+                legalCaseTypeName
+        );
+    }
+
+    private String formatDate(LocalDate date) {
+        return date == null ? "" : DateUtils.formatLocalDate(date);
     }
 
     private void pushNotification(Account account, NotificationResponse response) {
@@ -383,12 +417,6 @@ public class NotificationService {
             return null;
         }
         return accountRepository.findById(authentication.getName()).orElse(null);
-    }
-
-    private synchronized String generateId() {
-        String year = String.format("%04d", LocalDate.now().getYear());
-        int next = notificationRepository.getMaxId(year).orElse(0) + 1;
-        return String.format("%sTB%06d", year, next);
     }
 
     private String describeAssignment(Assignment assignment) {
