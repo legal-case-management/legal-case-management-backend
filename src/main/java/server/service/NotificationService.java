@@ -147,6 +147,35 @@ public class NotificationService {
     }
 
     /**
+     * Thông báo nhập án mới cho người nhập án. Real-time.
+     * Với mỗi án đã có thẩm phán, gọi thêm thông báo phân công cho thẩm phán đó.
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void notifyImportExcel(List<LegalCase> legalCases, Account creator) {
+        if (legalCases == null || legalCases.isEmpty()) {
+            return;
+        }
+
+        // Thông báo nhập án thành công cho người nhập án.
+        if (creator != null) {
+            String title = "Nhập án mới thành công";
+            String content = String.format(
+                    "Một danh sách %d vụ án đã được nhập vào hệ thống thành công.",
+                    legalCases.size()
+            );
+            createAndPush(creator, NotificationType.CASE_CREATED, title, content, null);
+        }
+
+        // Với mỗi án đã có sẵn thẩm phán -> thông báo phân công cho thẩm phán đó.
+        // Gọi trực tiếp helper để cùng tham gia transaction mới này.
+        for (LegalCase legalCase : legalCases) {
+            if (legalCase.getJudge() != null) {
+                doNotifyCaseAssigned(legalCase);
+            }
+        }
+    }
+
+    /**
      * 5. Thông báo khi xóa án.
      * Gửi cho người thực hiện xóa và thẩm phán được phân công (nếu có). Real-time.
      */

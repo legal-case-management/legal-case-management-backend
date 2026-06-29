@@ -118,10 +118,13 @@ public class LegalCaseService {
         Batch batch = batchRepository.findById(request.getBatchId())
                 .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
 
+        List<LegalCase> legalCases = new ArrayList<>();
         for (LegalCaseRequest legalCaseRequest : request.getLegalCases()) {
             LegalCase created = createSingle(legalCaseRequest, batch);
-            safeNotify(() -> notificationService.notifyCaseCreated(created, actor));
+            legalCases.add(created);
         }
+
+        safeNotify(() -> notificationService.notifyImportExcel(legalCases, actor));
     }
 
     private LegalCase createSingle(LegalCaseRequest request, Batch batch) {
@@ -307,7 +310,6 @@ public class LegalCaseService {
             }
         }
     }
-
 
     private void assignLegalCaseToJudge(LegalCase legalCase, JudgeAssignmentInfoResponse judge) {
         LegalCaseType legalCaseType = legalCaseTypeRepository.getByLegalRelationships(legalCase.getLegalRelationship())
