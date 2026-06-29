@@ -12,6 +12,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
@@ -32,10 +33,14 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        // Lấy accessor CỦA CHÍNH message (đang ở trạng thái mutable trong inbound channel)
+        // để setUser có hiệu lực thật sự. KHÔNG dùng StompHeaderAccessor.wrap(message) vì
+        // wrap() tạo accessor trên bản sao -> setUser bị mất, principal không được gán,
+        // dẫn tới convertAndSendToUser không tìm thấy session để đẩy thông báo.
         StompHeaderAccessor accessor =
-                StompHeaderAccessor.wrap(message);
+                MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+        if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
             String token = resolveToken(accessor);
             String accountId = verifyAndGetSubject(token);
             if (accountId != null) {
