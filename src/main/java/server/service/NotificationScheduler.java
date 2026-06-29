@@ -14,10 +14,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-/**
- * Tác vụ định kỳ tạo thông báo cho án sắp hết hạn và án quá hạn.
- * Chạy vào 6h sáng hằng ngày (giờ Việt Nam).
- */
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

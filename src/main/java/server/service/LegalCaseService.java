@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -230,7 +229,6 @@ public class LegalCaseService {
 
         legalCaseRepository.save(legalCaseSaved);
 
-        // Thông báo cập nhật thông tin án cho người cập nhật và thẩm phán (nếu có).
         safeNotify(() -> notificationService.notifyCaseUpdated(legalCaseSaved, actor));
     }
 
@@ -246,9 +244,6 @@ public class LegalCaseService {
         // Thông báo xóa án (cho người xóa và thẩm phán) TRƯỚC khi xóa khỏi DB,
         // vì sau khi xóa không còn lấy được thông tin án/thẩm phán.
         safeNotify(() -> notificationService.notifyCaseDeleted(legalCaseSaved, actor));
-
-        // Gỡ liên kết án khỏi các thông báo cũ để FK không chặn việc xóa.
-        notificationService.detachLegalCaseFromNotifications(legalCaseSaved);
 
         legalCaseRepository.delete(legalCaseSaved);
     }

@@ -154,7 +154,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
                 SELECT lc FROM LegalCase lc
                 WHERE lc.judge IS NOT NULL
                   AND lc.expiredDate BETWEEN :today AND :futureDate
-                  AND lc.legalCaseStatus = server.entity.enums.LegalCaseStatus.IN_PROCESS
+                  AND lc.legalCaseStatus = 'IN_PROCESS'
             """)
     List<LegalCase> findUpcomingDeadlineCases(
             @Param("today") LocalDate today,

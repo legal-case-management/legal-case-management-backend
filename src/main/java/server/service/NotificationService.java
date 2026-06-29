@@ -50,10 +50,6 @@ public class NotificationService {
 
     SimpMessagingTemplate messagingTemplate;
 
-    /* =========================================================================
-     *  TRUY VẤN (cho người dùng đang đăng nhập)
-     * ========================================================================= */
-
     public PageResponse<NotificationResponse> getMyNotifications(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
         Account account = getCurrentAccount();
@@ -73,7 +69,6 @@ public class NotificationService {
                 .findByNotificationIdAndAccount(id, account)
                 .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_NOT_EXISTED));
 
-        // Xem chi tiết được coi là đã đọc.
         if (!notification.isRead()) {
             notification.setRead(true);
             notificationRepository.save(notification);
@@ -103,18 +98,6 @@ public class NotificationService {
         notificationRepository.markAllAsRead(account);
         pushUnreadCount(account);
     }
-
-    /**
-     * Gỡ liên kết án khỏi mọi thông báo trước khi xóa án (để FK không chặn).
-     * Chạy trong cùng transaction với thao tác xóa án.
-     */
-    public void detachLegalCaseFromNotifications(LegalCase legalCase) {
-        notificationRepository.detachLegalCase(legalCase);
-    }
-
-    /* =========================================================================
-     *  TẠO THÔNG BÁO THEO TỪNG NGHIỆP VỤ
-     * ========================================================================= */
 
     /**
      * 1. Thông báo khi được phân công án (chỉ định / ngẫu nhiên / án mới có sẵn thẩm phán).
@@ -262,7 +245,7 @@ public class NotificationService {
         String content = String.format(
                 "Một vụ án bạn phụ trách sẽ hết hạn trong %d ngày (hạn: %s).%s",
                 daysLeft,
-                formatDate(legalCase.getExpiredDate()),
+                DateUtils.formatLocalDate(legalCase.getExpiredDate()),
                 caseInfo(legalCase)
         );
         createAndPush(judgeAccount, NotificationType.UPCOMING_DEADLINE, title, content, legalCase);
@@ -281,25 +264,19 @@ public class NotificationService {
         String content = daysOverdue == 0
                 ? String.format(
                         "Một vụ án bạn phụ trách đã đến hạn hôm nay (%s) và bị quá hạn.%s",
-                        formatDate(legalCase.getExpiredDate()),
+                        DateUtils.formatLocalDate(legalCase.getExpiredDate()),
                         caseInfo(legalCase))
                 : String.format(
                         "Một vụ án bạn phụ trách đã quá hạn %d ngày (hạn: %s).%s",
                         daysOverdue,
-                        formatDate(legalCase.getExpiredDate()),
+                        DateUtils.formatLocalDate(legalCase.getExpiredDate()),
                         caseInfo(legalCase));
         createAndPush(judgeAccount, NotificationType.OVERDUE, title, content, legalCase);
     }
 
-    /* =========================================================================
-     *  HÀM HỖ TRỢ
-     * ========================================================================= */
-
     private void createAndPush(Account account, NotificationType type, String title, String content, LegalCase legalCase) {
         Notification notification = buildNotification(account, type, title, content);
         if (legalCase != null && legalCase.getLegalCaseId() != null) {
-            // Gắn reference tới án (lấy theo id để hợp lệ trong transaction REQUIRES_NEW hiện tại).
-            // Khi án bị xóa, FK sẽ tự chuyển null (ON DELETE SET NULL).
             notification.setLegalCase(legalCaseRepository.getReferenceById(legalCase.getLegalCaseId()));
         }
         persistAndPush(account, notification);
@@ -315,7 +292,6 @@ public class NotificationService {
     }
 
     private void persistAndPush(Account account, Notification notification) {
-        // saveAndFlush để id (UUID) được sinh và ghi xuống DB ngay, phục vụ đẩy real-time.
         notificationRepository.saveAndFlush(notification);
         NotificationResponse response = notificationMapper.toNotificationResponse(notification);
         pushNotification(account, response);
@@ -323,8 +299,6 @@ public class NotificationService {
     }
 
     private Notification buildNotification(Account account, NotificationType type, String title, String content) {
-        // Vì các phương thức notify chạy trong transaction mới (REQUIRES_NEW), account
-        // truyền vào có thể đã detached. Lấy reference theo id để gắn vào transaction hiện tại.
         Account managedAccount = accountRepository.getReferenceById(account.getAccountId());
         return Notification.builder()
                 .account(managedAccount)
@@ -347,22 +321,18 @@ public class NotificationService {
         try {
             if (legalCase.getLegalRelationship() != null
                     && legalCase.getLegalRelationship().getLegalCaseType() != null) {
-                legalCaseTypeName = safe(legalCase.getLegalRelationship().getLegalCaseType().getLegalCaseTypeName());
+                legalCaseTypeName = legalCase.getLegalRelationship().getLegalCaseType().getLegalCaseTypeName();
             }
         } catch (Exception ignored) {
             // Quan hệ có thể chưa tải -> bỏ qua, không để ảnh hưởng nội dung chính.
         }
         return String.format(
                 "%n- Mã án: %s%n- Số thụ lý: %s%n- Ngày thụ lý: %s%n- Loại án: %s",
-                safe(legalCase.getLegalCaseId()),
-                safe(legalCase.getAcceptanceNumber()),
-                formatDate(legalCase.getAcceptanceDate()),
+                legalCase.getLegalCaseId(),
+                legalCase.getAcceptanceNumber(),
+                DateUtils.formatLocalDate(legalCase.getAcceptanceDate()),
                 legalCaseTypeName
         );
-    }
-
-    private String formatDate(LocalDate date) {
-        return date == null ? "" : DateUtils.formatLocalDate(date);
     }
 
     private void pushNotification(Account account, NotificationResponse response) {
@@ -427,9 +397,5 @@ public class NotificationService {
             case ASSIGN -> " (phân công chỉ định)";
             case RANDOM -> " (phân công ngẫu nhiên)";
         };
-    }
-
-    private String safe(String value) {
-        return value == null ? "" : value;
     }
 }

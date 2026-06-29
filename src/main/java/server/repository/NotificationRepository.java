@@ -33,7 +33,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
             WHERE n.account = :account
               AND n.notificationId IN :notificationIds
             """)
-    int markAsRead(
+    void markAsRead(
             @Param("account") Account account,
             @Param("notificationIds") List<String> notificationIds
     );
@@ -46,18 +46,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
             WHERE n.account = :account
               AND n.isRead = false
             """)
-    int markAllAsRead(@Param("account") Account account);
+    void markAllAsRead(@Param("account") Account account);
 
-    /**
-     * Gỡ liên kết tới án (set null) cho mọi thông báo đang tham chiếu án này.
-     * Gọi trước khi xóa án để FK không chặn việc xóa, đồng thời thông báo vẫn còn.
-     */
-    @Modifying
-    @Transactional
-    @Query("""
-            UPDATE Notification n
-            SET n.legalCase = NULL
-            WHERE n.legalCase = :legalCase
-            """)
-    int detachLegalCase(@Param("legalCase") LegalCase legalCase);
 }
