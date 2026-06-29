@@ -3,7 +3,7 @@ package server.dto.request.officer;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import server.entity.enums.OfficerStatus;
+import server.enums.OfficerStatus;
 
 @Getter
 @Setter

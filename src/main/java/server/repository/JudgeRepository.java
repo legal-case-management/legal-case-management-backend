@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import server.entity.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
 import server.entity.LegalRelationshipGroup;
-import server.entity.enums.OfficerStatus;
+import server.enums.OfficerStatus;
 
 import java.time.LocalDate;
 import java.util.List;

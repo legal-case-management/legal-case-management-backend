@@ -7,8 +7,8 @@ import server.dto.response.batch.BatchResponse;
 import server.dto.response.judge.JudgeResponse;
 import server.dto.response.legalRelationship.LegalRelationshipResponse;
 import server.dto.response.mediator.MediatorResponse;
-import server.entity.enums.Assignment;
-import server.entity.enums.LegalCaseStatus;
+import server.enums.Assignment;
+import server.enums.LegalCaseStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

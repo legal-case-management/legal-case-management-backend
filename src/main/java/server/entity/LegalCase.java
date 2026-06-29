@@ -1,9 +1,10 @@
 package server.entity;
 
 import jakarta.persistence.*;
-import server.entity.enums.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import server.enums.Assignment;
+import server.enums.LegalCaseStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

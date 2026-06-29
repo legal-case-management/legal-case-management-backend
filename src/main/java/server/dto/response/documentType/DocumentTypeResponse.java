@@ -3,7 +3,7 @@ package server.dto.response.documentType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.legalCaseType.LegalCaseTypeResponse;
-import server.entity.enums.LegalCaseStatus;
+import server.enums.LegalCaseStatus;
 
 import java.util.Set;
 

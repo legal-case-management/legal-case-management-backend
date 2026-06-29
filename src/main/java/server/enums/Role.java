@@ -1,4 +1,4 @@
-package server.entity.enums;
+package server.enums;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,11 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor
-public enum Assignment {
-    ASSIGN("Chỉ định"),
-    RANDOM("Ngẩu nhiên");
+public enum Role {
+    ADMIN("Quản trị viên"),
+    MANAGER("Quản lý"),
+    JUDGE("Thẩm phán"),
+    MEDIATOR("Hòa giải viên"),
+    ;
     String name;
 }

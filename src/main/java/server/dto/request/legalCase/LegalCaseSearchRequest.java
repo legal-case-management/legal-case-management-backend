@@ -3,7 +3,7 @@ package server.dto.request.legalCase;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.LegalCaseStatus;
+import server.enums.LegalCaseStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

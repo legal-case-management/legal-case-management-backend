@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import server.entity.enums.OfficerStatus;
+import server.enums.OfficerStatus;
 
 @Entity
 @Table(name = "officers")

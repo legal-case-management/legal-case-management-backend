@@ -1,4 +1,4 @@
-package server.entity.enums;
+package server.enums;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

@@ -14,7 +14,7 @@ import server.dto.response.document.DocumentResponse;
 import server.entity.Document;
 import server.entity.LegalCase;
 import server.entity.DocumentType;
-import server.entity.enums.LegalCaseStatus;
+import server.enums.LegalCaseStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.DocumentMapper;
@@ -22,7 +22,6 @@ import server.repository.DocumentRepository;
 import server.repository.LegalCaseRepository;
 import server.repository.DocumentTypeRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

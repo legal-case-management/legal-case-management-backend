@@ -5,12 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import server.dto.response.mediator.MediatorResponse;
 import server.entity.Mediator;
-import server.entity.enums.OfficerStatus;
+import server.enums.OfficerStatus;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 public interface MediatorRepository extends JpaRepository<Mediator, String> {

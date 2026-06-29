@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import server.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import server.entity.enums.Role;
+import server.enums.Role;
 
 import java.util.Optional;
 

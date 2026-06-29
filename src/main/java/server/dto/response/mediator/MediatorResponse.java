@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import server.dto.response.officer.OfficerResponse;
-import server.entity.enums.OfficerStatus;
 
 @Getter
 @Setter

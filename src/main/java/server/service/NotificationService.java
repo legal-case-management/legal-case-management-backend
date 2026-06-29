@@ -9,9 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +18,8 @@ import server.entity.Account;
 import server.entity.Judge;
 import server.entity.LegalCase;
 import server.entity.Notification;
-import server.entity.enums.Assignment;
-import server.entity.enums.NotificationType;
+import server.enums.Assignment;
+import server.enums.NotificationType;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.NotificationMapper;
@@ -32,7 +29,6 @@ import server.repository.LegalCaseRepository;
 import server.repository.NotificationRepository;
 import server.utils.DateUtils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 

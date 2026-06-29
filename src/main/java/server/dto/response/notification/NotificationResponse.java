@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import server.entity.enums.NotificationType;
+import server.enums.NotificationType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

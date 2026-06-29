@@ -1,9 +1,8 @@
 package server.dto.request.documentType;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.LegalCaseStatus;
+import server.enums.LegalCaseStatus;
 
 import java.util.Set;
 

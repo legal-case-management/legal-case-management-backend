@@ -3,7 +3,7 @@ package server.dto.response.authentication;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.officer.OfficerResponse;
-import server.entity.enums.Role;
+import server.enums.Role;
 
 @Getter
 @Setter

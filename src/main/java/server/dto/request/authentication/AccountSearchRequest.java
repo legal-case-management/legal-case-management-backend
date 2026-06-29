@@ -1,10 +1,9 @@
 package server.dto.request.authentication;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.Role;
+import server.enums.Role;
 
 @Getter
 @Setter

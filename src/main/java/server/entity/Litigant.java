@@ -7,9 +7,7 @@ import jakarta.persistence.Enumerated;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import server.entity.enums.LitigantType;
-
-import java.time.LocalDateTime;
+import server.enums.LitigantType;
 
 @Embeddable
 @FieldDefaults(level = AccessLevel.PRIVATE)

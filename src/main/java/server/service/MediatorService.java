@@ -21,15 +21,14 @@ import server.dto.response.PageResponse;
 import server.dto.response.mediator.MediatorResponse;
 import server.entity.Account;
 import server.entity.Mediator;
-import server.entity.enums.Role;
-import server.entity.enums.OfficerStatus;
+import server.enums.Role;
+import server.enums.OfficerStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.MediatorMapper;
 import server.mapper.PageMapper;
 import server.repository.LegalCaseRepository;
 import server.repository.MediatorRepository;
-import server.utils.DateUtils;
 
 import java.util.List;
 

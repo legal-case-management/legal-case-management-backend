@@ -6,7 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import server.entity.enums.NotificationType;
+import server.enums.NotificationType;
 
 import java.time.LocalDateTime;
 

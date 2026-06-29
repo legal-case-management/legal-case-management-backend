@@ -4,7 +4,7 @@ package server.dto.response.judge;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import server.entity.enums.OfficerStatus;
+import server.enums.OfficerStatus;
 
 @Getter
 @Setter

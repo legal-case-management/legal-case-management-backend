@@ -3,7 +3,7 @@ package server.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.entity.enums.LegalCaseStatus;
+import server.enums.LegalCaseStatus;
 
 import java.util.List;
 import java.util.Set;

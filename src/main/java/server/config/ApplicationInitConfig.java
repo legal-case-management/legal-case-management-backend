@@ -1,7 +1,7 @@
 package server.config;
 
 import server.entity.Account;
-import server.entity.enums.Role;
+import server.enums.Role;
 import server.repository.AccountRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
