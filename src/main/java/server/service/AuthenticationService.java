@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -425,6 +426,17 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
         account.setActive(true);
         accountRepository.save(account);
+    }
+
+    /**
+     * Lấy tài khoản đang đăng nhập, trả về null nếu không xác định được
+     * (ví dụ tiến trình chạy nền không có SecurityContext).
+     */
+    public Account getCurrentAccount() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        String accountId = Objects.requireNonNull(context.getAuthentication()).getName();
+        return accountRepository.findById(accountId)
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
     }
 
 //    @Scheduled(cron = "0 */6 * * * *")

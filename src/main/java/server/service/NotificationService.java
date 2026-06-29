@@ -48,11 +48,13 @@ public class NotificationService {
     NotificationMapper notificationMapper;
     PageMapper pageMapper;
 
+    AuthenticationService authenticationService;
+
     SimpMessagingTemplate messagingTemplate;
 
     public PageResponse<NotificationResponse> getMyNotifications(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
-        Account account = getCurrentAccount();
+        Account account = authenticationService.getCurrentAccount();
 
         Page<NotificationResponse> resultPage = notificationRepository
                 .getNotificationByAccount(account, pageable)
@@ -63,7 +65,7 @@ public class NotificationService {
 
     @Transactional
     public NotificationResponse getMyNotification(String id) {
-        Account account = getCurrentAccount();
+        Account account = authenticationService.getCurrentAccount();
 
         Notification notification = notificationRepository
                 .findByNotificationIdAndAccount(id, account)
@@ -79,12 +81,13 @@ public class NotificationService {
     }
 
     public long getMyUnreadCount() {
-        return notificationRepository.countByAccountAndIsReadFalse(getCurrentAccount());
+        Account account = authenticationService.getCurrentAccount();
+        return notificationRepository.countByAccountAndIsReadFalse(account);
     }
 
     @Transactional
     public void markAsRead(List<String> notificationIds) {
-        Account account = getCurrentAccount();
+        Account account = authenticationService.getCurrentAccount();
         if (notificationIds == null || notificationIds.isEmpty()) {
             return;
         }
@@ -94,7 +97,7 @@ public class NotificationService {
 
     @Transactional
     public void markAllAsRead() {
-        Account account = getCurrentAccount();
+        Account account = authenticationService.getCurrentAccount();
         notificationRepository.markAllAsRead(account);
         pushUnreadCount(account);
     }
@@ -367,26 +370,6 @@ public class NotificationService {
         return accountRepository
                 .findAccountByOfficerOfficerId(legalCase.getJudge().getOfficerId())
                 .orElse(null);
-    }
-
-    private Account getCurrentAccount() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        String accountId = Objects.requireNonNull(context.getAuthentication()).getName();
-        return accountRepository.findById(accountId)
-                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
-    }
-
-    /**
-     * Lấy tài khoản đang đăng nhập, trả về null nếu không xác định được
-     * (ví dụ tiến trình chạy nền không có SecurityContext).
-     */
-    public Account getCurrentActorOrNull() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
-        if (authentication == null || authentication.getName() == null) {
-            return null;
-        }
-        return accountRepository.findById(authentication.getName()).orElse(null);
     }
 
     private String describeAssignment(Assignment assignment) {

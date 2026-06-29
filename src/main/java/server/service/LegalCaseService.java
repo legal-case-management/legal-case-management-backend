@@ -52,6 +52,7 @@ public class LegalCaseService {
 
     JudgeService judgeService;
     NotificationService notificationService;
+    AuthenticationService authenticationService;
 
     public PageResponse<LegalCaseResponse> search(LegalCaseSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
@@ -91,7 +92,7 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void create(LegalCaseRequest request) {
-        Account actor = notificationService.getCurrentActorOrNull();
+        Account actor = authenticationService.getCurrentAccount();
 
         Batch batch = batchRepository.findById(request.getBatchId())
                 .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
@@ -112,7 +113,7 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void importFromExcel(LegalCasesRequest request) {
-        Account actor = notificationService.getCurrentActorOrNull();
+        Account actor = authenticationService.getCurrentAccount();
 
         Batch batch = batchRepository.findById(request.getBatchId())
                 .orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_EXISTED));
@@ -192,7 +193,7 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void update(String id, LegalCaseRequest request) {
-        Account actor = notificationService.getCurrentActorOrNull();
+        Account actor = authenticationService.getCurrentAccount();
 
         LegalCase legalCaseSaved = legalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
@@ -236,7 +237,7 @@ public class LegalCaseService {
     @Synchronized
     @Transactional
     public void delete(String id) {
-        Account actor = notificationService.getCurrentActorOrNull();
+        Account actor = authenticationService.getCurrentAccount();
 
         LegalCase legalCaseSaved = legalCaseRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
@@ -435,7 +436,7 @@ public class LegalCaseService {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Transactional
     public void removeAssignment(String legalCaseId) {
-        Account actor = notificationService.getCurrentActorOrNull();
+        Account actor = authenticationService.getCurrentAccount();
 
         LegalCase legalCase = legalCaseRepository.findById(legalCaseId)
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
