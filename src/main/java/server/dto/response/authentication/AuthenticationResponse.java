@@ -11,10 +11,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthenticationResponse {
     boolean authenticated;
-    /**
-     * Giữ lại để tương thích ngược với client cũ (bằng accessToken).
-     */
-    String token;
     String accessToken;
     String refreshToken;
 }

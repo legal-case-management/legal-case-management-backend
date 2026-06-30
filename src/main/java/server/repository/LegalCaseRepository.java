@@ -115,6 +115,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             LEFT JOIN lc.legalRelationship lr
             WHERE lc.legalCaseStatus = 'WAITING_FOR_ASSIGNMENT'
             AND lc.judge IS NULL
+            AND lc.mediator IS NULL
             AND lr.legalRelationshipGroup.legalRelationshipGroupId = :legalRelationshipGroupId
             """)
     Page<LegalCase> getAssignmentListWithoutMediator(String legalRelationshipGroupId, Pageable pageable);

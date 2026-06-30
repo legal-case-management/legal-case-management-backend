@@ -119,7 +119,6 @@ public class AuthenticationService {
             // 5. Trả về cả 2 token (token = accessToken để tương thích ngược)
             return AuthenticationResponse.builder()
                     .authenticated(true)
-                    .token(accessToken)
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();
@@ -170,7 +169,6 @@ public class AuthenticationService {
 
             return AuthenticationResponse.builder()
                     .authenticated(true)
-                    .token(newAccessToken)
                     .accessToken(newAccessToken)
                     .refreshToken(newRefreshToken)
                     .build();

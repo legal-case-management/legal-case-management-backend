@@ -59,7 +59,7 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
             }
             return value;
         }
-        List<String> tokenHeaders = accessor.getNativeHeader("token");
+        List<String> tokenHeaders = accessor.getNativeHeader("accessToken");
         if (tokenHeaders != null && !tokenHeaders.isEmpty()) {
             return tokenHeaders.get(0);
         }
