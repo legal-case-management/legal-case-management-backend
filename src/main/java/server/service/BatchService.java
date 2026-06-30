@@ -38,7 +38,7 @@ public class BatchService {
     BatchMapper batchMapper;
     PageMapper pageMapper;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('CREATE_BATCH')")
     @Synchronized
     @Transactional
     public void create(BatchRequest request) {
@@ -57,7 +57,7 @@ public class BatchService {
         batchRepository.save(batch);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('UPDATE_BATCH')")
     @Async
     @Synchronized
     @Transactional
@@ -68,7 +68,7 @@ public class BatchService {
         batchRepository.save(existing);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('DELETE_BATCH')")
     @Async
     @Synchronized
     @Transactional
@@ -84,7 +84,7 @@ public class BatchService {
         batchRepository.delete(existing);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_BATCH')")
     public PageResponse<BatchResponse> search(BatchSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         Page<BatchResponse> resultPage = batchRepository.search(

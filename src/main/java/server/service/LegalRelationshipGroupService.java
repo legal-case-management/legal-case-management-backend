@@ -33,7 +33,7 @@ public class LegalRelationshipGroupService {
     LegalRelationshipGroupMapper legalRelationshipGroupMapper;
     PageMapper pageMapper;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('CREATE_LEGAL_RELATIONSHIP_GROUP')")
     @Async
     @Synchronized
     @Transactional
@@ -51,7 +51,7 @@ public class LegalRelationshipGroupService {
         legalRelationshipGroupRepository.save(legalRelationshipGroup);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('UPDATE_LEGAL_RELATIONSHIP_GROUP')")
     @Async
     @Synchronized
     @Transactional
@@ -62,7 +62,7 @@ public class LegalRelationshipGroupService {
         legalRelationshipGroupRepository.save(existing);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('DELETE_LEGAL_RELATIONSHIP_GROUP')")
     @Async
     @Synchronized
     @Transactional
@@ -79,7 +79,7 @@ public class LegalRelationshipGroupService {
                 .toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_LEGAL_RELATIONSHIP_GROUP')")
     public PageResponse<LegalRelationshipGroupResponse> search(
             LegalRelationshipGroupSearchRequest request,
             int page, int size, String sortBy

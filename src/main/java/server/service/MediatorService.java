@@ -19,9 +19,10 @@ import server.dto.request.mediator.MediatorRequest;
 import server.dto.request.mediator.MediatorSearchRequest;
 import server.dto.response.PageResponse;
 import server.dto.response.mediator.MediatorResponse;
+import server.constant.RoleCatalog;
 import server.entity.Account;
 import server.entity.Mediator;
-import server.enums.Role;
+import server.entity.Role;
 import server.enums.OfficerStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
@@ -29,6 +30,7 @@ import server.mapper.MediatorMapper;
 import server.mapper.PageMapper;
 import server.repository.LegalCaseRepository;
 import server.repository.MediatorRepository;
+import server.repository.RoleRepository;
 
 import java.util.List;
 
@@ -38,6 +40,7 @@ import java.util.List;
 public class MediatorService {
     MediatorRepository mediatorRepository;
     LegalCaseRepository legalCaseRepository;
+    RoleRepository roleRepository;
 
     MediatorMapper mediatorMapper;
     PageMapper pageMapper;
@@ -50,7 +53,7 @@ public class MediatorService {
     @NonFinal
     String DEFAULT_PASSWORD;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_MEDIATOR')")
     public List<MediatorResponse> getAll() {
         return mediatorRepository.findAll().stream()
                 .map(mediatorMapper::toMediatorResponseBasic)
@@ -58,7 +61,7 @@ public class MediatorService {
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('CREATE_MEDIATOR')")
     @Async
     @Synchronized
     @Transactional
@@ -76,18 +79,21 @@ public class MediatorService {
         mediator.setOfficerStatus(OfficerStatus.WORKING);
         Mediator mediatorSaved = mediatorRepository.save(mediator);
 
+        Role mediatorRole = roleRepository.findById(RoleCatalog.MEDIATOR)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+
         Account account = Account.builder()
                 .username(mediatorSaved.getOfficerId())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(DEFAULT_PASSWORD))
                 .officer(mediatorSaved)
-                .role(Role.JUDGE)
+                .role(mediatorRole)
                 .build();
 
         authenticationService.createAccount(account);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('UPDATE_MEDIATOR')")
     @Async
     @Synchronized
     @Transactional
@@ -100,7 +106,7 @@ public class MediatorService {
         mediatorRepository.save(mediatorSaved);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('DELETE_MEDIATOR')")
     @Async
     @Synchronized
     @Transactional
@@ -117,7 +123,7 @@ public class MediatorService {
         mediatorRepository.delete(mediatorSaved);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('VIEW_MEDIATOR')")
     public PageResponse<MediatorResponse> search(MediatorSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 

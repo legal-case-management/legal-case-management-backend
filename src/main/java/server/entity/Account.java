@@ -1,7 +1,6 @@
 package server.entity;
 
 import jakarta.persistence.*;
-import server.enums.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -25,8 +24,8 @@ public class Account {
     String password;
     @Column(unique = true, nullable = false)
     String email;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
     Role role;
 
     @Column(name = "active", nullable = false)

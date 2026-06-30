@@ -47,7 +47,7 @@ public class LegalRelationshipService {
                 .toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('CREATE_LEGAL_RELATIONSHIP')")
     @Async
     @Synchronized
     @Transactional
@@ -80,7 +80,7 @@ public class LegalRelationshipService {
         legalRelationshipRepository.save(legalRelationship);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('UPDATE_LEGAL_RELATIONSHIP')")
     @Async
     @Synchronized
     @Transactional
@@ -103,7 +103,7 @@ public class LegalRelationshipService {
         legalRelationshipRepository.save(legalRelationshipSaved);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('DELETE_LEGAL_RELATIONSHIP')")
     @Async
     @Synchronized
     @Transactional
@@ -113,7 +113,7 @@ public class LegalRelationshipService {
         legalRelationshipRepository.delete(legalRelationship);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_LEGAL_RELATIONSHIP')")
     public PageResponse<LegalRelationshipResponse> search(LegalRelationshipSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by(sortBy).ascending());
 

@@ -3,7 +3,6 @@ package server.dto.request.authentication;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import server.enums.Role;
 
 @Getter
 @Setter
@@ -15,6 +14,6 @@ import server.enums.Role;
 public class AccountSearchRequest {
     String username;
     String email;
-    Role role;
+    String roleId;
     String fullName;
 }

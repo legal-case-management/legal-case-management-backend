@@ -23,11 +23,14 @@ import server.dto.response.authentication.AccountResponse;
 import server.dto.response.authentication.AuthenticationResponse;
 import server.dto.response.authentication.VerifyOtpResponse;
 import server.entity.Account;
+import server.entity.Permission;
+import server.entity.Role;
 import server.exception.AppException;
 import server.exception.ErrorCode;
 import server.mapper.AccountMapper;
 import server.mapper.PageMapper;
 import server.repository.AccountRepository;
+import server.repository.RoleRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -76,6 +79,7 @@ public class AuthenticationService {
     RedisTemplate<String, String> tokenRedis;
     RedisTemplate<String, String> otpRedis;
     AccountRepository accountRepository;
+    RoleRepository roleRepository;
 
     AccountMapper accountMapper;
     PageMapper pageMapper;
@@ -201,15 +205,17 @@ public class AuthenticationService {
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('CREATE_ACCOUNT')")
     @Async
     @Synchronized
     @Transactional
     public void createAccount(AccountRequest request) {
-        createAccount(accountMapper.toAccount(request));
+        Account account = accountMapper.toAccount(request);
+        account.setRole(resolveRole(request.getRoleId()));
+        createAccount(account);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('UPDATE_ACCOUNT')")
     @Async
     @Synchronized
     @Transactional
@@ -225,13 +231,14 @@ public class AuthenticationService {
                 && accountRepository.existsByEmail(request.getEmail()))
             throw new AppException(ErrorCode.EMAIL_EXISTED);
 
-
-
         accountMapper.toAccount(request, account);
+        if (request.getRoleId() != null) {
+            account.setRole(resolveRole(request.getRoleId()));
+        }
         accountRepository.save(account);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('DELETE_ACCOUNT')")
     @Async
     @Synchronized
     @Transactional
@@ -240,6 +247,15 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
         accountRepository.delete(account);
+    }
+
+    /** Nạp Role entity từ roleId; ném 404 nếu vai trò không tồn tại. */
+    private Role resolveRole(String roleId) {
+        if (roleId == null) {
+            throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
+        }
+        return roleRepository.findById(roleId)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
     }
 
     public void createAccount(Account account) {
@@ -286,13 +302,27 @@ public class AuthenticationService {
                         ? account.getOfficer().getFullName()
                         : null)
                 .claim("officerId", account.getOfficer() != null ? account.getOfficer().getOfficerId() : null)
-                .claim("scope", account.getRole().name())
+                // scope CHỈ chứa danh sách permissionId (không chứa roleId) -> Spring Security phân quyền.
+                .claim("scope", buildScope(account))
+                // roleName chỉ dùng để hiển thị ở giao diện, KHÔNG dùng cho phân quyền.
+                .claim("roleName", account.getRole() != null ? account.getRole().getName() : null)
                 .build();
 
         JWSObject jwsObject = new JWSObject(header, new Payload(claims.toJSONObject()));
         jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
 
         return jwsObject.serialize();
+    }
+
+    /** Tạo chuỗi scope = các permissionId của vai trò, ngăn cách bằng khoảng trắng. */
+    private String buildScope(Account account) {
+        Role role = account.getRole();
+        if (role == null || role.getPermissions() == null || role.getPermissions().isEmpty()) {
+            return "";
+        }
+        return role.getPermissions().stream()
+                .map(Permission::getPermissionId)
+                .collect(java.util.stream.Collectors.joining(" "));
     }
 
     private String accessKey(String accountId) {
@@ -441,20 +471,20 @@ public class AuthenticationService {
         );
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('VIEW_ACCOUNT')")
     public List<AccountResponse> getAllAccount() {
         return accountRepository.findAll()
                 .stream().map(accountMapper::toAccountResponse)
                 .toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('VIEW_ACCOUNT')")
     public PageResponse<AccountResponse> search(AccountSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         Page<AccountResponse> resultPage = accountRepository.search(
                 request.getUsername(),
                 request.getEmail(),
-                request.getRole(),
+                request.getRoleId(),
                 request.getFullName(),
                 pageable
         ).map(accountMapper::toAccountResponse);
@@ -462,7 +492,7 @@ public class AuthenticationService {
         return pageMapper.map(resultPage);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('BLOCK_ACCOUNT')")
     public void blockAccount(String id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
@@ -474,7 +504,7 @@ public class AuthenticationService {
         tokenRedis.delete(refreshKey(account.getAccountId()));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('BLOCK_ACCOUNT')")
     public void activeAccount(String id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));

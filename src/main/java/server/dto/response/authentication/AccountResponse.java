@@ -3,7 +3,7 @@ package server.dto.response.authentication;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import server.dto.response.officer.OfficerResponse;
-import server.enums.Role;
+import server.dto.response.role.RoleResponse;
 
 @Getter
 @Setter
@@ -15,7 +15,7 @@ public class AccountResponse {
     String accountId;
     String username;
     String email;
-    Role role;
+    RoleResponse role;
     OfficerResponse officer;
     boolean active;
 }

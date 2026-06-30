@@ -89,7 +89,7 @@ public class LegalCaseService {
         return pageMapper.map(resultPage);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('CREATE_LEGAL_CASE')")
     @Synchronized
     @Transactional
     public void create(LegalCaseRequest request) {
@@ -110,7 +110,7 @@ public class LegalCaseService {
                 .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('IMPORT_LEGAL_CASE')")
     @Synchronized
     @Transactional
     public void importFromExcel(LegalCasesRequest request) {
@@ -193,7 +193,7 @@ public class LegalCaseService {
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('UPDATE_LEGAL_CASE')")
     @Synchronized
     @Transactional
     public void update(String id, LegalCaseRequest request) {
@@ -237,7 +237,7 @@ public class LegalCaseService {
         safeNotify(() -> notificationService.notifyCaseUpdated(legalCaseSaved, actor));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('DELETE_LEGAL_CASE')")
     @Synchronized
     @Transactional
     public void delete(String id) {
@@ -253,7 +253,7 @@ public class LegalCaseService {
         legalCaseRepository.delete(legalCaseSaved);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('RANDOM_ASSIGNMENT')")
     @Synchronized
     @Transactional
     public void randomAssignment(RandomAssignmentRequest request) {
@@ -338,7 +338,7 @@ public class LegalCaseService {
         safeNotify(() -> notificationService.notifyCaseAssigned(legalCase));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ASSIGN_LEGAL_CASE')")
     @Synchronized
     @Transactional
     public void assignAssignment(AssignAssignmentRequest request) {
@@ -396,7 +396,7 @@ public class LegalCaseService {
         safeNotify(() -> notificationService.notifyCaseAssigned(legalCase));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('ASSIGN_LEGAL_CASE')")
     public PageResponse<LegalCaseResponse> getAssignmentList(String legalRelationshipGroupId, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
 
@@ -436,7 +436,7 @@ public class LegalCaseService {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('ASSIGN_LEGAL_CASE')")
     @Transactional
     public void removeAssignment(String legalCaseId) {
         Account actor = authenticationService.getCurrentAccount();

@@ -114,7 +114,15 @@ public enum ErrorCode {
     /* Statistic */
 
     START_DATE_AFTER_END_DATE(400, HttpStatus.BAD_REQUEST, "Ngày bắt đầu phải trước ngày kết thúc"),
-    INVALID_PARAMETERS(400, HttpStatus.BAD_REQUEST, "Tham số không hợp lệ")
+    INVALID_PARAMETERS(400, HttpStatus.BAD_REQUEST, "Tham số không hợp lệ"),
+
+    /* Role / Permission */
+    ROLE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Vai trò không tồn tại"),
+    ROLE_EXISTED(400, HttpStatus.BAD_REQUEST, "Vai trò đã tồn tại"),
+    ROLE_ID_INVALID(400, HttpStatus.BAD_REQUEST, "Mã vai trò không hợp lệ (chỉ gồm chữ in hoa và dấu gạch dưới, không bắt đầu bằng số)"),
+    ROLE_ADMIN_IMMUTABLE(400, HttpStatus.BAD_REQUEST, "Không thể chỉnh sửa hoặc xóa vai trò ADMIN"),
+    ROLE_IN_USE(400, HttpStatus.BAD_REQUEST, "Không thể xóa vai trò vì đang có tài khoản sử dụng"),
+    PERMISSION_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Quyền không tồn tại")
     ;
 
     int status;

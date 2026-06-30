@@ -38,7 +38,7 @@ public class DocumentTypeService {
     PageMapper pageMapper;
 
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('VIEW_DOCUMENT_TYPE')")
     public List<DocumentTypeResponse> getAll() {
         return documentTypeRepository
                 .findAll()
@@ -46,14 +46,14 @@ public class DocumentTypeService {
                 .toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('VIEW_DOCUMENT_TYPE')")
     public DocumentTypeResponse getById(String id) {
         return documentTypeRepository.findById(id)
                 .map(documentTypeMapper::toDocumentTypeResponse)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('CREATE_DOCUMENT_TYPE')")
     @Async
     @Synchronized
     @Transactional
@@ -82,7 +82,7 @@ public class DocumentTypeService {
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('UPDATE_DOCUMENT_TYPE')")
     @Async
     @Synchronized
     @Transactional
@@ -101,7 +101,7 @@ public class DocumentTypeService {
         documentTypeRepository.save(existing);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('DELETE_DOCUMENT_TYPE')")
     @Async
     @Synchronized
     @Transactional
@@ -112,7 +112,7 @@ public class DocumentTypeService {
         documentTypeRepository.delete(existing);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('VIEW_DOCUMENT_TYPE')")
     public PageResponse<DocumentTypeResponse> search(DocumentTypeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
@@ -126,7 +126,7 @@ public class DocumentTypeService {
         return pageMapper.map(resultPage);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('VIEW_DOCUMENT_TYPE')")
     public List<DocumentTypeResponse> getByLegalCaseType(String legalCaseTypeId) {
         LegalCaseType legalCaseType = legalCaseTypeRepository.findById(legalCaseTypeId)
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_LEGAL_CASE_NOT_EXISTED));

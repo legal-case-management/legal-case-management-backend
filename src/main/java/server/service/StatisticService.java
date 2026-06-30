@@ -29,7 +29,7 @@ public class StatisticService {
     LegalCaseTypeRepository legalCaseTypeRepository;
     LegalCaseRepository legalCaseRepository;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_STATISTIC')")
     public BarChartResponse getStatisticsJudgeByLegalRelationshipGroup(
             LocalDate startDate,
             LocalDate endDate
@@ -131,7 +131,7 @@ public class StatisticService {
         return response;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_STATISTIC')")
     public BarChartResponse getStatisticsJudgeByLegalCaseType(
             LocalDate startDate,
             LocalDate endDate
@@ -244,7 +244,7 @@ public class StatisticService {
         return response;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_STATISTIC')")
     public PieChartResponse getPieByLegalRelationshipGroup(
             LocalDate startDate,
             LocalDate endDate
@@ -295,7 +295,7 @@ public class StatisticService {
         return response;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_STATISTIC')")
     public LineChartResponse getTimelineByLegalCaseType(
             LocalDate startDate,
             LocalDate endDate,
@@ -386,7 +386,7 @@ public class StatisticService {
         return response;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_STATISTIC')")
     public LineChartResponse getTimelineByLegalRelationshipGroup(
             LocalDate startDate,
             LocalDate endDate,

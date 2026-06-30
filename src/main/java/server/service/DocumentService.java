@@ -36,7 +36,7 @@ public class DocumentService {
     DocumentMapper documentMapper;
 
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('CREATE_DOCUMENT')")
     @Async
     @Synchronized
     @Transactional
@@ -82,7 +82,7 @@ public class DocumentService {
         documentRepository.save(document);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('UPDATE_DOCUMENT')")
     @Async
     @Synchronized
     @Transactional
@@ -93,7 +93,7 @@ public class DocumentService {
         documentRepository.save(document);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('DELETE_DOCUMENT')")
     @Async
     @Synchronized
     @Transactional

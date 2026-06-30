@@ -41,7 +41,7 @@ public class LegalCaseTypeService {
                 .toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('CREATE_LEGAL_CASE_TYPE')")
     @Async
     @Synchronized
     @Transactional
@@ -66,7 +66,7 @@ public class LegalCaseTypeService {
         legalCaseTypeRepository.save(legalCaseType);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('UPDATE_LEGAL_CASE_TYPE')")
     @Async
     @Synchronized
     @Transactional
@@ -88,7 +88,7 @@ public class LegalCaseTypeService {
         legalCaseTypeRepository.save(existing);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('DELETE_LEGAL_CASE_TYPE')")
     @Async
     @Synchronized
     @Transactional
@@ -99,7 +99,7 @@ public class LegalCaseTypeService {
         legalCaseTypeRepository.delete(existing);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('VIEW_LEGAL_CASE_TYPE')")
     public PageResponse<LegalCaseTypeResponse> search(LegalCaseTypeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 

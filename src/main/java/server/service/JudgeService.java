@@ -15,8 +15,8 @@ import server.dto.request.judge.JudgeSearchRequest;
 import server.dto.response.PageResponse;
 import server.dto.response.judge.JudgeAssignmentInfoResponse;
 import server.dto.response.judge.JudgeResponse;
+import server.constant.RoleCatalog;
 import server.entity.*;
-import server.enums.Role;
 import server.enums.OfficerStatus;
 import server.exception.AppException;
 import server.exception.ErrorCode;
@@ -24,6 +24,7 @@ import server.mapper.JudgeMapper;
 import server.mapper.LegalRelationshipGroupMapper;
 import server.mapper.PageMapper;
 import server.repository.JudgeRepository;
+import server.repository.RoleRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,6 +43,7 @@ public class JudgeService {
     JudgeRepository judgeRepository;
     LegalCaseRepository legalCaseRepository;
     LegalRelationshipGroupRepository legalRelationshipGroupRepository;
+    RoleRepository roleRepository;
 
     JudgeMapper judgeMapper;
     LegalRelationshipGroupMapper legalRelationshipGroupMapper;
@@ -62,7 +64,7 @@ public class JudgeService {
                 .toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_JUDGE')")
     public List<JudgeAssignmentInfoResponse> listAssignment(String legalRelationshipGroupId) {
         boolean isMediator = legalRelationshipGroupId == null;
         if (isMediator) {
@@ -87,7 +89,7 @@ public class JudgeService {
                 .toList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAuthority('VIEW_JUDGE')")
     public PageResponse<JudgeResponse> search(JudgeSearchRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         Page<JudgeResponse> resultPage = judgeRepository.search(
@@ -101,7 +103,7 @@ public class JudgeService {
     }
 
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('CREATE_JUDGE')")
     @Async
     @Synchronized
     @Transactional
@@ -125,18 +127,21 @@ public class JudgeService {
 
         Judge judgeSaved = judgeRepository.save(judge);
 
+        Role judgeRole = roleRepository.findById(RoleCatalog.JUDGE)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+
         Account account = Account.builder()
                 .username(judgeSaved.getOfficerId())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(DEFAULT_PASSWORD))
                 .officer(judgeSaved)
-                .role(Role.JUDGE)
+                .role(judgeRole)
                 .build();
 
         authenticationService.createAccount(account);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('UPDATE_JUDGE')")
     @Async
     @Synchronized
     @Transactional
@@ -154,7 +159,7 @@ public class JudgeService {
         judgeRepository.save(judgeSaved);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('DELETE_JUDGE')")
     @Async
     @Synchronized
     @Transactional
