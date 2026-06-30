@@ -72,6 +72,7 @@ public class LegalCaseService {
                 request.getStartStorageDate(),
                 request.getEndStorageDate(),
                 request.getMediator(),
+                request.getMediatorId(),
                 pageable
         ).map(legalCase -> {
             LegalCaseResponse legalCaseResponse = legalCaseMapper.toLegalCaseResponse(legalCase);

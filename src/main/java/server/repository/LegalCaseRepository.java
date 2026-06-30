@@ -24,6 +24,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
                 LEFT JOIN lc.judge j
                 LEFT JOIN lc.legalRelationship lr
                 LEFT JOIN lc.litigants l
+                LEFT JOIN lc.mediator m
                 WHERE (:acceptanceNumber IS NULL OR lc.acceptanceNumber ILIKE %:acceptanceNumber%)
                 AND (cast(:startAcceptanceDate as date) IS NULL OR lc.acceptanceDate >= :startAcceptanceDate)
                 AND (cast(:endAcceptanceDate as date) IS NULL OR lc.acceptanceDate <= :endAcceptanceDate)
@@ -41,6 +42,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
                 AND (:isMediator IS NULL
                     OR (:isMediator = true AND lc.mediator IS NOT NULL)
                     OR (:isMediator = false AND lc.mediator IS NULL))
+                AND (:mediatorId IS NULL OR (m IS NOT NULL AND m.officerId = :mediatorId))
             """)
     Page<LegalCase> search(
             @Param("acceptanceNumber") String acceptanceNumber,
@@ -58,6 +60,7 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
             @Param("startStorageDate") LocalDateTime startStorageDate,
             @Param("endStorageDate") LocalDateTime endStorageDate,
             @Param("isMediator") Boolean isMediator,
+            @Param("mediatorId") String mediatorId,
             Pageable pageable
     );
 
