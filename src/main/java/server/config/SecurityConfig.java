@@ -50,7 +50,6 @@ public class SecurityConfig {
             "/auth/ping"
     };
 
-    /* Endpoint handshake WebSocket - xác thực JWT được thực hiện ở tầng STOMP CONNECT */
     String[] PUBLIC_ENDPOINTS = {
             "/ws/**"
     };

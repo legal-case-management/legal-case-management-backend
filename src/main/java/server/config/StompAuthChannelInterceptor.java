@@ -19,10 +19,6 @@ import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Xác thực JWT khi client mở kết nối STOMP (CONNECT) và gán principal = accountId.
- * Nhờ đó server có thể đẩy thông báo riêng cho từng tài khoản qua /user/{accountId}/queue/...
- */
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StompAuthChannelInterceptor implements ChannelInterceptor {
@@ -33,10 +29,6 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        // Lấy accessor CỦA CHÍNH message (đang ở trạng thái mutable trong inbound channel)
-        // để setUser có hiệu lực thật sự. KHÔNG dùng StompHeaderAccessor.wrap(message) vì
-        // wrap() tạo accessor trên bản sao -> setUser bị mất, principal không được gán,
-        // dẫn tới convertAndSendToUser không tìm thấy session để đẩy thông báo.
         StompHeaderAccessor accessor =
                 MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 

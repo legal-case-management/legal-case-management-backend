@@ -35,51 +35,8 @@ public class ApplicationInitConfig {
             PermissionRepository permissionRepository
     ) {
         return args -> {
-            seedPermissions(permissionRepository);
-            seedRoles(roleRepository, permissionRepository);
             seedAdminAccount(accountRepository, roleRepository);
         };
-    }
-
-    /** Upsert toàn bộ permission từ catalogue (idempotent: cập nhật name/description nếu đã tồn tại). */
-    private void seedPermissions(PermissionRepository permissionRepository) {
-        for (Map.Entry<String, String[]> entry : PermissionCatalog.ALL.entrySet()) {
-            String permissionId = entry.getKey();
-            String[] meta = entry.getValue();
-
-            Permission permission = permissionRepository.findById(permissionId)
-                    .orElseGet(() -> Permission.builder().permissionId(permissionId).build());
-            permission.setName(meta[0]);
-            permission.setDescription(meta[1]);
-            permissionRepository.save(permission);
-        }
-    }
-
-    /**
-     * Tạo 4 vai trò mặc định nếu chưa có.
-     * Riêng ADMIN luôn được đồng bộ để có TẤT CẢ permission (kể cả quyền mới thêm sau này).
-     */
-    private void seedRoles(RoleRepository roleRepository, PermissionRepository permissionRepository) {
-        List<Permission> allPermissions = permissionRepository.findAll();
-
-        for (RoleCatalog.DefaultRole def : RoleCatalog.DEFAULTS) {
-            boolean isAdmin = RoleCatalog.ADMIN.equals(def.roleId());
-            Role existing = roleRepository.findById(def.roleId()).orElse(null);
-
-            if (existing == null) {
-                Role role = Role.builder()
-                        .roleId(def.roleId())
-                        .name(def.name())
-                        .description(def.description())
-                        .permissions(resolvePermissions(def.permissionIds(), allPermissions))
-                        .build();
-                roleRepository.save(role);
-            } else if (isAdmin) {
-                // ADMIN luôn có mọi quyền -> đồng bộ lại mỗi lần khởi động.
-                existing.setPermissions(new HashSet<>(allPermissions));
-                roleRepository.save(existing);
-            }
-        }
     }
 
     private Set<Permission> resolvePermissions(Set<String> permissionIds, List<Permission> allPermissions) {
