@@ -105,20 +105,23 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.INVALID_PASSWORD);
 
         try {
-            // 3. Generate new token
-            String token = generateToken(account, false);
+            // 3. Sinh cặp token mới: accessToken (ngắn hạn) + refreshToken (dài hạn)
+            String accessToken = generateAccessToken(account);
+            String refreshToken = generateRefreshToken(account);
 
-            // 4. Xóa token cũ trong Redis (nếu có)
-            String redisKey = "account:" + account.getAccountId() + ":token";
-            tokenRedis.delete(redisKey);
+            // 4. Xóa token cũ trong Redis (nếu có) rồi lưu cặp token mới với TTL tương ứng
+            String accountId = account.getAccountId();
+            tokenRedis.delete(accessKey(accountId));
+            tokenRedis.delete(refreshKey(accountId));
+            tokenRedis.opsForValue().set(accessKey(accountId), accessToken, VALID_DURATION, TimeUnit.SECONDS);
+            tokenRedis.opsForValue().set(refreshKey(accountId), refreshToken, REFRESHABLE_DURATION, TimeUnit.SECONDS);
 
-            // 5. Lưu token mới vào Redis với TTL
-            tokenRedis.opsForValue().set(redisKey, token, VALID_DURATION, TimeUnit.SECONDS);
-
-            // 6. Return token
+            // 5. Trả về cả 2 token (token = accessToken để tương thích ngược)
             return AuthenticationResponse.builder()
                     .authenticated(true)
-                    .token(token)
+                    .token(accessToken)
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
                     .build();
         } catch (JOSEException e) {
             throw new AppException(ErrorCode.TOKEN_GENERATION_FAILED);
@@ -136,38 +139,43 @@ public class AuthenticationService {
 
     public void logout(LogoutRequest request) {
         try {
-            /* Verify token*/
-            SignedJWT signedJWT = verifyToken(request.getToken(), true);
-
-            /* Remote token to redis*/
+            /* Parse token để lấy accountId (không bắt buộc còn hạn vì mục đích là hủy phiên) */
+            SignedJWT signedJWT = SignedJWT.parse(request.getToken());
             String accountId = signedJWT.getJWTClaimsSet().getSubject();
-            String redisKey = "account:" + accountId + ":token";
-            tokenRedis.delete(redisKey);
-        } catch (JOSEException | ParseException e) {
+
+            /* Xóa cả access token và refresh token khỏi Redis -> hủy phiên hoàn toàn */
+            tokenRedis.delete(accessKey(accountId));
+            tokenRedis.delete(refreshKey(accountId));
+        } catch (ParseException e) {
             throw new AppException(ErrorCode.LOGOUT_FAILED);
         }
     }
 
     public AuthenticationResponse refreshToken(RefreshTokenRequest request) {
         try {
-            SignedJWT signedJWT = verifyToken(request.getToken(), true);
+            // Xác thực refreshToken theo đúng bản đang lưu ở Redis (:refreshToken)
+            SignedJWT signedJWT = verifyRefreshToken(request.resolveRefreshToken());
             String accountId = signedJWT.getJWTClaimsSet().getSubject();
 
             // Check account exists
             Account account = accountRepository.findById(accountId)
                     .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
-            // Generate new token
-            String token = generateToken(account, false);
+            // Cấp access token mới và xoay vòng refresh token (an toàn hơn)
+            String newAccessToken = generateAccessToken(account);
+            String newRefreshToken = generateRefreshToken(account);
 
-            // Update Redis
-            String redisKey = "account:" + account.getAccountId() + ":token";
-            tokenRedis.opsForValue().set(redisKey, token, VALID_DURATION, TimeUnit.SECONDS);
+            tokenRedis.opsForValue().set(accessKey(accountId), newAccessToken, VALID_DURATION, TimeUnit.SECONDS);
+            tokenRedis.opsForValue().set(refreshKey(accountId), newRefreshToken, REFRESHABLE_DURATION, TimeUnit.SECONDS);
 
             return AuthenticationResponse.builder()
                     .authenticated(true)
-                    .token(token)
+                    .token(newAccessToken)
+                    .accessToken(newAccessToken)
+                    .refreshToken(newRefreshToken)
                     .build();
+        } catch (AppException e) {
+            throw e;
         } catch (Exception e) {
             throw new AppException(ErrorCode.REFRESH_TOKEN_FAILED);
         }
@@ -251,15 +259,30 @@ public class AuthenticationService {
     }
 
     private String generateToken(Account account, boolean isForgotPassword) throws JOSEException {
+        // Token đặt lại mật khẩu vẫn dùng hàm này; access token thường dùng generateAccessToken().
+        return buildToken(account, isForgotPassword ? RESET_PASSWORD_DURATION : VALID_DURATION,
+                isForgotPassword ? "reset" : "access");
+    }
+
+    /** Access token: ngắn hạn, mang đầy đủ claims để Spring Security phân quyền. */
+    private String generateAccessToken(Account account) throws JOSEException {
+        return buildToken(account, VALID_DURATION, "access");
+    }
+
+    /** Refresh token: dài hạn, chỉ dùng để xin access token mới. */
+    private String generateRefreshToken(Account account) throws JOSEException {
+        return buildToken(account, REFRESHABLE_DURATION, "refresh");
+    }
+
+    private String buildToken(Account account, long durationSeconds, String tokenType) throws JOSEException {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
                 .jwtID(UUID.randomUUID().toString())
                 .subject(account.getAccountId())
                 .issuer("legal-case-management")
                 .issueTime(new Date())
-                .expirationTime(isForgotPassword ?
-                        new Date(Instant.now().plus(RESET_PASSWORD_DURATION, ChronoUnit.SECONDS).toEpochMilli())
-                        : new Date(Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
+                .expirationTime(new Date(Instant.now().plus(durationSeconds, ChronoUnit.SECONDS).toEpochMilli()))
+                .claim("tokenType", tokenType)
                 .claim("username", account.getUsername())
                 .claim("displayName", account.getOfficer() != null
                         ? account.getOfficer().getFullName()
@@ -274,32 +297,63 @@ public class AuthenticationService {
         return jwsObject.serialize();
     }
 
+    private String accessKey(String accountId) {
+        return "account:" + accountId + ":token";
+    }
+
+    private String refreshKey(String accountId) {
+        return "account:" + accountId + ":refreshToken";
+    }
+
+    /** Xác thực access token (dùng cho introspect): so khớp với :token trong Redis. */
     private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
-        SignedJWT signedJWT = SignedJWT.parse(token);
+        SignedJWT signedJWT = parseAndVerifySignature(token);
 
-        if (!signedJWT.verify(verifier)) {
-            throw new AppException(ErrorCode.TOKEN_INVALID);
-        }
-
-        // Check expiration time
-        Date expirationTime = isRefresh
-                ? Date.from(signedJWT.getJWTClaimsSet().getIssueTime().toInstant()
-                .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS))
-                : signedJWT.getJWTClaimsSet().getExpirationTime();
-        if (!expirationTime.after(new Date())) {
+        if (!signedJWT.getJWTClaimsSet().getExpirationTime().after(new Date())) {
             throw new AppException(ErrorCode.TOKEN_EXPIRED);
         }
 
-        // Check token có trùng trong Redis không
         String accountId = signedJWT.getJWTClaimsSet().getSubject();
-        String redisKey = "account:" + accountId + ":token";
-        String currentToken = tokenRedis.opsForValue().get(redisKey);
-
+        String currentToken = tokenRedis.opsForValue().get(accessKey(accountId));
         if (currentToken == null || !currentToken.equals(token)) {
             throw new AppException(ErrorCode.TOKEN_LOGGED_OUT);
         }
 
+        return signedJWT;
+    }
+
+    /** Xác thực refresh token: kiểm tra chữ ký, hạn, loại token và so khớp với :refreshToken trong Redis. */
+    private SignedJWT verifyRefreshToken(String refreshToken) throws JOSEException, ParseException {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new AppException(ErrorCode.TOKEN_INVALID);
+        }
+
+        SignedJWT signedJWT = parseAndVerifySignature(refreshToken);
+        JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+
+        if (!"refresh".equals(claims.getStringClaim("tokenType"))) {
+            throw new AppException(ErrorCode.TOKEN_INVALID);
+        }
+
+        if (claims.getExpirationTime() == null || !claims.getExpirationTime().after(new Date())) {
+            throw new AppException(ErrorCode.TOKEN_EXPIRED);
+        }
+
+        String accountId = claims.getSubject();
+        String currentRefresh = tokenRedis.opsForValue().get(refreshKey(accountId));
+        if (currentRefresh == null || !currentRefresh.equals(refreshToken)) {
+            throw new AppException(ErrorCode.TOKEN_LOGGED_OUT);
+        }
+
+        return signedJWT;
+    }
+
+    private SignedJWT parseAndVerifySignature(String token) throws JOSEException, ParseException {
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        if (!signedJWT.verify(verifier)) {
+            throw new AppException(ErrorCode.TOKEN_INVALID);
+        }
         return signedJWT;
     }
 
@@ -351,7 +405,8 @@ public class AuthenticationService {
         account.setPassword(passwordEncoder.encode(request.getNewPassword()));
         accountRepository.save(account);
 
-        tokenRedis.delete("account:" + account.getAccountId() + ":token");
+        tokenRedis.delete(accessKey(account.getAccountId()));
+        tokenRedis.delete(refreshKey(account.getAccountId()));
     }
 
     public void sendOtpEmail(String toEmail) throws MessagingException {
@@ -417,7 +472,8 @@ public class AuthenticationService {
         account.setActive(false);
         accountRepository.save(account);
 
-        tokenRedis.delete("account:" + account.getAccountId() + ":token");
+        tokenRedis.delete(accessKey(account.getAccountId()));
+        tokenRedis.delete(refreshKey(account.getAccountId()));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
