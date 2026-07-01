@@ -40,8 +40,8 @@ public class Notification {
     String content;
     @Column(name = "storage_date", nullable = false)
     LocalDateTime storageDate;
-    @Column(name = "is_read", nullable = false)
-    boolean isRead;
+    @Column(name = "read", nullable = false)
+    boolean read;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)

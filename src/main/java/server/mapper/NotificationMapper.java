@@ -13,11 +13,8 @@ import server.entity.Notification;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface NotificationMapper {
-    // Bắt buộc map trường boolean isRead (MapStruct + @SuperBuilder/Lombok dễ bỏ sót).
-    @Mapping(target = "isRead", source = "read")
-    // Lấy thông tin án liên quan từ quan hệ legalCase (null khi án đã bị xóa).
+    // Field "read" ở cả entity lẫn DTO -> Lombok sinh getter isRead()/setter setRead() thống nhất,
+    // MapStruct tự suy đúng property "read" ở cả 2 phía nên không cần @Mapping tường minh cho field này.
     @Mapping(target = "legalCaseId", source = "legalCase.legalCaseId")
-    @Mapping(target = "acceptanceNumber", source = "legalCase.acceptanceNumber")
-    @Mapping(target = "acceptanceDate", source = "legalCase.acceptanceDate")
     NotificationResponse toNotificationResponse(Notification notification);
 }

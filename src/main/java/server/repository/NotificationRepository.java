@@ -23,13 +23,13 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
 
     Optional<Notification> findByNotificationIdAndAccount(String notificationId, Account account);
 
-    long countByAccountAndIsReadFalse(Account account);
+    long countByAccountAndReadFalse(Account account);
 
     @Modifying
     @Transactional
     @Query("""
             UPDATE Notification n
-            SET n.isRead = true
+            SET n.read = true
             WHERE n.account = :account
               AND n.notificationId IN :notificationIds
             """)
@@ -42,9 +42,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Stri
     @Transactional
     @Query("""
             UPDATE Notification n
-            SET n.isRead = true
+            SET n.read = true
             WHERE n.account = :account
-              AND n.isRead = false
+              AND n.read = false
             """)
     void markAllAsRead(@Param("account") Account account);
 

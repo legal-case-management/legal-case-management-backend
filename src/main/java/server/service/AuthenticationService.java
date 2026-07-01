@@ -304,8 +304,9 @@ public class AuthenticationService {
                 .claim("officerId", account.getOfficer() != null ? account.getOfficer().getOfficerId() : null)
                 // scope CHỈ chứa danh sách permissionId (không chứa roleId) -> Spring Security phân quyền.
                 .claim("scope", buildScope(account))
-                // roleName chỉ dùng để hiển thị ở giao diện, KHÔNG dùng cho phân quyền.
-                .claim("roleName", account.getRole() != null ? account.getRole().getName() : null)
+                // roleId chỉ dùng để hiển thị/tham chiếu ở giao diện (client tự gọi API lấy tên hiển thị),
+                // KHÔNG dùng cho phân quyền (phân quyền luôn dựa trên scope).
+                .claim("roleId", account.getRole() != null ? account.getRole().getRoleId() : null)
                 .build();
 
         JWSObject jwsObject = new JWSObject(header, new Payload(claims.toJSONObject()));

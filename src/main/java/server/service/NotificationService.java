@@ -78,7 +78,7 @@ public class NotificationService {
 
     public long getMyUnreadCount() {
         Account account = authenticationService.getCurrentAccount();
-        return notificationRepository.countByAccountAndIsReadFalse(account);
+        return notificationRepository.countByAccountAndReadFalse(account);
     }
 
     @Transactional
@@ -334,13 +334,10 @@ public class NotificationService {
                 .title(title)
                 .content(content)
                 .storageDate(LocalDateTime.now())
-                .isRead(false)
+                .read(false)
                 .build();
     }
 
-    /**
-     * Khối thông tin án nhúng vào content: mã án, số thụ lý, ngày thụ lý, loại án.
-     */
     private String caseInfo(LegalCase legalCase) {
         if (legalCase == null) {
             return "";
@@ -377,7 +374,7 @@ public class NotificationService {
 
     private void pushUnreadCount(Account account) {
         try {
-            long unread = notificationRepository.countByAccountAndIsReadFalse(account);
+            long unread = notificationRepository.countByAccountAndReadFalse(account);
             messagingTemplate.convertAndSendToUser(
                     account.getAccountId(),
                     "/queue/notifications-unread",
