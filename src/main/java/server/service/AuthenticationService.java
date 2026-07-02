@@ -510,10 +510,6 @@ public class AuthenticationService {
         accountRepository.save(account);
     }
 
-    /**
-     * Lấy tài khoản đang đăng nhập, trả về null nếu không xác định được
-     * (ví dụ tiến trình chạy nền không có SecurityContext).
-     */
     public Account getCurrentAccount() {
         SecurityContext context = SecurityContextHolder.getContext();
         String accountId = Objects.requireNonNull(context.getAuthentication()).getName();
@@ -522,14 +518,14 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
     }
 
-//    @Scheduled(cron = "0 */6 * * * *")
-//    public void keepServerAwake() {
-//        try {
-//            RestTemplate restTemplate = new RestTemplate();
-//            String url = "https://legal-case-management-backend-sggy.onrender.com/auth/ping";
-//            restTemplate.getForObject(url, String.class);
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
-//    }
+    @Scheduled(cron = "0 */6 * * * *")
+    public void keepServerAwake() {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String url = "https://legal-case-management-backend-sggy.onrender.com/auth/ping";
+            restTemplate.getForObject(url, String.class);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
