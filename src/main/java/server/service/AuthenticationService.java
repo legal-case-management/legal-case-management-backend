@@ -522,7 +522,7 @@ public class AuthenticationService {
     public void keepServerAwake() {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            String url = "https://legal-case-management-backend-sggy.onrender.com/auth/ping";
+            String url = "https://legal-case-management-backend-sggy.onrender.com/api/v3/auth/ping";
             restTemplate.getForObject(url, String.class);
         } catch (Exception e) {
             System.out.println(e.getMessage());
