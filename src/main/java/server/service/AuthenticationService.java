@@ -463,13 +463,10 @@ public class AuthenticationService {
     }
 
     public AccountResponse getMyInfo() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        String accountId = Objects.requireNonNull(context.getAuthentication()).getName();
-        return accountMapper.toAccountResponse(
-                accountRepository
-                        .findById(accountId)
-                        .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED))
-        );
+        Account account = getCurrentAccount();
+        System.out.println("Hello");
+        System.out.println(account.getAccountId());
+        return accountMapper.toAccountResponse(account);
     }
 
     @PreAuthorize("hasAuthority('VIEW_ACCOUNT')")
@@ -520,6 +517,7 @@ public class AuthenticationService {
     public Account getCurrentAccount() {
         SecurityContext context = SecurityContextHolder.getContext();
         String accountId = Objects.requireNonNull(context.getAuthentication()).getName();
+        System.out.println(accountId);
         return accountRepository.findById(accountId)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
     }

@@ -150,3 +150,6 @@ INSERT INTO role_permissions (role_id, permission_id) VALUES
 ('MEDIATOR', 'VIEW_HOME'),
 ('MEDIATOR', 'VIEW_LEGAL_CASE'),
 ('MEDIATOR', 'VIEW_NOTIFICATION');
+
+UPDATE accounts SET role_id = role;
+ALTER TABLE accounts DROP COLUMN role;
