@@ -24,9 +24,6 @@ public class Account {
     String password;
     @Column(unique = true, nullable = false)
     String email;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id", nullable = false)
-    Role role;
 
     @Column(name = "active", nullable = false)
     boolean active;
@@ -34,4 +31,8 @@ public class Account {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "officer_id")
     Officer officer;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    Role role;
 }
