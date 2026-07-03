@@ -62,7 +62,6 @@ public class MediatorService {
 
 
     @PreAuthorize("hasAuthority('CREATE_MEDIATOR')")
-    @Async
     @Synchronized
     @Transactional
     public void create(MediatorRequest request) {
@@ -94,7 +93,6 @@ public class MediatorService {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_MEDIATOR')")
-    @Async
     @Synchronized
     @Transactional
     public void update(String id, MediatorRequest request) {
@@ -107,7 +105,6 @@ public class MediatorService {
     }
 
     @PreAuthorize("hasAuthority('DELETE_MEDIATOR')")
-    @Async
     @Synchronized
     @Transactional
     public void delete(String id) {
@@ -135,7 +132,5 @@ public class MediatorService {
         ).map(mediatorMapper::toMediatorResponse);
 
         return pageMapper.map(resultPage);
-
     }
-
 }

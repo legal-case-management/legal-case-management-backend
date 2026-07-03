@@ -58,7 +58,6 @@ public class BatchService {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_BATCH')")
-    @Async
     @Synchronized
     @Transactional
     public void update(String id, BatchRequest request) {
@@ -69,7 +68,6 @@ public class BatchService {
     }
 
     @PreAuthorize("hasAuthority('DELETE_BATCH')")
-    @Async
     @Synchronized
     @Transactional
     public void delete(String id) {

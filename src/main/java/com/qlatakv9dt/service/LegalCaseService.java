@@ -426,7 +426,7 @@ public class LegalCaseService {
         }
     }
 
-    public List<LegalCase> getAssignmentList(List<String> legalCaseIds, String legalRelationshipGroupId) {
+    private List<LegalCase> getAssignmentList(List<String> legalCaseIds, String legalRelationshipGroupId) {
         boolean isMediator = legalRelationshipGroupId == null;
 
         if (isMediator) {
@@ -443,6 +443,7 @@ public class LegalCaseService {
     }
 
     @PreAuthorize("hasAuthority('ASSIGN_LEGAL_CASE')")
+    @Synchronized
     @Transactional
     public void removeAssignment(String legalCaseId) {
         Account actor = authenticationService.getCurrentAccount();
@@ -468,23 +469,14 @@ public class LegalCaseService {
     }
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Ho_Chi_Minh")
+    @Synchronized
+    @Transactional
     public void updateCaseStatuses() {
         int waiting = legalCaseRepository.updateWaitingForAssignment();
         int overdue = legalCaseRepository.updateOverdue();
         System.out.println("Updated " + waiting + " cases to WAITING_FOR_ASSIGNMENT and " + overdue + " cases to OVERDUE.");
     }
 
-    /**
-     * Gửi thông báo như một side-effect SAU KHI transaction nghiệp vụ commit thành công.
-     *
-     * Lý do chạy sau commit: thông báo tham chiếu khóa ngoại tới án (legal_case_id).
-     * Nếu chạy trong khi transaction nghiệp vụ chưa commit, bản ghi án chưa hiện hữu ở
-     * tầng DB nên insert thông báo sẽ vi phạm khóa ngoại. Sau commit, án đã tồn tại,
-     * các phương thức notify (chạy transaction mới) sẽ thấy được và tạo thông báo hợp lệ.
-     *
-     * Nếu tạo/đẩy thông báo lỗi thì chỉ ghi log, KHÔNG ảnh hưởng nghiệp vụ chính
-     * (vốn đã commit xong).
-     */
     private void safeNotify(Runnable notifyAction) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(

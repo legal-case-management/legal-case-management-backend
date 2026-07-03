@@ -54,7 +54,6 @@ public class DocumentTypeService {
     }
 
     @PreAuthorize("hasAuthority('CREATE_DOCUMENT_TYPE')")
-    @Async
     @Synchronized
     @Transactional
     public void create(DocumentTypeRequest request) {
@@ -83,7 +82,6 @@ public class DocumentTypeService {
 
 
     @PreAuthorize("hasAuthority('UPDATE_DOCUMENT_TYPE')")
-    @Async
     @Synchronized
     @Transactional
     public void update(String id, DocumentTypeRequest request) {
@@ -102,7 +100,6 @@ public class DocumentTypeService {
     }
 
     @PreAuthorize("hasAuthority('DELETE_DOCUMENT_TYPE')")
-    @Async
     @Synchronized
     @Transactional
     public void delete(String id) {

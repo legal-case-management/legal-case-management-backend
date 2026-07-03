@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor
 public enum Assignment {
-    ASSIGN("Chỉ định"),
-    RANDOM("Ngẩu nhiên");
+    ASSIGN("Phân công chỉ định"),
+    RANDOM("Phân công ngẩu nhiên");
     String name;
 }

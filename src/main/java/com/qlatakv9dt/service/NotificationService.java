@@ -59,6 +59,7 @@ public class NotificationService {
         return pageMapper.map(resultPage);
     }
 
+
     @Transactional
     public NotificationResponse getMyNotification(String id) {
         Account account = authenticationService.getCurrentAccount();
@@ -98,10 +99,6 @@ public class NotificationService {
         pushUnreadCount(account);
     }
 
-    /**
-     * 1. Thông báo khi được phân công án (chỉ định / ngẫu nhiên / án mới có sẵn thẩm phán).
-     * Gửi cho thẩm phán được phân công. Real-time.
-     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyCaseAssigned(LegalCase legalCase) {
         doNotifyCaseAssigned(legalCase);
@@ -113,7 +110,7 @@ public class NotificationService {
             return;
         }
 
-        String assignmentText = describeAssignment(legalCase.getAssignment());
+        String assignmentText = legalCase.getAssignment().getName();
         String title = "Bạn được phân công một vụ án";
         String content = String.format(
                 "Bạn vừa được phân công một vụ án%s. Vui lòng kiểm tra thông tin vụ án.%s",
@@ -123,11 +120,6 @@ public class NotificationService {
 
         createAndPush(judgeAccount, NotificationType.CASE_ASSIGNED, title, content, legalCase);
     }
-
-    /**
-     * 4. Thông báo nhập án mới cho người nhập án. Real-time.
-     * Nếu án mới đã có thẩm phán thì gọi thêm {@link #notifyCaseAssigned(LegalCase)}.
-     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyCaseCreated(LegalCase legalCase, Account creator) {
         if (creator != null) {
@@ -138,18 +130,11 @@ public class NotificationService {
             );
             createAndPush(creator, NotificationType.CASE_CREATED, title, content, legalCase);
         }
-
-        // Nếu án mới đã có sẵn thẩm phán -> thông báo phân công cho thẩm phán đó.
-        // Gọi trực tiếp helper để cùng tham gia transaction mới này.
         if (legalCase.getJudge() != null) {
             doNotifyCaseAssigned(legalCase);
         }
     }
 
-    /**
-     * Thông báo nhập án mới cho người nhập án. Real-time.
-     * Với mỗi án đã có thẩm phán, gọi thêm thông báo phân công cho thẩm phán đó.
-     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyImportExcel(List<LegalCase> legalCases, Account creator) {
         if (legalCases == null || legalCases.isEmpty()) {
@@ -175,10 +160,6 @@ public class NotificationService {
         }
     }
 
-    /**
-     * 5. Thông báo khi xóa án.
-     * Gửi cho người thực hiện xóa và thẩm phán được phân công (nếu có). Real-time.
-     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyCaseDeleted(LegalCase legalCase, Account actor) {
         String title = "Một vụ án đã bị xóa";
@@ -200,10 +181,6 @@ public class NotificationService {
         }
     }
 
-    /**
-     * 6. Thông báo khi cập nhật thông tin án.
-     * Gửi cho người thực hiện cập nhật và thẩm phán được phân công (nếu có). Real-time.
-     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyCaseUpdated(LegalCase legalCase, Account actor) {
         String title = "Thông tin vụ án đã được cập nhật";
@@ -225,12 +202,6 @@ public class NotificationService {
         }
     }
 
-    /**
-     * 7. Thông báo khi gỡ phân công thẩm phán.
-     * Gửi cho người thực hiện gỡ và thẩm phán bị gỡ phân công. Real-time.
-     *
-     * @param removedJudge thẩm phán bị gỡ (lấy trước khi set null trên legalCase)
-     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyAssignmentRemoved(LegalCase legalCase, Judge removedJudge, Account actor) {
         String title = "Gỡ phân công thẩm phán";
@@ -260,9 +231,6 @@ public class NotificationService {
         }
     }
 
-    /**
-     * 2. Thông báo án sắp hết hạn (<= 7 ngày). Gửi cho thẩm phán được phân công.
-     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyUpcomingDeadline(LegalCase legalCase, long daysLeft) {
         Account judgeAccount = resolveJudgeAccount(legalCase);
@@ -279,9 +247,6 @@ public class NotificationService {
         createAndPush(judgeAccount, NotificationType.UPCOMING_DEADLINE, title, content, legalCase);
     }
 
-    /**
-     * 3. Thông báo án quá hạn. Gửi cho thẩm phán được phân công.
-     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyOverdue(LegalCase legalCase, long daysOverdue) {
         Account judgeAccount = resolveJudgeAccount(legalCase);
@@ -310,10 +275,6 @@ public class NotificationService {
         persistAndPush(account, notification);
     }
 
-    /**
-     * Trường hợp xóa án: KHÔNG gắn reference tới án (vì án đang/sẽ bị xóa).
-     * Thông tin án đã được nhúng sẵn trong content khi tạo thông báo.
-     */
     private void createAndPushDeleted(Account account, String title, String content) {
         Notification notification = buildNotification(account, NotificationType.CASE_DELETED, title, content);
         persistAndPush(account, notification);
@@ -392,15 +353,5 @@ public class NotificationService {
         return accountRepository
                 .findAccountByOfficerOfficerId(legalCase.getJudge().getOfficerId())
                 .orElse(null);
-    }
-
-    private String describeAssignment(Assignment assignment) {
-        if (assignment == null) {
-            return "";
-        }
-        return switch (assignment) {
-            case ASSIGN -> " (phân công chỉ định)";
-            case RANDOM -> " (phân công ngẫu nhiên)";
-        };
     }
 }

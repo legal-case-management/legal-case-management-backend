@@ -10,14 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import com.qlatakv9dt.dto.request.authentication.*;
 import com.qlatakv9dt.dto.response.PageResponse;
 import com.qlatakv9dt.dto.response.authentication.AccountResponse;
 import com.qlatakv9dt.dto.response.authentication.AuthenticationResponse;
@@ -120,7 +118,6 @@ public class AuthenticationService {
             tokenRedis.opsForValue().set(accessKey(accountId), accessToken, VALID_DURATION, TimeUnit.SECONDS);
             tokenRedis.opsForValue().set(refreshKey(accountId), refreshToken, REFRESHABLE_DURATION, TimeUnit.SECONDS);
 
-            // 5. Trả về cả 2 token (token = accessToken để tương thích ngược)
             return AuthenticationResponse.builder()
                     .authenticated(true)
                     .accessToken(accessToken)
@@ -134,7 +131,7 @@ public class AuthenticationService {
     public void introspect(IntrospectRequest request) {
         try {
             /* Verify token*/
-            verifyToken(request.getToken(), false);
+            verifyToken(request.getToken());
         } catch (JOSEException | ParseException e) {
             throw new AppException(ErrorCode.AUTHENTICATION_FAILED);
         }
@@ -206,7 +203,6 @@ public class AuthenticationService {
 
 
     @PreAuthorize("hasAuthority('CREATE_ACCOUNT')")
-    @Async
     @Synchronized
     @Transactional
     public void createAccount(AccountRequest request) {
@@ -216,7 +212,6 @@ public class AuthenticationService {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_ACCOUNT')")
-    @Async
     @Synchronized
     @Transactional
     public void updateAccount(String id, AccountRequest request) {
@@ -239,7 +234,6 @@ public class AuthenticationService {
     }
 
     @PreAuthorize("hasAuthority('DELETE_ACCOUNT')")
-    @Async
     @Synchronized
     @Transactional
     public void deleteAccount(String id) {
@@ -249,7 +243,6 @@ public class AuthenticationService {
         accountRepository.delete(account);
     }
 
-    /** Nạp Role entity từ roleId; ném 404 nếu vai trò không tồn tại. */
     private Role resolveRole(String roleId) {
         if (roleId == null) {
             throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
@@ -258,7 +251,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
     }
 
-    public void createAccount(Account account) {
+     void createAccount(Account account) {
         if (accountRepository.existsByUsername(account.getUsername())) {
             throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
@@ -272,10 +265,10 @@ public class AuthenticationService {
         accountRepository.save(account);
     }
 
-    private String generateToken(Account account, boolean isForgotPassword) throws JOSEException {
+    private String generateToken(Account account) throws JOSEException {
         // Token đặt lại mật khẩu vẫn dùng hàm này; access token thường dùng generateAccessToken().
-        return buildToken(account, isForgotPassword ? RESET_PASSWORD_DURATION : VALID_DURATION,
-                isForgotPassword ? "reset" : "access");
+        return buildToken(account, RESET_PASSWORD_DURATION,
+                "reset");
     }
 
     /** Access token: ngắn hạn, mang đầy đủ claims để Spring Security phân quyền. */
@@ -334,8 +327,7 @@ public class AuthenticationService {
         return "account:" + accountId + ":refreshToken";
     }
 
-    /** Xác thực access token (dùng cho introspect): so khớp với :token trong Redis. */
-    private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
+    private void verifyToken(String token) throws JOSEException, ParseException {
         SignedJWT signedJWT = parseAndVerifySignature(token);
 
         if (!signedJWT.getJWTClaimsSet().getExpirationTime().after(new Date())) {
@@ -347,11 +339,8 @@ public class AuthenticationService {
         if (currentToken == null || !currentToken.equals(token)) {
             throw new AppException(ErrorCode.TOKEN_LOGGED_OUT);
         }
-
-        return signedJWT;
     }
 
-    /** Xác thực refresh token: kiểm tra chữ ký, hạn, loại token và so khớp với :refreshToken trong Redis. */
     private SignedJWT verifyRefreshToken(String refreshToken) throws JOSEException, ParseException {
         if (refreshToken == null || refreshToken.isBlank()) {
             throw new AppException(ErrorCode.TOKEN_INVALID);
@@ -413,7 +402,7 @@ public class AuthenticationService {
         try {
             // Xóa OTP sau khi xác thực thành công
             otpRedis.delete("otp:" + account.getEmail());
-            String token = generateToken(account, true);
+            String token = generateToken(account);
             return VerifyOtpResponse.builder()
                     .verified(true)
                     .token(token)
@@ -491,6 +480,7 @@ public class AuthenticationService {
     }
 
     @PreAuthorize("hasAuthority('BLOCK_ACCOUNT')")
+    @Synchronized
     public void blockAccount(String id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
@@ -503,6 +493,7 @@ public class AuthenticationService {
     }
 
     @PreAuthorize("hasAuthority('BLOCK_ACCOUNT')")
+    @Synchronized
     public void activeAccount(String id) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));

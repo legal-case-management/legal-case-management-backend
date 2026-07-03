@@ -108,7 +108,6 @@ public class JudgeService {
 
 
     @PreAuthorize("hasAuthority('CREATE_JUDGE')")
-    @Async
     @Synchronized
     @Transactional
     public void create(JudgeRequest request) {
@@ -146,7 +145,6 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_JUDGE')")
-    @Async
     @Synchronized
     @Transactional
     public void update(String id, JudgeRequest request) {
@@ -164,7 +162,6 @@ public class JudgeService {
     }
 
     @PreAuthorize("hasAuthority('DELETE_JUDGE')")
-    @Async
     @Synchronized
     @Transactional
     public void delete(String id) {

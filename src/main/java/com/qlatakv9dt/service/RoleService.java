@@ -2,6 +2,7 @@ package com.qlatakv9dt.service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +36,6 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleService {
-    /* Mã vai trò: in hoa + dấu gạch dưới, không bắt đầu bằng số, không khoảng trắng */
     static Pattern ROLE_ID_PATTERN = Pattern.compile("^[A-Z][A-Z0-9_]*$");
 
     RoleRepository roleRepository;
@@ -73,6 +73,7 @@ public class RoleService {
     }
 
     @PreAuthorize("hasAuthority('CREATE_ROLE')")
+    @Synchronized
     @Transactional
     public void create(RoleRequest request) {
         String roleId = request.getRoleId();
@@ -94,6 +95,7 @@ public class RoleService {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_ROLE')")
+    @Synchronized
     @Transactional
     public void update(String roleId, RoleRequest request) {
         if (RoleCatalog.ADMIN.equals(roleId)) {
@@ -111,6 +113,7 @@ public class RoleService {
     }
 
     @PreAuthorize("hasAuthority('DELETE_ROLE')")
+    @Synchronized
     @Transactional
     public void delete(String roleId) {
         if (RoleCatalog.ADMIN.equals(roleId)) {
@@ -127,7 +130,6 @@ public class RoleService {
         roleRepository.delete(role);
     }
 
-    /** Nạp tập Permission từ danh sách permissionId; bỏ qua nếu rỗng/null. */
     private Set<Permission> resolvePermissions(Set<String> permissionIds) {
         if (permissionIds == null || permissionIds.isEmpty()) {
             return new HashSet<>();

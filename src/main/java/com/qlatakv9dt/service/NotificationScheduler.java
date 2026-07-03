@@ -2,6 +2,7 @@ package com.qlatakv9dt.service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,17 +27,15 @@ public class NotificationScheduler {
     private static final long UPCOMING_THRESHOLD_DAYS = 7;
     private static final long OVERDUE_THRESHOLD_DAYS = 6;
 
-    /**
-     * 6h sáng hằng ngày: thông báo án sắp hết hạn (còn <= 7 ngày) và án quá hạn (0 -> 6 ngày).
-     */
     @Scheduled(cron = "0 0 6 * * *", zone = "Asia/Ho_Chi_Minh")
+    @Synchronized
     @Transactional
     public void sendDailyDeadlineNotifications() {
         sendUpcomingDeadlineNotifications();
         sendOverdueNotifications();
     }
 
-    void sendUpcomingDeadlineNotifications() {
+    private void sendUpcomingDeadlineNotifications() {
         LocalDate today = LocalDate.now();
         LocalDate futureDate = today.plusDays(UPCOMING_THRESHOLD_DAYS);
 
@@ -62,7 +61,7 @@ public class NotificationScheduler {
         log.info("[NotificationScheduler] Đã gửi {} thông báo án sắp hết hạn.", count);
     }
 
-    void sendOverdueNotifications() {
+    private void sendOverdueNotifications() {
         LocalDate today = LocalDate.now();
         LocalDate earliest = today.minusDays(OVERDUE_THRESHOLD_DAYS);
 

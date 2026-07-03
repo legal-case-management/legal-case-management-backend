@@ -35,9 +35,7 @@ public class DocumentService {
 
     DocumentMapper documentMapper;
 
-
     @PreAuthorize("hasAuthority('CREATE_DOCUMENT')")
-    @Async
     @Synchronized
     @Transactional
     public void create(DocumentRequest request) {
@@ -83,7 +81,6 @@ public class DocumentService {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_DOCUMENT')")
-    @Async
     @Synchronized
     @Transactional
     public void update(String id, DocumentRequest request) {
@@ -94,7 +91,6 @@ public class DocumentService {
     }
 
     @PreAuthorize("hasAuthority('DELETE_DOCUMENT')")
-    @Async
     @Synchronized
     @Transactional
     public void delete(String id) {
@@ -102,7 +98,6 @@ public class DocumentService {
                 .orElseThrow(() -> new AppException(ErrorCode.DECISION_NOT_EXISTED));
         documentRepository.delete(document);
     }
-
 
     public List<DocumentResponse> getByLegalCase(String legalCaseId) {
         LegalCase legalCase = legalCaseRepository.findById(legalCaseId)

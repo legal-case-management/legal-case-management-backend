@@ -34,7 +34,6 @@ public class LegalRelationshipGroupService {
     PageMapper pageMapper;
 
     @PreAuthorize("hasAuthority('CREATE_LEGAL_RELATIONSHIP_GROUP')")
-    @Async
     @Synchronized
     @Transactional
     public void create(LegalRelationshipGroupRequest request) {
@@ -52,7 +51,6 @@ public class LegalRelationshipGroupService {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_LEGAL_RELATIONSHIP_GROUP')")
-    @Async
     @Synchronized
     @Transactional
     public void update(String id, LegalRelationshipGroupRequest request) {
@@ -63,7 +61,6 @@ public class LegalRelationshipGroupService {
     }
 
     @PreAuthorize("hasAuthority('DELETE_LEGAL_RELATIONSHIP_GROUP')")
-    @Async
     @Synchronized
     @Transactional
     public void delete(String id) {

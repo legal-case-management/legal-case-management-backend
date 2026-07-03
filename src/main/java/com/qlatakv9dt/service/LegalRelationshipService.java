@@ -48,7 +48,6 @@ public class LegalRelationshipService {
     }
 
     @PreAuthorize("hasAuthority('CREATE_LEGAL_RELATIONSHIP')")
-    @Async
     @Synchronized
     @Transactional
     public void create(LegalRelationshipRequest request) {
@@ -81,7 +80,6 @@ public class LegalRelationshipService {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_LEGAL_RELATIONSHIP')")
-    @Async
     @Synchronized
     @Transactional
     public void update(String id, LegalRelationshipRequest request) {
@@ -104,7 +102,6 @@ public class LegalRelationshipService {
     }
 
     @PreAuthorize("hasAuthority('DELETE_LEGAL_RELATIONSHIP')")
-    @Async
     @Synchronized
     @Transactional
     public void delete(String id) {

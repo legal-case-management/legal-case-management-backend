@@ -42,7 +42,6 @@ public class LegalCaseTypeService {
     }
 
     @PreAuthorize("hasAuthority('CREATE_LEGAL_CASE_TYPE')")
-    @Async
     @Synchronized
     @Transactional
     public void create(LegalCaseTypeRequest request) {
@@ -67,7 +66,6 @@ public class LegalCaseTypeService {
     }
 
     @PreAuthorize("hasAuthority('UPDATE_LEGAL_CASE_TYPE')")
-    @Async
     @Synchronized
     @Transactional
     public void update(String id, LegalCaseTypeRequest request) {
@@ -89,7 +87,6 @@ public class LegalCaseTypeService {
     }
 
     @PreAuthorize("hasAuthority('DELETE_LEGAL_CASE_TYPE')")
-    @Async
     @Synchronized
     @Transactional
     public void delete(String id) {
