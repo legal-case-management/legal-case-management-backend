@@ -1,0 +1,64 @@
+package com.qlatakv9dt.utils;
+
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class DateUtils {
+    static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    public static LocalDate getMilestoneStartDate() {
+        LocalDate today = LocalDate.now();
+        LocalDate milestone = LocalDate.of(today.getYear(), 10, 1);
+
+        if (today.isBefore(milestone)) {
+            milestone = milestone.minusYears(1);
+        }
+        return milestone;
+    }
+
+    public static LocalDate getMilestoneEndDate() {
+        LocalDate today = LocalDate.now();
+        LocalDate milestone = LocalDate.of(today.getYear(), 9, 30);
+
+        if (today.isAfter(milestone)) {
+            milestone = milestone.minusYears(1);
+        }
+        return milestone;
+    }
+
+    public static LocalDate getMilestoneStartDate(int year) {
+        return LocalDate.of(year - 1, 10, 1);
+    }
+
+    public static LocalDate getMilestoneEndDate(int year) {
+        return LocalDate.of(year, 9, 30);
+    }
+
+    public static int getCurrentYear(LocalDate date) {
+        LocalDate milestone = LocalDate.of(date.getYear(), 10, 1);
+
+        if (date.isBefore(milestone)) {
+            return date.getYear();
+        } else {
+            return date.getYear() + 1;
+        }
+    }
+
+    public static int getCurrentYear(LocalDateTime date) {
+        LocalDateTime milestone = LocalDateTime.of(date.getYear(), 10, 1, 0, 0, 0);
+
+        if (date.isBefore(milestone)) {
+            return date.getYear();
+        } else {
+            return date.getYear() + 1;
+        }
+    }
+
+    public static String formatLocalDate(LocalDate localDate) {
+        return localDate.format(formatter);
+    }
+}
