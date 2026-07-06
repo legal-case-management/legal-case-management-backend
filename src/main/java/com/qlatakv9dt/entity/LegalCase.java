@@ -15,7 +15,9 @@ import java.util.List;
         name = "legal_cases",
         indexes = {
                 @Index(name = "idx_acceptance_number", columnList = "acceptance_number"),
-                @Index(name = "idx_time", columnList = "acceptance_date")
+                @Index(name = "idx_acceptance_date", columnList = "acceptance_date"),
+                @Index(name = "idx_expired_date", columnList = "expired_date"),
+                @Index(name = "idx_storage_date", columnList = "storage_date")
         }
 )
 @FieldDefaults(level = AccessLevel.PRIVATE)
