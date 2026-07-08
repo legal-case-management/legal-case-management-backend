@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import com.qlatakv9dt.dto.request.judge.JudgeRequest;
@@ -25,7 +24,6 @@ import com.qlatakv9dt.enums.OfficerStatus;
 import com.qlatakv9dt.exception.AppException;
 import com.qlatakv9dt.exception.ErrorCode;
 import com.qlatakv9dt.mapper.JudgeMapper;
-import com.qlatakv9dt.mapper.LegalRelationshipGroupMapper;
 import com.qlatakv9dt.mapper.PageMapper;
 import com.qlatakv9dt.repository.JudgeRepository;
 import com.qlatakv9dt.repository.RoleRepository;
@@ -50,7 +48,6 @@ public class JudgeService {
     RoleRepository roleRepository;
 
     JudgeMapper judgeMapper;
-    LegalRelationshipGroupMapper legalRelationshipGroupMapper;
     PageMapper pageMapper;
 
     AuthenticationService authenticationService;

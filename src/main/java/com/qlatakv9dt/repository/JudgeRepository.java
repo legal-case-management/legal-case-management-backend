@@ -43,7 +43,11 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                 j.officerStatus,
                 j.maxWithoutMediator,
                 COUNT(lc) AS numberWithoutMediator,
-                SUM(CASE WHEN lrg = :legalRelationshipGroup THEN 1 ELSE 0 END) AS numberByCondition
+                SUM(CASE
+                        WHEN :#{#legalRelationshipGroup.legalRelationshipGroupId} = 'N05' AND lrg.legalRelationshipGroupId IN ('N05', 'N01') THEN 1
+                        WHEN lrg = :legalRelationshipGroup THEN 1
+                        ELSE 0
+                    END) AS numberByCondition
             FROM Judge j
             LEFT JOIN j.legalCases lc ON lc.acceptanceDate BETWEEN :milestoneStartDate AND :milestoneEndDate AND (lc.mediator IS NULL)
             LEFT JOIN lc.legalRelationship.legalRelationshipGroup lrg
