@@ -48,6 +48,9 @@ jwt:
   valid-duration: ${JWT_VALID_DURATION}
   reset-password-duration: ${JWT_RESET_DURATION}
   refreshable-duration: ${JWT_REFRESH_DURATION}
+  # RefreshToken dài hạn riêng cho mobile (đăng nhập ~vĩnh viễn kiểu Facebook, chỉ mất khi user chủ động đăng xuất).
+  # Mặc định 30 ngày nếu không cấu hình qua env.
+  refreshable-duration-mobile: ${JWT_REFRESH_DURATION_MOBILE:2592000}
 
 auth:
   default-password: ${AUTH_DEFAULT_PASSWORD}

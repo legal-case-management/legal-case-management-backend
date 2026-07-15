@@ -12,4 +12,6 @@ import lombok.experimental.FieldDefaults;
 public class LoginRequest {
     String identifier;
     String password;
+    /** "MOBILE" hoặc "WEB" (mặc định); quyết định thời hạn refreshToken cấp cho phiên này. */
+    String clientType;
 }

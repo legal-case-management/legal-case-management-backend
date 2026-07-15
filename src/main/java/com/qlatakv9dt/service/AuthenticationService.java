@@ -70,6 +70,10 @@ public class AuthenticationService {
     @Value("${jwt.refreshable-duration}")
     long REFRESHABLE_DURATION;
 
+    @NonFinal
+    @Value("${jwt.refreshable-duration-mobile}")
+    long REFRESHABLE_DURATION_MOBILE;
+
     @Value("${auth.default-password}")
     @NonFinal
     String DEFAULT_PASSWORD;
@@ -107,16 +111,19 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.INVALID_PASSWORD);
 
         try {
-            // 3. Sinh cặp token mới: accessToken (ngắn hạn) + refreshToken (dài hạn)
+            // 3. Sinh cặp token mới: accessToken (ngắn hạn) + refreshToken (dài hạn, TTL theo clientType)
+            boolean isMobile = "MOBILE".equalsIgnoreCase(request.getClientType());
+            long refreshDuration = isMobile ? REFRESHABLE_DURATION_MOBILE : REFRESHABLE_DURATION;
+
             String accessToken = generateAccessToken(account);
-            String refreshToken = generateRefreshToken(account);
+            String refreshToken = generateRefreshToken(account, refreshDuration, isMobile);
 
             // 4. Xóa token cũ trong Redis (nếu có) rồi lưu cặp token mới với TTL tương ứng
             String accountId = account.getAccountId();
             tokenRedis.delete(accessKey(accountId));
             tokenRedis.delete(refreshKey(accountId));
             tokenRedis.opsForValue().set(accessKey(accountId), accessToken, VALID_DURATION, TimeUnit.SECONDS);
-            tokenRedis.opsForValue().set(refreshKey(accountId), refreshToken, REFRESHABLE_DURATION, TimeUnit.SECONDS);
+            tokenRedis.opsForValue().set(refreshKey(accountId), refreshToken, refreshDuration, TimeUnit.SECONDS);
 
             return AuthenticationResponse.builder()
                     .authenticated(true)
@@ -161,12 +168,17 @@ public class AuthenticationService {
             Account account = accountRepository.findById(accountId)
                     .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_EXISTED));
 
+            // Giữ nguyên clientType của phiên gốc (nhúng trong refreshToken đang verify) qua mỗi lần
+            // rotate, để phiên mobile tiếp tục dùng TTL dài dù client không tự gửi lại clientType.
+            boolean isMobile = Boolean.TRUE.equals(signedJWT.getJWTClaimsSet().getClaim("mobile"));
+            long refreshDuration = isMobile ? REFRESHABLE_DURATION_MOBILE : REFRESHABLE_DURATION;
+
             // Cấp access token mới và xoay vòng refresh token (an toàn hơn)
             String newAccessToken = generateAccessToken(account);
-            String newRefreshToken = generateRefreshToken(account);
+            String newRefreshToken = generateRefreshToken(account, refreshDuration, isMobile);
 
             tokenRedis.opsForValue().set(accessKey(accountId), newAccessToken, VALID_DURATION, TimeUnit.SECONDS);
-            tokenRedis.opsForValue().set(refreshKey(accountId), newRefreshToken, REFRESHABLE_DURATION, TimeUnit.SECONDS);
+            tokenRedis.opsForValue().set(refreshKey(accountId), newRefreshToken, refreshDuration, TimeUnit.SECONDS);
 
             return AuthenticationResponse.builder()
                     .authenticated(true)
@@ -277,11 +289,15 @@ public class AuthenticationService {
     }
 
     /** Refresh token: dài hạn, chỉ dùng để xin access token mới. */
-    private String generateRefreshToken(Account account) throws JOSEException {
-        return buildToken(account, REFRESHABLE_DURATION, "refresh");
+    private String generateRefreshToken(Account account, long durationSeconds, boolean mobile) throws JOSEException {
+        return buildToken(account, durationSeconds, "refresh", mobile);
     }
 
     private String buildToken(Account account, long durationSeconds, String tokenType) throws JOSEException {
+        return buildToken(account, durationSeconds, tokenType, false);
+    }
+
+    private String buildToken(Account account, long durationSeconds, String tokenType, boolean mobile) throws JOSEException {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
                 .jwtID(UUID.randomUUID().toString())
@@ -290,6 +306,9 @@ public class AuthenticationService {
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(durationSeconds, ChronoUnit.SECONDS).toEpochMilli()))
                 .claim("tokenType", tokenType)
+                // Chỉ có ý nghĩa trên refreshToken: đánh dấu phiên mobile để xoay vòng vẫn giữ TTL dài
+                // (xem refreshToken()) — bỏ qua trên accessToken (không ảnh hưởng phân quyền/Spring Security).
+                .claim("mobile", mobile)
                 .claim("username", account.getUsername())
                 .claim("displayName", account.getOfficer() != null
                         ? account.getOfficer().getFullName()
