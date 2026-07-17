@@ -9,8 +9,17 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class AppException extends RuntimeException {
     ErrorCode errorCode;
+    String customMessage;
+
+    public AppException(ErrorCode errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public AppException(ErrorCode errorCode, String customMessage) {
+        this.errorCode = errorCode;
+        this.customMessage = customMessage;
+    }
 }

@@ -47,6 +47,8 @@ public enum ErrorCode {
     LEGAL_CASE_NOT_EXISTED(404, HttpStatus.NOT_FOUND, "Vụ án không tồn tại"),
     LEGAL_CASE_EXISTED(404, HttpStatus.BAD_REQUEST, "Vụ án đã tồn tại"),
     LEGAL_CASE_NOT_WAITING_FOR_ASSIGNMENT(400, HttpStatus.BAD_REQUEST, "Vụ án không ở trạng thái chờ phân công"),
+    LEGAL_CASE_AMBIGUOUS_FOR_IMPORT(400, HttpStatus.BAD_REQUEST, "Tìm thấy nhiều vụ án khớp với tiêu chí"),
+    LEGAL_CASE_NOT_FOUND_FOR_IMPORT(404, HttpStatus.NOT_FOUND, "Không tìm thấy vụ án khớp với tiêu chí"),
 
     RANDOM_ASSIGNMENT_FAILED(500, HttpStatus.INTERNAL_SERVER_ERROR, "Phân công án ngẫu nhiên thất bại"),
     NO_JUDGES_AVAILABLE_FOR_LEGAL_CASES(400, HttpStatus.BAD_REQUEST, "Không có đủ thẩm phán nào đủ điều kiện để phân công cho các vụ án"),

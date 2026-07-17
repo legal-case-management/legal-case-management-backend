@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import com.qlatakv9dt.dto.request.document.DocumentRequest;
+import com.qlatakv9dt.dto.request.document.DocumentsRequest;
 import com.qlatakv9dt.dto.response.ApiResponse;
 import com.qlatakv9dt.dto.response.document.DocumentResponse;
 import com.qlatakv9dt.service.DocumentService;
@@ -28,6 +29,16 @@ public class DocumentController {
                 .success(true)
                 .status(200)
                 .message("Thêm tài liệu, thông báo thành công")
+                .build();
+    }
+
+    @PostMapping("/import-excel")
+    public ApiResponse<Void> importFromExcel(@RequestBody @Valid DocumentsRequest request) {
+        documentService.importFromExcel(request);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .status(200)
+                .message("Nhập tài liệu hàng loạt thành công")
                 .build();
     }
 

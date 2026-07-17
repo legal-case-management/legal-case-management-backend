@@ -9,7 +9,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.qlatakv9dt.dto.request.document.DocumentAcceptanceRequest;
 import com.qlatakv9dt.dto.request.document.DocumentRequest;
+import com.qlatakv9dt.dto.request.document.DocumentsRequest;
 import com.qlatakv9dt.dto.response.document.DocumentResponse;
 import com.qlatakv9dt.entity.Document;
 import com.qlatakv9dt.entity.LegalCase;
@@ -21,6 +23,7 @@ import com.qlatakv9dt.mapper.DocumentMapper;
 import com.qlatakv9dt.repository.DocumentRepository;
 import com.qlatakv9dt.repository.LegalCaseRepository;
 import com.qlatakv9dt.repository.DocumentTypeRepository;
+import com.qlatakv9dt.utils.DateUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,15 +42,61 @@ public class DocumentService {
     @Synchronized
     @Transactional
     public void create(DocumentRequest request) {
+        LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
+                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
+        createSingle(request, legalCase);
+    }
+
+    @PreAuthorize("hasAuthority('CREATE_DOCUMENT')")
+    @Synchronized
+    @Transactional
+    public void importFromExcel(DocumentsRequest request) {
+        for (DocumentAcceptanceRequest acceptanceRequest : request.getDocuments()) {
+            List<LegalCase> matches = legalCaseRepository.findByAcceptanceNumberAndAcceptanceDateAndIsMediator(
+                    acceptanceRequest.getAcceptanceNumber(),
+                    acceptanceRequest.getAcceptanceDate(),
+                    request.isMediator()
+            );
+
+            if (matches.isEmpty()) {
+                throw new AppException(ErrorCode.LEGAL_CASE_NOT_FOUND_FOR_IMPORT, String.format(
+                        "Không tìm thấy vụ án có số thụ lý %s, ngày %s, %s hòa giải viên",
+                        acceptanceRequest.getAcceptanceNumber(),
+                        DateUtils.formatLocalDate(acceptanceRequest.getAcceptanceDate()),
+                        request.isMediator() ? "có" : "không có"
+                ));
+            }
+
+            if (matches.size() >= 2) {
+                throw new AppException(ErrorCode.LEGAL_CASE_AMBIGUOUS_FOR_IMPORT, String.format(
+                        "Tìm thấy %d vụ án có số thụ lý %s, ngày %s, %s hòa giải viên",
+                        matches.size(),
+                        acceptanceRequest.getAcceptanceNumber(),
+                        DateUtils.formatLocalDate(acceptanceRequest.getAcceptanceDate()),
+                        request.isMediator() ? "có" : "không có"
+                ));
+            }
+
+            LegalCase legalCase = matches.get(0);
+
+            DocumentRequest documentRequest = DocumentRequest.builder()
+                    .documentNumber(acceptanceRequest.getDocumentNumber())
+                    .releaseDate(acceptanceRequest.getReleaseDate())
+                    .note(acceptanceRequest.getNote())
+                    .documentTypeId(acceptanceRequest.getDocumentTypeId())
+                    .legalCaseId(legalCase.getLegalCaseId())
+                    .build();
+
+            createSingle(documentRequest, legalCase);
+        }
+    }
+
+    private void createSingle(DocumentRequest request, LegalCase legalCase) {
         Document document = Document.builder().build();
         documentMapper.toDocument(request, document);
 
         DocumentType documentType = documentTypeRepository.findById(request.getDocumentTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.TYPE_OF_DECISION_NOT_EXISTED));
-
-        LegalCase legalCase = legalCaseRepository.findById(request.getLegalCaseId())
-                .orElseThrow(() -> new AppException(ErrorCode.LEGAL_CASE_NOT_EXISTED));
-
 
         if (!documentType.getPreStatuses().isEmpty()) {
             for (LegalCaseStatus status : documentType.getPreStatuses()) {

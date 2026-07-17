@@ -76,6 +76,21 @@ public interface LegalCaseRepository extends JpaRepository<LegalCase, String> {
     );
 
     @Query("""
+                SELECT lc FROM LegalCase lc
+                WHERE lc.acceptanceNumber = :acceptanceNumber
+                  AND lc.acceptanceDate = :acceptanceDate
+                  AND (
+                        (:isMediator = true AND lc.mediator IS NOT NULL)
+                        OR (:isMediator = false AND lc.mediator IS NULL)
+                      )
+            """)
+    List<LegalCase> findByAcceptanceNumberAndAcceptanceDateAndIsMediator(
+            @Param("acceptanceNumber") String acceptanceNumber,
+            @Param("acceptanceDate") LocalDate acceptanceDate,
+            @Param("isMediator") boolean isMediator
+    );
+
+    @Query("""
         SELECT lc
         FROM LegalCase lc
         WHERE lc.legalCaseId IN :legalCaseIds
