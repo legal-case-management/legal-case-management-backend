@@ -1,10 +1,12 @@
 package com.qlatakv9dt.config;
 
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import com.qlatakv9dt.dto.response.ApiResponse;
 import com.qlatakv9dt.exception.ErrorCode;
+import com.qlatakv9dt.service.RateLimiterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -36,7 +39,10 @@ import javax.crypto.spec.SecretKeySpec;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    RateLimiterService rateLimiterService;
+
     String[] PUBLIC_POST_ENDPOINTS = {
             "/auth/introspect",
             "/auth/login",
@@ -57,6 +63,14 @@ public class SecurityConfig {
     @NonFinal
     @Value("${jwt.signerKey}")
     private String signerKey;
+
+    @NonFinal
+    @Value("${rate-limit.default.limit:120}")
+    private int rateLimitDefaultLimit;
+
+    @NonFinal
+    @Value("${rate-limit.default.window-seconds:60}")
+    private long rateLimitDefaultWindowSeconds;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -94,8 +108,13 @@ public class SecurityConfig {
                                     response.flushBuffer();
                                 })
                 )
-                .csrf(AbstractHttpConfigurer::disable);
+                .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(rateLimitFilter(), BasicAuthenticationFilter.class);
         return httpSecurity.build();
+    }
+
+    private RateLimitFilter rateLimitFilter() {
+        return new RateLimitFilter(rateLimiterService, rateLimitDefaultLimit, rateLimitDefaultWindowSeconds);
     }
 
     @Bean

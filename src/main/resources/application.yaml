@@ -55,6 +55,11 @@ jwt:
 auth:
   default-password: ${AUTH_DEFAULT_PASSWORD}
 
+rate-limit:
+  default:
+    limit: ${RATE_LIMIT_DEFAULT_LIMIT:120}
+    window-seconds: ${RATE_LIMIT_DEFAULT_WINDOW_SECONDS:60}
+
 server:
   address: 0.0.0.0
   port: ${SERVER_PORT}

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatusCode;
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(500, HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi chưa được phân loại"),
     UNKNOWN_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi không xác định"),
+    TOO_MANY_REQUESTS(429, HttpStatus.TOO_MANY_REQUESTS, "Quá nhiều yêu cầu, vui lòng thử lại sau"),
 
     /* Register customer's account */
     USERNAME_EXISTED(400, HttpStatus.BAD_REQUEST, "Tên đăng nhập đã được sử dụng"),
