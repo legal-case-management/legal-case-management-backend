@@ -55,7 +55,7 @@ public interface JudgeRepository extends JpaRepository<Judge, String> {
                   AND (j.restrictedGroups IS EMPTY OR :legalRelationshipGroup NOT MEMBER OF j.restrictedGroups)
             GROUP BY j.officerId, j.firstName, j.lastName, j.fullName, j.maxWithoutMediator, j.officerStatus
             HAVING (j.maxWithoutMediator IS NULL OR count(lc) < j.maxWithoutMediator)
-            ORDER BY numberByCondition, j.officerId
+            ORDER BY numberByCondition, numberWithoutMediator, j.officerId
             """)
     List<Object[]> getAssignAssignmentWithoutMediatorRaw(
             @Param("milestoneStartDate") LocalDate milestoneStartDate,

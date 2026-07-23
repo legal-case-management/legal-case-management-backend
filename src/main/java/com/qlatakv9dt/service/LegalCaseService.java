@@ -287,6 +287,7 @@ public class LegalCaseService {
         // Luôn lấy ra thẩm phán có số án ít nhất để phân công
         PriorityQueue<JudgeAssignmentInfoResponse> minHeap = new PriorityQueue<>(
                 Comparator.comparingLong(JudgeAssignmentInfoResponse::getNumberByCondition)
+                        .thenComparingLong(JudgeAssignmentInfoResponse::getMaxWithType)
         );
 
         // Đưa thẩm phán vào heap
